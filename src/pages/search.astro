@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="검색 — itsdangerous"
+  description="기술 블로그의 글을 검색합니다."
+  canonicalPath="/search/"
+>
+  <main class="shell search-page" data-pagefind-ignore>
+    <section class="intro" aria-labelledby="search-title">
+      <p class="eyebrow">Search</p>
+      <h1 id="search-title">글 검색</h1>
+      <p class="intro__description">기록된 글에서 원하는 내용을 찾아보세요.</p>
+    </section>
+    <section class="search-page__form" aria-label="글 검색">
+      <div id="pagefind-search" class="pagefind-ui"></div>
+    </section>
+  </main>
+</BaseLayout>
+
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+
+<script>
+  import { PagefindUI } from '@pagefind/default-ui';
+
+  new PagefindUI({ element: '#pagefind-search' });
+</script>
+
+<style is:global>
+  :root,
+  [data-theme='midnight'] {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-surface-raised);
+  }
+
+  [data-theme='light'] {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-surface-raised);
+  }
+
+  .search-page__form {
+    max-width: var(--content-width);
+    padding-top: var(--space-12);
+  }
+
+  .pagefind-ui {
+    color: var(--color-text);
+  }
+</style>

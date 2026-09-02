@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "test": "vitest",
     "test:e2e": "playwright test"
@@ -14,8 +14,10 @@
     "astro": "^5.13.5"
   },
   "devDependencies": {
-    "@types/node": "^24.3.0",
+    "@pagefind/default-ui": "^1.5.2",
     "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.0",
+    "pagefind": "^1.5.2",
     "parse5": "^7.3.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

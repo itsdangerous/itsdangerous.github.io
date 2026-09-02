@@ -40,6 +40,11 @@ a {
   gap: var(--space-6);
 }
 
+.site-header nav a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
 .site-header__brand {
   color: var(--color-text);
   font-weight: 700;
