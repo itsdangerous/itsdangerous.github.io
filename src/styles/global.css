@@ -37,12 +37,13 @@ a {
   --sidebar-accent: #d4bd8a;
   --sidebar-accent-strong: #f0dfb7;
   position: sticky;
-  top: 0.5rem;
+  top: 0;
   align-self: start;
-  height: calc(100svh - 1rem);
+  height: 100svh;
   min-height: 40rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.8rem;
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  border-radius: 0;
   background: var(--color-surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-text) 5%, transparent), 0 1.5rem 4rem rgb(0 0 0 / 16%);
   overflow: hidden;
@@ -240,7 +241,7 @@ a {
 .site-header__controls .search-button:hover { color: var(--sidebar-accent-strong); }
 .site-header__controls .search-button kbd { color: inherit; font-family: var(--font-mono); font-size: 0.65rem; }
 
-.site-frame { display: grid; grid-template-columns: clamp(18rem, 22vw, 22rem) minmax(0, 1fr); gap: clamp(3rem, 5vw, 5rem); width: calc(100% - 1rem); max-width: 99rem; margin: 0 auto; }
+.site-frame { display: grid; grid-template-columns: clamp(18rem, 22vw, 22rem) minmax(0, 1fr); gap: clamp(3rem, 5vw, 5rem); width: 100%; margin: 0; }
 .site-content { min-width: 0; }
 
 .theme-toggle {
