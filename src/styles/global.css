@@ -61,11 +61,12 @@ a {
 }
 
 [data-theme='light'] .site-header::before {
-  opacity: 0.82;
+  opacity: 0.72;
   background-image:
-    linear-gradient(90deg, color-mix(in srgb, var(--color-border) 28%, transparent), transparent 24%),
-    url('/sidebar-texture-light.webp');
-  background-blend-mode: multiply, soft-light;
+    linear-gradient(90deg, color-mix(in srgb, var(--color-border) 24%, transparent), transparent 24%),
+    url('/sidebar-texture.webp');
+  background-blend-mode: multiply, normal;
+  filter: grayscale(1) invert(1) sepia(0.1) brightness(1.08) contrast(0.62);
 }
 
 .site-header::after {
@@ -233,34 +234,60 @@ a {
 .theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
   padding: 0;
   color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: 0.85rem;
   background: none;
   border: 0;
   cursor: pointer;
-  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 18%, transparent), 0 -1px 0 rgb(0 0 0 / 52%);
 }
 
-.theme-toggle__icon {
-  display: grid;
-  place-items: center;
-  width: 1.65rem;
-  height: 1.65rem;
+.theme-toggle__track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 3.5rem;
+  height: 1.8rem;
+  padding: 0 0.35rem;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-surface-raised) 72%, transparent);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 18%);
+}
+
+.theme-toggle__symbol {
+  color: var(--color-text-muted);
   font-family: Georgia, serif;
-  font-size: 1rem;
+  font-size: 0.72rem;
   line-height: 1;
 }
 
-.theme-toggle__state {
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
+.theme-toggle__thumb {
+  position: absolute;
+  top: 0.17rem;
+  left: 0.18rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--color-background);
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 2px 5px rgb(0 0 0 / 28%);
+  font-family: Georgia, serif;
+  font-size: 0.84rem;
+  line-height: 1;
+  transition: transform 180ms ease, background-color 180ms ease;
+  text-shadow: none;
+}
+
+.theme-toggle[aria-checked='false'] .theme-toggle__thumb {
+  transform: translateX(1.72rem);
+}
+
+.theme-toggle:focus-visible .theme-toggle__track {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 [data-theme='light'] .site-header nav a span,

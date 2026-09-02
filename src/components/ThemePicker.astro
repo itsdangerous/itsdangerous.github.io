@@ -1,22 +1,23 @@
-<button class="theme-toggle" type="button" aria-label="라이트 테마로 전환" aria-pressed="false" data-theme-toggle>
-  <span class="theme-toggle__icon" data-theme-icon aria-hidden="true">☾</span>
-  <span class="theme-toggle__label">Theme</span>
-  <span class="theme-toggle__state" data-theme-state>Dark</span>
+<button class="theme-toggle" type="button" role="switch" aria-label="라이트 테마로 전환" aria-checked="false" data-theme-toggle>
+  <span class="sr-only">테마 변경</span>
+  <span class="theme-toggle__track" aria-hidden="true">
+    <span class="theme-toggle__symbol theme-toggle__symbol--sun">☼</span>
+    <span class="theme-toggle__symbol theme-toggle__symbol--moon">☾</span>
+    <span class="theme-toggle__thumb" data-theme-icon>☾</span>
+  </span>
 </button>
 
 <script>
   import { applyTheme, THEME_STORAGE_KEY } from '../scripts/theme-init';
   const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
   const icon = document.querySelector<HTMLElement>('[data-theme-icon]');
-  const state = document.querySelector<HTMLElement>('[data-theme-state]');
   const sync = () => {
     const isLight = document.documentElement.dataset.theme === 'light';
     if (toggle) {
-      toggle.setAttribute('aria-pressed', String(isLight));
+      toggle.setAttribute('aria-checked', String(isLight));
       toggle.setAttribute('aria-label', isLight ? '다크 테마로 전환' : '라이트 테마로 전환');
     }
     if (icon) icon.textContent = isLight ? '☼' : '☾';
-    if (state) state.textContent = isLight ? 'Light' : 'Dark';
   };
   if (toggle) {
     sync();
