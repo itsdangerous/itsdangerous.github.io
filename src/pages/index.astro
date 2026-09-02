@@ -1,5 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import PostCard from '../components/PostCard.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
 ---
 
 <BaseLayout
@@ -19,7 +25,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <p class="eyebrow">Archive</p>
         <h2 id="recent-title">최근 글</h2>
       </div>
-      <p class="empty-state">곧 새로운 기록이 올라옵니다.</p>
+      <ol class="post-list">
+        {posts.map((post, index) => <PostCard post={post} index={index} />)}
+      </ol>
+      <a class="archive-link" href="/posts/">모든 글 보기 <span aria-hidden="true">→</span></a>
     </section>
   </main>
 </BaseLayout>

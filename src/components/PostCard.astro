@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  index?: number;
+}
+
+const { post, index } = Astro.props;
+const { category, description, pubDate, title } = post.data;
+const date = new Intl.DateTimeFormat('ko-KR', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(pubDate);
+const categoryHref = `/categories/${encodeURIComponent(category)}/`;
+---
+
+<li class="post-card">
+  {index !== undefined && <span class="post-card__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
+  <article>
+    <div class="post-card__meta">
+      <a href={categoryHref}>{category}</a>
+      <time datetime={pubDate.toISOString()}>{date}</time>
+    </div>
+    <h3><a href={`/posts/${post.slug}/`}>{title}</a></h3>
+    <p>{description}</p>
+  </article>
+</li>
