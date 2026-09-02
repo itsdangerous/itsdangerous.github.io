@@ -1,0 +1,12 @@
+[data-theme='light'] {
+  --color-background: #f6f8fa;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef1f4;
+  --color-border: #d0d7de;
+  --color-text: #1f2328;
+  --color-text-muted: #59636e;
+  --color-accent: #0969da;
+  --color-accent-strong: #0550ae;
+  --color-code-background: #eef1f4;
+  color-scheme: light;
+}
