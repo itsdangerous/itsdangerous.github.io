@@ -41,11 +41,7 @@ a {
   min-height: 40rem;
   border: 1px solid var(--color-border);
   border-radius: 0.8rem;
-  background:
-    url('/sidebar-texture.svg'),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-background) 45%, transparent), transparent 18%),
-    var(--color-surface);
-  background-blend-mode: soft-light, normal, normal;
+  background: var(--color-surface);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-text) 5%, transparent), 0 1.5rem 4rem rgb(0 0 0 / 16%);
   overflow: hidden;
 }
@@ -55,12 +51,18 @@ a {
   inset: 0;
   pointer-events: none;
   content: '';
-  opacity: 0.28;
+  opacity: 0.88;
   background-image:
-    repeating-linear-gradient(90deg, transparent 0 2px, color-mix(in srgb, var(--color-text-muted) 16%, transparent) 2px 3px),
-    repeating-linear-gradient(0deg, transparent 0 4px, color-mix(in srgb, var(--color-border) 35%, transparent) 4px 5px);
-  background-size: auto, auto;
-  mask-image: linear-gradient(90deg, black, transparent 92%);
+    linear-gradient(90deg, color-mix(in srgb, var(--color-background) 36%, transparent), transparent 22%),
+    url('/sidebar-texture.webp');
+  background-position: center, center;
+  background-size: auto, cover;
+  background-blend-mode: multiply, soft-light;
+}
+
+[data-theme='light'] .site-header::before {
+  opacity: 0.24;
+  background-blend-mode: normal, multiply;
 }
 
 .site-header::after {
@@ -82,6 +84,24 @@ a {
   align-items: stretch;
   min-height: 100%;
   padding: 4.5rem 3rem 2.75rem 4rem;
+}
+
+.site-header__inner::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.3;
+  background:
+    radial-gradient(ellipse at 18% 12%, color-mix(in srgb, var(--color-text-muted) 22%, transparent), transparent 25%),
+    radial-gradient(ellipse at 82% 48%, color-mix(in srgb, var(--color-background) 42%, transparent), transparent 34%),
+    radial-gradient(ellipse at 36% 86%, color-mix(in srgb, var(--color-text-muted) 12%, transparent), transparent 29%);
+}
+
+.site-header__inner > * {
+  position: relative;
+  z-index: 1;
 }
 
 .site-header__profile {
@@ -167,7 +187,7 @@ a {
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 500;
-  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 18%, transparent);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 28%, transparent), 0 -1px 0 rgb(0 0 0 / 62%), 0 2px 2px rgb(0 0 0 / 24%);
 }
 
 .site-header__brand {
@@ -179,6 +199,7 @@ a {
   letter-spacing: -0.03em;
   padding-bottom: 1.8rem;
   border-bottom: 1px solid var(--color-border);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 34%, transparent), 0 -1px 0 rgb(0 0 0 / 72%), 0 2px 3px rgb(0 0 0 / 28%);
 }
 
 .site-header__stats {
@@ -187,6 +208,7 @@ a {
   font-family: var(--font-display);
   font-size: 0.78rem;
   letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 18%, transparent), 0 -1px 0 rgb(0 0 0 / 58%);
 }
 
 .site-header__controls { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
@@ -208,6 +230,7 @@ a {
   background: none;
   border: 0;
   cursor: pointer;
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 18%, transparent), 0 -1px 0 rgb(0 0 0 / 52%);
 }
 
 .theme-toggle__icon {
