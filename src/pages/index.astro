@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="itsdangerous — 기록하고, 더 나은 답을 찾습니다."
+  description="기록하고, 더 나은 답을 찾습니다."
+  canonicalPath="/"
+>
+  <main class="shell">
+    <section class="intro" aria-labelledby="site-title">
+      <p class="eyebrow">itsdangerous.github.io</p>
+      <h1 id="site-title">기록하고,<br /><span>더 나은 답을 찾습니다.</span></h1>
+      <p class="intro__description">기술을 탐구하며 배운 것과 만든 것을 차분하게 기록합니다.</p>
+    </section>
+
+    <section class="recent" aria-labelledby="recent-title">
+      <div class="section-heading">
+        <p class="eyebrow">Archive</p>
+        <h2 id="recent-title">최근 글</h2>
+      </div>
+      <p class="empty-state">곧 새로운 기록이 올라옵니다.</p>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,27 @@
+:root {
+  --color-background: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-raised: #21262d;
+  --color-border: #30363d;
+  --color-text: #e6edf3;
+  --color-text-muted: #8b949e;
+  --color-accent: #79c0ff;
+  --color-accent-strong: #a5d6ff;
+  --color-code-background: #161b22;
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-size-body: 1rem;
+  --line-height-body: 1.75;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --content-width: 48rem;
+  --shell-width: 72rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+}
