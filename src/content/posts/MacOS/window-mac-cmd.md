@@ -8,7 +8,6 @@ slug: "window-mac-cmd"
 sourceUrl: "https://0418.tistory.com/31"
 draft: false
 ---
-# Windows에서 macOS처럼 동일 애플리케이션 창 전환 단축키 설정하기
 
 macOS에서는 `Cmd + \\`` 단축키로 같은 애플리케이션에 속한 여러 창을 빠르게 전환할 수 있습니다. 반면 Windows의 기본 단축키인 `Alt + Tab`은 모든 애플리케이션 창을 대상으로 동작하기 때문에, 동일 프로그램 내 창만 순환하고 싶은 경우에는 다소 비효율적입니다.
 
@@ -21,6 +20,7 @@ Windows에는 이 기능이 기본 제공되지 않지만, `AutoHotkey`를 사�
 - [AutoHotkey 공식 홈페이지](https://www.autohotkey.com/)
 
 에 접속합니다.
+
 - **Download**를 눌러 최신 버전인 **v2**를 설치합니다.
 - 특별한 설정이 필요하지 않다면 기본값으로 설치하면 됩니다.
 

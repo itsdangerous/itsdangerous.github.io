@@ -1,14 +1,12 @@
-<button class="search-button" type="button" data-search-open aria-label="검색 열기">
-  <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
-    <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7"></circle>
-    <path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-  </svg>
-  <kbd data-search-shortcut>⌘K</kbd>
+<button type="button" data-search-open aria-label="검색 열기">
+  <img data-search-icon="dark" src="/images/search-eye-dark.png" alt="" width="28" height="28" />
+  <img data-search-icon="light" src="/images/search-eye-light.png" alt="" width="28" height="28" />
+  <kbd data-search-shortcut>⌘ K</kbd>
 </button>
 
 <script>
   const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
   document.querySelectorAll<HTMLElement>('[data-search-shortcut]').forEach((label) => {
-    label.textContent = macPlatform ? '⌘K' : 'Ctrl K';
+    label.textContent = macPlatform ? '⌘ K' : 'Ctrl K';
   });
 </script>

@@ -3,10 +3,9 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   post: CollectionEntry<'posts'>;
-  readingTime: number;
 }
 
-const { post, readingTime } = Astro.props;
+const { post } = Astro.props;
 const { category, pubDate, tags } = post.data;
 const date = new Intl.DateTimeFormat('ko-KR', {
   year: 'numeric',
@@ -20,7 +19,6 @@ const date = new Intl.DateTimeFormat('ko-KR', {
   <div class="article-meta__primary">
     <a href={`/categories/${encodeURIComponent(category)}/`}>{category}</a>
     <time datetime={pubDate.toISOString()}>{date}</time>
-    <span>{readingTime}분 읽기</span>
   </div>
   {tags.length > 0 && (
     <ul class="article-meta__tags" aria-label="태그">
