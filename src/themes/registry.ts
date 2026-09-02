@@ -5,8 +5,8 @@ export interface ThemeDefinition {
 }
 
 export const themes: ThemeDefinition[] = [
-  { id: 'midnight', label: 'Midnight', giscusTheme: 'dark' },
-  { id: 'light', label: 'Light', giscusTheme: 'light' },
+  { id: 'midnight', label: 'Midnight', giscusTheme: 'https://itsdangerous.github.io/giscus-dark.css' },
+  { id: 'light', label: 'Light', giscusTheme: 'https://itsdangerous.github.io/giscus-light.css' },
 ];
 
 export function getTheme(id: string | null | undefined): ThemeDefinition {

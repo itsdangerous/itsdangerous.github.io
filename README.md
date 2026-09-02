@@ -43,11 +43,13 @@ node scripts/migration-report.mjs
 | `PUBLIC_GA_MEASUREMENT_ID` | GA4 Measurement ID. 비워 두면 분석 스크립트를 로드하지 않습니다. |
 | `PUBLIC_GISCUS_REPO` | Giscus를 연결한 `owner/repository`입니다. |
 | `PUBLIC_GISCUS_REPO_ID` | Giscus 설정 화면에서 받은 repository ID입니다. |
-| `PUBLIC_GISCUS_CATEGORY` | 사용할 GitHub Discussions category 이름입니다. |
-| `PUBLIC_GISCUS_CATEGORY_ID` | Giscus 설정 화면에서 받은 category ID입니다. |
+| `PUBLIC_GISCUS_COMMENTS_CATEGORY` | 게시물 댓글에 사용할 GitHub Discussions category 이름입니다. |
+| `PUBLIC_GISCUS_COMMENTS_CATEGORY_ID` | 게시물 댓글 category의 Giscus ID입니다. |
+| `PUBLIC_GISCUS_GUESTBOOK_CATEGORY` | 방명록에 사용할 GitHub Discussions category 이름입니다. |
+| `PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID` | 방명록 category의 Giscus ID입니다. |
 | `PUBLIC_GUESTBOOK_DISCUSSION_NUMBER` | 방명록에 고정할 양의 GitHub Discussion 번호입니다. |
 
-Giscus 앱을 repository에 설치하고 Discussions를 활성화한 후, Giscus 설정 화면에서 repository/category ID를 복사합니다. 게시물 댓글은 URL별 Discussion을 쓰고, 방명록은 위의 고정 Discussion 번호를 씁니다. 값이 없거나 유효하지 않으면 댓글 영역은 안전한 안내문만 표시됩니다.
+Giscus 앱을 repository에 설치하고 Discussions를 활성화한 후, Giscus 설정 화면에서 repository/category ID를 복사합니다. 게시물 댓글은 `Comments` category의 URL별 Discussion을 쓰고, 방명록은 `Guestbook` category의 고정 Discussion 번호를 씁니다. 값이 없거나 유효하지 않으면 댓글 영역은 안전한 안내문만 표시됩니다.
 
 ## GitHub Pages 배포와 확인
 

@@ -1,0 +1,42 @@
+main {
+  --color-fg-default: #e7edf5;
+  --color-fg-muted: #9aa8ba;
+  --color-fg-subtle: #718096;
+  --color-canvas-default: #111827;
+  --color-canvas-overlay: #172033;
+  --color-canvas-inset: #0d1421;
+  --color-canvas-subtle: #1a2638;
+  --color-border-default: #2d3b52;
+  --color-border-muted: #233047;
+  --color-neutral-muted: #2d3b5280;
+  --color-accent-fg: #8ab4ff;
+  --color-accent-emphasis: #4f7cff;
+  --color-accent-muted: #4f7cff40;
+  --color-accent-subtle: #4f7cff1f;
+  --color-btn-text: #e7edf5;
+  --color-btn-bg: #1a2638;
+  --color-btn-border: #2d3b52;
+  --color-btn-hover-bg: #24334b;
+  --color-btn-hover-border: #415576;
+  --color-btn-primary-text: #fff;
+  --color-btn-primary-bg: #4f7cff;
+  --color-btn-primary-border: #4f7cff;
+  --color-btn-primary-hover-bg: #6b91ff;
+  --color-success-fg: #72d6a0;
+  --color-danger-fg: #ff8d8d;
+  --color-attention-fg: #f4c76e;
+  --color-primer-shadow-inset: 0 0 #0000;
+}
+
+main .gsc-comment-box,
+main .gsc-comment {
+  border: 1px solid var(--color-border-default);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+main .gsc-comment-box { background: var(--color-canvas-overlay); }
+main .gsc-comment { background: var(--color-canvas-subtle); }
+main .gsc-header { padding-bottom: 1rem; }
+main .gsc-reactions-count { display: none; }
+main .gsc-timeline { flex-direction: column-reverse; }

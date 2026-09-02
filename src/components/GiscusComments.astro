@@ -2,13 +2,15 @@
 interface Props {
   mapping: 'pathname' | 'specific';
   discussionNumber?: number;
+  category?: string;
+  categoryId?: string;
 }
 
-const { mapping, discussionNumber } = Astro.props;
+const { mapping, discussionNumber, category: categoryProp, categoryId: categoryIdProp } = Astro.props;
 const repo = import.meta.env.PUBLIC_GISCUS_REPO?.trim();
 const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID?.trim();
-const category = import.meta.env.PUBLIC_GISCUS_CATEGORY?.trim();
-const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID?.trim();
+const category = categoryProp?.trim();
+const categoryId = categoryIdProp?.trim();
 const hasDiscussionNumber = Number.isSafeInteger(discussionNumber) && discussionNumber > 0;
 const giscusMapping = mapping === 'specific' ? 'number' : mapping;
 const isConfigured = Boolean(repo && repoId && category && categoryId);

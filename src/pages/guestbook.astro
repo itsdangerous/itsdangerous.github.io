@@ -6,6 +6,8 @@ const configuredDiscussionNumber = Number(import.meta.env.PUBLIC_GUESTBOOK_DISCU
 const discussionNumber = Number.isSafeInteger(configuredDiscussionNumber) && configuredDiscussionNumber > 0
   ? configuredDiscussionNumber
   : undefined;
+const guestbookCategory = import.meta.env.PUBLIC_GISCUS_GUESTBOOK_CATEGORY?.trim();
+const guestbookCategoryId = import.meta.env.PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID?.trim();
 ---
 
 <BaseLayout title="방명록 — itsdangerous" description="itsdangerous 방명록" canonicalPath="/guestbook/">
@@ -13,6 +15,11 @@ const discussionNumber = Number.isSafeInteger(configuredDiscussionNumber) && con
     <p class="eyebrow">Guestbook</p>
     <h1>방명록</h1>
     <p>방명록은 GitHub Discussions로 운영합니다.</p>
-    <GiscusComments mapping="specific" discussionNumber={discussionNumber} />
+    <GiscusComments
+      mapping="specific"
+      discussionNumber={discussionNumber}
+      category={guestbookCategory}
+      categoryId={guestbookCategoryId}
+    />
   </main>
 </BaseLayout>
