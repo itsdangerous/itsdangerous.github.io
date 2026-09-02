@@ -10,7 +10,9 @@ interface Props {
 }
 
 const { headings } = Astro.props;
-const navigableHeadings = headings.filter(({ depth }) => depth >= 2 && depth <= 3);
+const navigableHeadings = headings.filter(({ depth, slug, text }) => (
+  depth >= 2 && depth <= 3 && slug.trim().length > 0 && text.trim().length > 0
+));
 ---
 
 {navigableHeadings.length > 0 && (
