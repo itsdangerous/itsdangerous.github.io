@@ -7,6 +7,7 @@ import { parse } from 'parse5';
 const projectRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const defaultPostsDirectory = join(projectRoot, 'src/content/posts');
 const defaultAssetDirectory = join(projectRoot, 'public/images/posts');
+const migrationManifestPath = join(projectRoot, 'src/content/tistory-migration-manifest.json');
 const namedCategories = new Set(['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm']);
 
 function attr(node, name) {
@@ -86,10 +87,11 @@ function imageExtension(url, contentType) {
   }
 }
 
-function sourceSlug(sourceUrl) {
-  const pathname = new URL(sourceUrl).pathname.replace(/\/+$/, '');
-  const candidate = basename(pathname) || 'post';
-  return candidate.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'post';
+function sourceSlug(title) {
+  const normalized = title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  const candidate = normalized.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (/[a-z]/.test(candidate)) return candidate;
+  return `post-${createHash('sha256').update(title).digest('hex').slice(0, 12)}`;
 }
 
 function yamlString(value) {
@@ -242,13 +244,13 @@ export function assertUniqueSlugs(slugs) {
 export async function migrateHtmlExport(html, options) {
   const document = parse(html);
   const sourceUrl = options.sourceUrl;
-  const slug = options.slug ?? sourceSlug(sourceUrl);
   const assets = [];
   const missingAssets = [];
   const article = articleNode(document);
   if (!article) throw new Error(`No article body found in ${sourceUrl}`);
   const articleHeading = findAll(article, (item) => /^h1$/i.test(item.tagName ?? ''))[0];
-  const title = (meta(document, 'og:title') ?? cleanText(articleHeading ? textContent(articleHeading) : '')) || slug;
+  const title = (meta(document, 'og:title') ?? cleanText(articleHeading ? textContent(articleHeading) : '')) || 'post';
+  const slug = options.slug ?? sourceSlug(title);
   const description = meta(document, 'og:description') ?? '';
   const dateValue = meta(document, 'article:published_time');
   const pubDate = dateValue ? new Date(dateValue) : new Date(0);
@@ -317,8 +319,6 @@ async function main() {
   const source = args[sourceIndex + 1];
   const overwrite = args.includes('--overwrite');
   const inputs = await sourcePosts(source, fetch);
-  const slugs = inputs.map((input) => sourceSlug(input.sourceUrl));
-  assertUniqueSlugs(slugs);
   await mkdir(defaultPostsDirectory, { recursive: true });
   const results = [];
   for (const input of inputs) {
@@ -327,17 +327,34 @@ async function main() {
       continue;
     }
     const result = await migrateHtmlExport(input.html, { sourceUrl: input.sourceUrl });
-    const target = join(defaultPostsDirectory, `${result.post.slug}.md`);
-    if (!overwrite && await readFile(target, 'utf8').then(() => true).catch(() => false)) throw new Error(`Refusing to overwrite existing post: ${relative(projectRoot, target)}`);
     if (result.missingAssets.length) throw new Error(`Missing assets for ${input.sourceUrl}: ${result.missingAssets.map((asset) => asset.sourceUrl).join(', ')}`);
-    await writeFile(target, `${frontmatter(result.post)}${result.markdown}\n`);
     results.push(result);
   }
   const generated = results.filter((result) => !result.skipped);
+  assertUniqueSlugs(generated.map((result) => result.post.slug));
+  for (const result of generated) {
+    const target = join(defaultPostsDirectory, `${result.post.slug}.md`);
+    if (!overwrite && await readFile(target, 'utf8').then(() => true).catch(() => false)) throw new Error(`Refusing to overwrite existing post: ${relative(projectRoot, target)}`);
+    await writeFile(target, `${frontmatter(result.post)}${result.markdown}\n`);
+  }
+  const manifest = {
+    version: 1,
+    source,
+    sourceUrls: inputs.map((input) => input.sourceUrl),
+    entries: generated.map((result) => ({
+      slug: result.post.slug,
+      sourceUrl: result.post.sourceUrl,
+      category: result.post.category,
+      markdownPath: `src/content/posts/${result.post.slug}.md`,
+      imagePaths: result.assets.map((asset) => asset.localPath),
+    })),
+    skippedSources: results.flatMap((result) => result.skipped ? [result.skipped] : []),
+  };
+  await writeFile(migrationManifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(JSON.stringify({
     sourceCount: inputs.length,
     generatedCount: generated.length,
-    skippedSources: results.flatMap((result) => result.skipped ? [result.skipped] : []),
+    skippedSources: manifest.skippedSources,
     missingAssets: generated.flatMap((result) => result.missingAssets),
   }, null, 2));
 }

@@ -4,7 +4,7 @@ description: "이 글은 1편: macOS에서 가상 데스크탑 전환 애니메�
 pubDate: 2026-08-24T11:28:47.000Z
 category: "MacOS"
 tags: []
-slug: "35"
+slug: "macos-yabai-skhd"
 sourceUrl: "https://0418.tistory.com/35"
 draft: false
 ---

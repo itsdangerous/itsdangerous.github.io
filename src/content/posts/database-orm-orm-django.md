@@ -4,7 +4,7 @@ description: "ORM이란Object-Relational Mapping의 약자객체(Object)와 관�
 pubDate: 2022-12-02T07:00:31.000Z
 category: "Study"
 tags: ["DATABASE","DB","ORM"]
-slug: "18"
+slug: "database-orm-orm-django"
 sourceUrl: "https://0418.tistory.com/18"
 draft: false
 ---

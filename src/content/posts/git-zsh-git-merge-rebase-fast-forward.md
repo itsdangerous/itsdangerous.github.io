@@ -4,7 +4,7 @@ description: "Git을 사용하다 보면 merge, fast-forward, rebase 를 자주 
 pubDate: 2026-03-11T17:49:20.000Z
 category: "uncategorized"
 tags: []
-slug: "30"
+slug: "git-zsh-git-merge-rebase-fast-forward"
 sourceUrl: "https://0418.tistory.com/30"
 draft: false
 ---

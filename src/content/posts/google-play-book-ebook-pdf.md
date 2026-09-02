@@ -4,7 +4,7 @@ description: "이 글로 인해서 생성된 pdf를 무단으로 배포하는 �
 pubDate: 2023-07-13T00:47:21.000Z
 category: "uncategorized"
 tags: []
-slug: "25"
+slug: "google-play-book-ebook-pdf"
 sourceUrl: "https://0418.tistory.com/25"
 draft: false
 ---
@@ -31,7 +31,7 @@ eBook을 PDF로 추출하고 사용하기 위해서는 eBook 파일을 ACSM용 E
 
 그 다음 내 라이브러리에 가서 아래 그림과 같이 책 오른쪽 하단의 메뉴를 누르고 내보내기 버튼을 누르면 파일 다운이 가능합니다.
 
-![](/images/posts/25/bef16b237bb65620407d.png) 파일이름\_EPUB.ACSM 파일이 다운이 될 텐데, 이 파일을 Adobe에서 제공하는 프로그램으로 PDF로 변환할 수 있습니다.
+![](/images/posts/google-play-book-ebook-pdf/bef16b237bb65620407d.png) 파일이름\_EPUB.ACSM 파일이 다운이 될 텐데, 이 파일을 Adobe에서 제공하는 프로그램으로 PDF로 변환할 수 있습니다.
 
 ## Tool 다운 받기
 
@@ -43,17 +43,17 @@ drm removal tool은 굉장히 여러가지 있는데, 저는 개인적으로는 
 
 [ADOBE DIGITAL EDITIONS Download Adobe Digital Editions 4.5.11 Installers Locate your preferred platform and click on it to download the installer. Then run the installer on your machine to install Adobe Digital Editions. For information on the Adobe Digital Editions' privacy policy, see www.adobe.com](https://www.adobe.com/kr/solutions/ebook/digital-editions/download.html) 위 링크를 따라가면 아래와 같은 화면이 보일 텐데 자신의 OS에 맞게 다운로드해줍니다.
 
-![](/images/posts/25/ca940dc24d3b932eebc6.png) 다운 받고 실행시켜보면 아래와 같은 화면을 볼 수 있습니다.
+![](/images/posts/google-play-book-ebook-pdf/ca940dc24d3b932eebc6.png) 다운 받고 실행시켜보면 아래와 같은 화면을 볼 수 있습니다.
 
-![](/images/posts/25/2069baccc59358dea246.png) ![](/images/posts/25/c1a0623e817b8ee3a463.png) 만약 컴퓨터를 승인하라고 나온다면 왼쪽 하단에 'ID 없이 컴퓨터를 승인하고싶습니다' 체크를 해주세요.
+![](/images/posts/google-play-book-ebook-pdf/2069baccc59358dea246.png) ![](/images/posts/google-play-book-ebook-pdf/c1a0623e817b8ee3a463.png) 만약 컴퓨터를 승인하라고 나온다면 왼쪽 하단에 'ID 없이 컴퓨터를 승인하고싶습니다' 체크를 해주세요.
 
 그 다음, 다운 받은 ACSM 파일을 드래그해서 올려놓으면 아래와 같이 등록됩니다.
 
-![](/images/posts/25/15cd941828e50346e7f9.png) ![](/images/posts/25/b0b8b2139aa6f291a462.png)만약 이런 E\_GOOGLE\_DEVICE\_LIMIT\_REACHED라는 에러가 뜬다면 adobe 계정으로 컴퓨터를 승인해서 뜬 것이니, 승인을 지워주시기 바랍니다. 지금 까지 과정으로 ACSM 확장자로 된 ebook 파일을 읽을 수 있습니다.
+![](/images/posts/google-play-book-ebook-pdf/15cd941828e50346e7f9.png) ![](/images/posts/google-play-book-ebook-pdf/b0b8b2139aa6f291a462.png)만약 이런 E\_GOOGLE\_DEVICE\_LIMIT\_REACHED라는 에러가 뜬다면 adobe 계정으로 컴퓨터를 승인해서 뜬 것이니, 승인을 지워주시기 바랍니다. 지금 까지 과정으로 ACSM 확장자로 된 ebook 파일을 읽을 수 있습니다.
 
 파일 경로는 추가된 항목의 우클릭을 하고 항목 정보를 누르면 볼 수 있습니다.
 
-![](/images/posts/25/85b5ff1728825182ebcd.png) 근데 이 경로를 따라 추출된 파일을 열면 아무것도 뜨지 않는데요. DRM이 걸려있기 때문입니다.
+![](/images/posts/google-play-book-ebook-pdf/85b5ff1728825182ebcd.png) 근데 이 경로를 따라 추출된 파일을 열면 아무것도 뜨지 않는데요. DRM이 걸려있기 때문입니다.
 
 그럼 이제 DRM을 제거해보겠습니다.
 
@@ -67,11 +67,11 @@ drm removal tool은 굉장히 여러가지 있는데, 저는 개인적으로는 
 
 다음과 같은 화면이 뜨는데요.
 
-![](/images/posts/25/9257628c8513946824b1.png) 무료로 5번 까지는 해주기 때문에, Continue를 누르면 됩니다.
+![](/images/posts/google-play-book-ebook-pdf/9257628c8513946824b1.png) 무료로 5번 까지는 해주기 때문에, Continue를 누르면 됩니다.
 
 전 2번 남았네요
 
-![](/images/posts/25/6cf53603547dddc9ca16.jpg) 그럼 이 화면으로 나오는데, 여기에 방금 추출한 파일을 드래그 한 뒤 Remove DRM을 누르면
+![](/images/posts/google-play-book-ebook-pdf/6cf53603547dddc9ca16.jpg) 그럼 이 화면으로 나오는데, 여기에 방금 추출한 파일을 드래그 한 뒤 Remove DRM을 누르면
 
 file convert가 완료됐다는 알림창이 뜨며 경로를 알려줍니다.
 

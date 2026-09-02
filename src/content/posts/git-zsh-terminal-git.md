@@ -4,7 +4,7 @@ description: "저는 VSCode의 Git Tool을 사용하는 것보다 terminal에서
 pubDate: 2026-02-20T09:08:09.000Z
 category: "Git"
 tags: ["github","Push"]
-slug: "4"
+slug: "git-zsh-terminal-git"
 sourceUrl: "https://0418.tistory.com/4"
 draft: false
 ---
@@ -32,7 +32,7 @@ git add -i
 
 ### interactive 모드 메뉴
 
-![](/images/posts/4/f49ac4ba26e01dcc6574.png) git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보여주고
+![](/images/posts/git-zsh-terminal-git/f49ac4ba26e01dcc6574.png) git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보여주고
 이후 다음과 같은 메뉴가 나타납니다.
 
 명령어 설명

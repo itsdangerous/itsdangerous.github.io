@@ -4,7 +4,7 @@ description: "일별 가격 데이터 수집 [Crwaling] 파이썬으로 구현�
 pubDate: 2022-11-02T01:18:42.000Z
 category: "project"
 tags: ["Crawling","mysql","python"]
-slug: "3"
+slug: "toy-project"
 sourceUrl: "https://0418.tistory.com/3"
 draft: false
 ---
@@ -136,7 +136,7 @@ DB는 MySQL을 connection 시켜주었습니다.
 
 코드를 실행하고 다음과 같이 데이터를 모았습니다. ㅎㅎ
 
-![](/images/posts/3/8b9774f416294dfaa552.png)2010년부터 긁어았죠 이제 이 데이터로 어떻게 요리를 할까.. 고민중입니다. ㅋㅋ
+![](/images/posts/toy-project/8b9774f416294dfaa552.png)2010년부터 긁어았죠 이제 이 데이터로 어떻게 요리를 할까.. 고민중입니다. ㅋㅋ
 
 저는 KAMIS에 유선통화로 직접 API를 받았으며, 서버에 문제가 되지 않는 선에서 크롤링을 해도 된다는 허락을 받고 진행하였습니다.
 

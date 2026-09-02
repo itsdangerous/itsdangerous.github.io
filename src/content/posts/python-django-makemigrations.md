@@ -4,7 +4,7 @@ description: "python manage.py makemigrations를 하니... mysqlclient가 없어
 pubDate: 2022-11-30T07:46:42.000Z
 category: "Study"
 tags: []
-slug: "13"
+slug: "python-django-makemigrations"
 sourceUrl: "https://0418.tistory.com/13"
 draft: false
 ---

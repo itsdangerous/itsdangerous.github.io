@@ -4,7 +4,7 @@ description: "2022.11.22 - [Study & 교육] - [Python | 가상환경] 파이썬 
 pubDate: 2022-11-22T05:57:31.000Z
 category: "Study"
 tags: ["Django","mysql","python"]
-slug: "9"
+slug: "python-django"
 sourceUrl: "https://0418.tistory.com/9"
 draft: false
 ---
@@ -57,19 +57,19 @@ wsgi.py
 
 다음과 같은 창이 뜨면 성공입니다.
 
-![](/images/posts/9/5bbe8beb2b988513cafc.png) Django version은 4.1.3을 쓰고 있고, server\_dev.settings의 세팅을 사용하고 있다고 하네요.
+![](/images/posts/python-django/5bbe8beb2b988513cafc.png) Django version은 4.1.3을 쓰고 있고, server\_dev.settings의 세팅을 사용하고 있다고 하네요.
 
 아무 브라우저나 켜서 주소입력창에 127.0.0.1:8000 또는 localhost:8000을 입력해보시면 다음과 같은 창에 접속되실 겁니다!
 
-![](/images/posts/9/979ac210cab5faeb0923.png)축하합니다!! 짝짝짝짝 빨간색 warning의 의미는 "18개의 적용이 되지 않은 migration이 있다 이와 관련된 앱은 'admin', 'auth', .. 등이 있다." 라는 말입니다.
+![](/images/posts/python-django/979ac210cab5faeb0923.png)축하합니다!! 짝짝짝짝 빨간색 warning의 의미는 "18개의 적용이 되지 않은 migration이 있다 이와 관련된 앱은 'admin', 'auth', .. 등이 있다." 라는 말입니다.
 
 이 앱들은 장고 프로젝트를 만들었을 때 자동으로 만들어지는 앱으로써, 관련된 정보는 server\_dev.settings.py 파일의 INSTALLED\_APPS 에서 확인 가능합니다.
 
-![](/images/posts/9/14abd61206facaad10d5.png) 위에 출력된 것들 외의 messages와 staticfiles는 DB와는 상관이 없습니다.
+![](/images/posts/python-django/14abd61206facaad10d5.png) 위에 출력된 것들 외의 messages와 staticfiles는 DB와는 상관이 없습니다.
 
 DB엔진은 sqlite를 사용하고 있네요. 저는 MySQL을 사용할 것이기 때문에, 수정해주고 migrate를 해주겠습니다.
 
-![](/images/posts/9/fbf482f4b638d669e1f9.png) 만약 DB를 갖고계신다면, mysql 연동은 다음과 같이 해주시면 됩니다.
+![](/images/posts/python-django/fbf482f4b638d669e1f9.png) 만약 DB를 갖고계신다면, mysql 연동은 다음과 같이 해주시면 됩니다.
 
 ```
 'ENGINE': 'django.db.backends.mysql',

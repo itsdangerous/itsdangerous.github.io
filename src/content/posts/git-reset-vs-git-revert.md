@@ -4,7 +4,7 @@ description: "Git을 사용하다 보면 이전 커밋을 되돌려야 하는 �
 pubDate: 2026-03-11T04:42:48.000Z
 category: "Git"
 tags: []
-slug: "29"
+slug: "git-reset-vs-git-revert"
 sourceUrl: "https://0418.tistory.com/29"
 draft: false
 ---

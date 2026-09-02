@@ -4,7 +4,7 @@ description: "Django 프레임워크에서 REST API를 사용하기 위해 Djang
 pubDate: 2022-12-01T17:03:33.000Z
 category: "Study"
 tags: ["API","Django","djangorestframework","DRF","python"]
-slug: "16"
+slug: "python-django-drf-django-restframework"
 sourceUrl: "https://0418.tistory.com/16"
 draft: false
 ---
@@ -24,9 +24,9 @@ Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하
 python manage.py startapp appname
 ```
 
-![](/images/posts/16/972f39691e72aed8de2c.png) app을 만들게 되면, 아래와 같이프로젝트 안에 login이라는 폴더가 생성된다.
+![](/images/posts/python-django-drf-django-restframework/972f39691e72aed8de2c.png) app을 만들게 되면, 아래와 같이프로젝트 안에 login이라는 폴더가 생성된다.
 
-![](/images/posts/16/52deb953fcb33e1abbfc.png) 그 다음에는
+![](/images/posts/python-django-drf-django-restframework/52deb953fcb33e1abbfc.png) 그 다음에는
 
 models.py에서 사용자의 ID와 PW를 저장할 모델을 만들어준다.
 
@@ -97,7 +97,7 @@ python manage.py sqlmigrate app_name migration_name
 
 2. python manage.py migrate app\_name zero 마이그레이션을 초기화
 
-![](/images/posts/16/911ac0a79fa3d4b5994a.png) login\_user 테이블이 생성되었다.
+![](/images/posts/python-django-drf-django-restframework/911ac0a79fa3d4b5994a.png) login\_user 테이블이 생성되었다.
 
 id, user\_id, user\_pw필드가 생긴 걸 볼 수 있다.
 
@@ -117,7 +117,7 @@ pip install djangorestframework
 
 settings.py의 INSTALLED\_APP에 'rest\_framework'추가 해준다.
 
-![](/images/posts/16/36da804dd2440e30aa63.png) login앱 폴더의 views.py 파일에 새로운 api call을 만든다.
+![](/images/posts/python-django-drf-django-restframework/36da804dd2440e30aa63.png) login앱 폴더의 views.py 파일에 새로운 api call을 만든다.
 
 ```
 # login/views.py
@@ -215,7 +215,7 @@ https://localhost:8000/url1/url2로 된단 말이다.
 
 잘 들어간 것을 볼 수 있다.
 
-![](/images/posts/16/920fae28f5a3e372ce95.png) ![](/images/posts/16/a497c3926c28a24d0ba6.png) ### api 수정 - 유효성 검증(Validation)
+![](/images/posts/python-django-drf-django-restframework/920fae28f5a3e372ce95.png) ![](/images/posts/python-django-drf-django-restframework/a497c3926c28a24d0ba6.png) ### api 수정 - 유효성 검증(Validation)
 
 #### ID 유효성 검증
 
@@ -279,7 +279,7 @@ unique 옵션은 default값으로 False이다. True로 설정할 경우, DB에�
 
 유효성 검증의 순서는 models.py에서 먼저 하고 통과했을 경우 views.py에서 검증한다.
 
-![](/images/posts/16/95a97720608dee5a5a11.png) 중복처리 외에도 특수문자 불가능, 숫자로 시작 불가능, 길이 제한 등 여러 조건을 설정해야 할 상황도 존재한다. 그건 그때 가서 구글링 해야겠다.
+![](/images/posts/python-django-drf-django-restframework/95a97720608dee5a5a11.png) 중복처리 외에도 특수문자 불가능, 숫자로 시작 불가능, 길이 제한 등 여러 조건을 설정해야 할 상황도 존재한다. 그건 그때 가서 구글링 해야겠다.
 
 #### PW 유효성 검증
 
@@ -358,7 +358,7 @@ views.py에서는 make\_password라는 django의 기본 함수를 사용하여 u
 
 암호화한 비밀번호를 보내준다.
 
-![](/images/posts/16/59d7c3519618221674f2.png) 이 비밀번호는 복호화가 불가능하다.
+![](/images/posts/python-django-drf-django-restframework/59d7c3519618221674f2.png) 이 비밀번호는 복호화가 불가능하다.
 
 > 그럼 어떻게 인증하냐?
 > 클라이언트에서 올린 user\_pw를 동일한 방법으로 암호화 해서 비교함. 즉, 같은 데이터를 암호화해서 같은 데이터가 나옴.

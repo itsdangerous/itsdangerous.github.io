@@ -4,7 +4,7 @@ description: "1. 문제 상황어느 날 저장 공간을 보니 시스템 데�
 pubDate: 2026-03-31T02:22:34.000Z
 category: "uncategorized"
 tags: []
-slug: "32"
+slug: "mac-spotlight-index"
 sourceUrl: "https://0418.tistory.com/32"
 draft: false
 ---
@@ -80,7 +80,7 @@ sudo du -xhd 1 /System/Volumes/Data 2>/dev/null | sort -h
 
 당시 결과의 핵심은 아래와 같았다.
 
-![](/images/posts/32/7e59a979bafbc62eccfd.png) 이 시점에서 거의 확신할 수 있었다. 내 맥에서 시스템 데이터를 비정상적으로 부풀린 건 Docker가 아니라 **Spotlight 인덱스 데이터**였다.
+![](/images/posts/mac-spotlight-index/7e59a979bafbc62eccfd.png) 이 시점에서 거의 확신할 수 있었다. 내 맥에서 시스템 데이터를 비정상적으로 부풀린 건 Docker가 아니라 **Spotlight 인덱스 데이터**였다.
 
 ## 5. 왜 이게 중요했나
 
@@ -115,7 +115,7 @@ sudo du -xhd 1 /System/Volumes/Data 2>/dev/null | sort -h
 
 결과는 확연히 달라졌다.
 
-![](/images/posts/32/a090c8377f6316a02070.png) ## 8. 참고 자료
+![](/images/posts/mac-spotlight-index/a090c8377f6316a02070.png) ## 8. 참고 자료
 
 - Apple Support, **Mac에서 Spotlight 인덱스 재구성하기**
 [https://support.apple.com/ko-kr/102321](https://support.apple.com/ko-kr/102321)

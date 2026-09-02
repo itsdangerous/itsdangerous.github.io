@@ -4,7 +4,7 @@ description: "배치 작업, 데이터 처리, 리포트 생성처럼 완료까�
 pubDate: 2026-08-18T07:10:04.000Z
 category: "Study"
 tags: []
-slug: "33"
+slug: "telegram-bot"
 sourceUrl: "https://0418.tistory.com/33"
 draft: false
 ---

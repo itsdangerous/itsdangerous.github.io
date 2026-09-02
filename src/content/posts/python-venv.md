@@ -4,7 +4,7 @@ description: "프로젝트 마다 버전을 관리하기 위해서 가상환경�
 pubDate: 2022-11-22T04:51:44.000Z
 category: "Study"
 tags: ["Django","python","venv","virtualenv","가상환경"]
-slug: "8"
+slug: "python-venv"
 sourceUrl: "https://0418.tistory.com/8"
 draft: false
 ---
@@ -24,7 +24,7 @@ python의 가상환경으로는 크게 2가지가 있습니다.
 
 먼저 python 버전 체크!!
 
-![](/images/posts/8/6c280ec91b3733c491dd.png) 네 저는 3.10.5 버전을 사용하고있습니다.
+![](/images/posts/python-venv/6c280ec91b3733c491dd.png) 네 저는 3.10.5 버전을 사용하고있습니다.
 
 가상환경을 만들기 위해선, 그 디렉토리로 이동한 다음 다음 명령을 입력해주면 됩니다.
 
@@ -34,7 +34,7 @@ python -m venv '가상환경 이름'
 
 저는 .venv라는 이름으로 생성하였습니다.
 
-![](/images/posts/8/7e373fcfb809be22a852.png) 아무것도 안보이죠?
+![](/images/posts/python-venv/7e373fcfb809be22a852.png) 아무것도 안보이죠?
 
 리눅스 명령어 중 현재 디렉토리의 숨김파일을 포함한 모든 파일의 목록을 나타내는 명령어로 확인해보니 뜨네요 ㅎㅎ
 
@@ -42,7 +42,7 @@ python -m venv '가상환경 이름'
 ls -a
 ```
 
-![](/images/posts/8/c89cb2de15ba5edbcf03.png)이제 보입니다. 이유는... 파일명 앞에 '.'을 붙이면 이 파일 및 폴더를 숨겨라란 뜻이며,
+![](/images/posts/python-venv/c89cb2de15ba5edbcf03.png)이제 보입니다. 이유는... 파일명 앞에 '.'을 붙이면 이 파일 및 폴더를 숨겨라란 뜻이며,
 
 대부분의 파이썬 프로젝트들이 따르는 관행이기도 합니다.
 
@@ -56,7 +56,7 @@ source .venv/bin/activate
 . .venv/bin/activate
 ```
 
-![](/images/posts/8/cf1e36cdd43fb0efa284.png) 비활성화 하기 위해선 아래와 같이 쳐줍니다
+![](/images/posts/python-venv/cf1e36cdd43fb0efa284.png) 비활성화 하기 위해선 아래와 같이 쳐줍니다
 
 ```
 deactivate

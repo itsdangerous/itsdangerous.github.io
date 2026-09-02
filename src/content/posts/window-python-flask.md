@@ -4,7 +4,7 @@ description: "23.7.16(일)현재 나는 웃참 대결 프로젝트를 진행중�
 pubDate: 2023-07-15T17:40:24.000Z
 category: "Study"
 tags: ["flask","window","감정","비디오","얼굴","이미지","인식","표정","화상"]
-slug: "26"
+slug: "window-python-flask"
 sourceUrl: "https://0418.tistory.com/26"
 draft: false
 ---

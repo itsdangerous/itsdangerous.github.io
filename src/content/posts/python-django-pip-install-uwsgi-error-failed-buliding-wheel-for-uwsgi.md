@@ -4,7 +4,7 @@ description: "ubuntu 18.04에서 uwsgi를 설치하려고 pip install uwsgi를 �
 pubDate: 2022-11-23T05:23:55.000Z
 category: "Study"
 tags: ["error","python","uWSGI","에러"]
-slug: "11"
+slug: "python-django-pip-install-uwsgi-error-failed-buliding-wheel-for-uwsgi"
 sourceUrl: "https://0418.tistory.com/11"
 draft: false
 ---
@@ -22,4 +22,4 @@ sudo apt-get install python3.10-dev
 
 을 해주니 해결되었다.
 
-![](/images/posts/11/287fd1630a66b126ae48.png)
+![](/images/posts/python-django-pip-install-uwsgi-error-failed-buliding-wheel-for-uwsgi/287fd1630a66b126ae48.png)

@@ -4,7 +4,7 @@ description: "Windows에서 macOS처럼 동일 애플리케이션 창 전환 단
 pubDate: 2026-03-20T04:23:42.000Z
 category: "MacOS"
 tags: []
-slug: "31"
+slug: "window-mac-cmd"
 sourceUrl: "https://0418.tistory.com/31"
 draft: false
 ---

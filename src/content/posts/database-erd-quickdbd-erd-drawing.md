@@ -4,7 +4,7 @@ description: "리뷰erd 다이어그램을 그리기 위해 drawio, erdCloud, my
 pubDate: 2023-12-11T13:16:21.000Z
 category: "Study"
 tags: ["1년","ERD","ERD다이어그램","PRO","quickDBD","개월","데이터베이스","리뷰","무료"]
-slug: "27"
+slug: "database-erd-quickdbd-erd-drawing"
 sourceUrl: "https://0418.tistory.com/27"
 draft: false
 ---
@@ -20,13 +20,13 @@ quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 
 
 문법이 처음에는 조금 어색하고 적응 안됐는데 사실 erd 다이어그램이 많은 기능이 필요하진 않아서 금방 적응했다.
 
-![](/images/posts/27/f601b3b107ab6a9fbdf3.png) **먼저, 기본 문법은 table 이름을 적고 대쉬(-)를 사용하여 attribute를 설정할 수 있다. 기본적으로 not null 형태로 제공되고, 필요 시 null 옵션을 줄 수 있는 것 같다.**
+![](/images/posts/database-erd-quickdbd-erd-drawing/f601b3b107ab6a9fbdf3.png) **먼저, 기본 문법은 table 이름을 적고 대쉬(-)를 사용하여 attribute를 설정할 수 있다. 기본적으로 not null 형태로 제공되고, 필요 시 null 옵션을 줄 수 있는 것 같다.**
 
 **FK 설정은 마우스를 테이블 위에 갖다 대면 끌어서 사용할 수 있는데 그렇게 FK 설정을 할 수 있다.**
 
 **그리고 생각보다 괜찮았던 것이...**
 
-![](/images/posts/27/330e4780d45bdcc5962f.png) **이 사진을 보면 알겠지만, 테이블 이름이 중복된다면 오류가 발생한다 이건 좀 좋은 기능같다.ㅎㅎ**
+![](/images/posts/database-erd-quickdbd-erd-drawing/330e4780d45bdcc5962f.png) **이 사진을 보면 알겠지만, 테이블 이름이 중복된다면 오류가 발생한다 이건 좀 좋은 기능같다.ㅎㅎ**
 
 ## **아쉬운 점**
 

@@ -4,7 +4,7 @@ description: "macOS의 가상 데스크탑(Space)은 편하지만, 데스크탑�
 pubDate: 2026-08-24T11:23:36.000Z
 category: "MacOS"
 tags: []
-slug: "34"
+slug: "macos-space"
 sourceUrl: "https://0418.tistory.com/34"
 draft: false
 ---

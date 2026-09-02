@@ -1,0 +1,364 @@
+{
+  "version": 1,
+  "source": "https://0418.tistory.com/",
+  "sourceUrls": [
+    "https://0418.tistory.com/35",
+    "https://0418.tistory.com/34",
+    "https://0418.tistory.com/33",
+    "https://0418.tistory.com/32",
+    "https://0418.tistory.com/31",
+    "https://0418.tistory.com/30",
+    "https://0418.tistory.com/29",
+    "https://0418.tistory.com/28",
+    "https://0418.tistory.com/4",
+    "https://0418.tistory.com/27",
+    "https://0418.tistory.com/26",
+    "https://0418.tistory.com/25",
+    "https://0418.tistory.com/24",
+    "https://0418.tistory.com/23",
+    "https://0418.tistory.com/22",
+    "https://0418.tistory.com/21",
+    "https://0418.tistory.com/19",
+    "https://0418.tistory.com/18",
+    "https://0418.tistory.com/17",
+    "https://0418.tistory.com/16",
+    "https://0418.tistory.com/15",
+    "https://0418.tistory.com/13",
+    "https://0418.tistory.com/11",
+    "https://0418.tistory.com/10",
+    "https://0418.tistory.com/9",
+    "https://0418.tistory.com/8",
+    "https://0418.tistory.com/7",
+    "https://0418.tistory.com/6",
+    "https://0418.tistory.com/3",
+    "https://0418.tistory.com/14"
+  ],
+  "entries": [
+    {
+      "slug": "macos-yabai-skhd",
+      "sourceUrl": "https://0418.tistory.com/35",
+      "category": "MacOS",
+      "markdownPath": "src/content/posts/macos-yabai-skhd.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "macos-space",
+      "sourceUrl": "https://0418.tistory.com/34",
+      "category": "MacOS",
+      "markdownPath": "src/content/posts/macos-space.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "telegram-bot",
+      "sourceUrl": "https://0418.tistory.com/33",
+      "category": "Study",
+      "markdownPath": "src/content/posts/telegram-bot.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "mac-spotlight-index",
+      "sourceUrl": "https://0418.tistory.com/32",
+      "category": "uncategorized",
+      "markdownPath": "src/content/posts/mac-spotlight-index.md",
+      "imagePaths": [
+        "/images/posts/mac-spotlight-index/7e59a979bafbc62eccfd.png",
+        "/images/posts/mac-spotlight-index/a090c8377f6316a02070.png"
+      ]
+    },
+    {
+      "slug": "window-mac-cmd",
+      "sourceUrl": "https://0418.tistory.com/31",
+      "category": "MacOS",
+      "markdownPath": "src/content/posts/window-mac-cmd.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "git-zsh-git-merge-rebase-fast-forward",
+      "sourceUrl": "https://0418.tistory.com/30",
+      "category": "uncategorized",
+      "markdownPath": "src/content/posts/git-zsh-git-merge-rebase-fast-forward.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "git-reset-vs-git-revert",
+      "sourceUrl": "https://0418.tistory.com/29",
+      "category": "Git",
+      "markdownPath": "src/content/posts/git-reset-vs-git-revert.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "algorithm-python-boj-15685",
+      "sourceUrl": "https://0418.tistory.com/28",
+      "category": "Algorithm",
+      "markdownPath": "src/content/posts/algorithm-python-boj-15685.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "git-zsh-terminal-git",
+      "sourceUrl": "https://0418.tistory.com/4",
+      "category": "Git",
+      "markdownPath": "src/content/posts/git-zsh-terminal-git.md",
+      "imagePaths": [
+        "/images/posts/git-zsh-terminal-git/f49ac4ba26e01dcc6574.png"
+      ]
+    },
+    {
+      "slug": "database-erd-quickdbd-erd-drawing",
+      "sourceUrl": "https://0418.tistory.com/27",
+      "category": "Study",
+      "markdownPath": "src/content/posts/database-erd-quickdbd-erd-drawing.md",
+      "imagePaths": [
+        "/images/posts/database-erd-quickdbd-erd-drawing/f601b3b107ab6a9fbdf3.png",
+        "/images/posts/database-erd-quickdbd-erd-drawing/330e4780d45bdcc5962f.png"
+      ]
+    },
+    {
+      "slug": "window-python-flask",
+      "sourceUrl": "https://0418.tistory.com/26",
+      "category": "Study",
+      "markdownPath": "src/content/posts/window-python-flask.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "google-play-book-ebook-pdf",
+      "sourceUrl": "https://0418.tistory.com/25",
+      "category": "uncategorized",
+      "markdownPath": "src/content/posts/google-play-book-ebook-pdf.md",
+      "imagePaths": [
+        "/images/posts/google-play-book-ebook-pdf/bef16b237bb65620407d.png",
+        "/images/posts/google-play-book-ebook-pdf/ca940dc24d3b932eebc6.png",
+        "/images/posts/google-play-book-ebook-pdf/2069baccc59358dea246.png",
+        "/images/posts/google-play-book-ebook-pdf/c1a0623e817b8ee3a463.png",
+        "/images/posts/google-play-book-ebook-pdf/15cd941828e50346e7f9.png",
+        "/images/posts/google-play-book-ebook-pdf/b0b8b2139aa6f291a462.png",
+        "/images/posts/google-play-book-ebook-pdf/85b5ff1728825182ebcd.png",
+        "/images/posts/google-play-book-ebook-pdf/9257628c8513946824b1.png",
+        "/images/posts/google-play-book-ebook-pdf/6cf53603547dddc9ca16.jpg"
+      ]
+    },
+    {
+      "slug": "idt",
+      "sourceUrl": "https://0418.tistory.com/24",
+      "category": "일상",
+      "markdownPath": "src/content/posts/idt.md",
+      "imagePaths": [
+        "/images/posts/idt/f226e898d00e13173f47.png"
+      ]
+    },
+    {
+      "slug": "heap-heapsort",
+      "sourceUrl": "https://0418.tistory.com/23",
+      "category": "Study",
+      "markdownPath": "src/content/posts/heap-heapsort.md",
+      "imagePaths": [
+        "/images/posts/heap-heapsort/3afe365c96fe8101e8fa.png",
+        "/images/posts/heap-heapsort/042c9ecfd913a2ec3905.png",
+        "/images/posts/heap-heapsort/01229cbe311f129f5f21.png",
+        "/images/posts/heap-heapsort/d0c25f1431422ab278ad.png",
+        "/images/posts/heap-heapsort/76db95203af420715ed2.png",
+        "/images/posts/heap-heapsort/730fffffd04e96f04164.png",
+        "/images/posts/heap-heapsort/1d170705a67d1beacfb0.png",
+        "/images/posts/heap-heapsort/a7b98bbbfa49f1e49e58.png",
+        "/images/posts/heap-heapsort/234a0d52871d982d248d.png",
+        "/images/posts/heap-heapsort/231e8059d8f41071ade3.png",
+        "/images/posts/heap-heapsort/84d4dc896e7f734bd1ad.png",
+        "/images/posts/heap-heapsort/476a99b4f37fb4d5c05e.png",
+        "/images/posts/heap-heapsort/82c2421e38877ef59639.png",
+        "/images/posts/heap-heapsort/2b044a63c403dda68d93.png",
+        "/images/posts/heap-heapsort/9c3424a7d54fb09fc28e.png",
+        "/images/posts/heap-heapsort/67fabf0063d139abe3c4.png",
+        "/images/posts/heap-heapsort/23ab61e936f712a33064.png",
+        "/images/posts/heap-heapsort/1a7c65b2f9404d95edeb.png",
+        "/images/posts/heap-heapsort/3daa3423062468f22e3c.png",
+        "/images/posts/heap-heapsort/0acd8882ea33de4bc3b4.png",
+        "/images/posts/heap-heapsort/3f4a30d607c9d626ce9e.png",
+        "/images/posts/heap-heapsort/536dc83e845ccb99638b.png",
+        "/images/posts/heap-heapsort/9dddc895be2ec24d895b.png"
+      ]
+    },
+    {
+      "slug": "java-dangling-quantifier",
+      "sourceUrl": "https://0418.tistory.com/22",
+      "category": "Algorithm",
+      "markdownPath": "src/content/posts/java-dangling-quantifier.md",
+      "imagePaths": [
+        "/images/posts/java-dangling-quantifier/bc48d1e766012d6325cf.png"
+      ]
+    },
+    {
+      "slug": "algorithm-java-swea-1767",
+      "sourceUrl": "https://0418.tistory.com/21",
+      "category": "Algorithm",
+      "markdownPath": "src/content/posts/algorithm-java-swea-1767.md",
+      "imagePaths": [
+        "/images/posts/algorithm-java-swea-1767/06c34c8e7c7b92b37e7c.png",
+        "/images/posts/algorithm-java-swea-1767/e09e37f4b16aae83dde1.png",
+        "/images/posts/algorithm-java-swea-1767/391f5622b90c4476dc9c.png",
+        "/images/posts/algorithm-java-swea-1767/e469f70b8bc80647ff7e.png",
+        "/images/posts/algorithm-java-swea-1767/25ab93a7e595f9611092.png",
+        "/images/posts/algorithm-java-swea-1767/a1f50ece76fdfaec4c05.png"
+      ]
+    },
+    {
+      "slug": "window-linux-feat-pycharm-django",
+      "sourceUrl": "https://0418.tistory.com/19",
+      "category": "uncategorized",
+      "markdownPath": "src/content/posts/window-linux-feat-pycharm-django.md",
+      "imagePaths": [
+        "/images/posts/window-linux-feat-pycharm-django/f5b6dafd662eaf56fce4.png",
+        "/images/posts/window-linux-feat-pycharm-django/d0247af7bbcabd632a95.png",
+        "/images/posts/window-linux-feat-pycharm-django/e506a9c51713a0cd1eec.png",
+        "/images/posts/window-linux-feat-pycharm-django/6e8a0bb20c593b591c5e.png",
+        "/images/posts/window-linux-feat-pycharm-django/03b0311a61c537d25530.png",
+        "/images/posts/window-linux-feat-pycharm-django/0b1276b2a45daae8cb99.png",
+        "/images/posts/window-linux-feat-pycharm-django/57b7acf7146e750e5f32.png",
+        "/images/posts/window-linux-feat-pycharm-django/932c23b1a0fe14e8afe8.png",
+        "/images/posts/window-linux-feat-pycharm-django/f91e2aecaa7cbd905588.png",
+        "/images/posts/window-linux-feat-pycharm-django/33234b727d68b60def55.png"
+      ]
+    },
+    {
+      "slug": "database-orm-orm-django",
+      "sourceUrl": "https://0418.tistory.com/18",
+      "category": "Study",
+      "markdownPath": "src/content/posts/database-orm-orm-django.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "macos-xcrun-error-invalied-active-developer-path",
+      "sourceUrl": "https://0418.tistory.com/17",
+      "category": "MacOS",
+      "markdownPath": "src/content/posts/macos-xcrun-error-invalied-active-developer-path.md",
+      "imagePaths": [
+        "/images/posts/macos-xcrun-error-invalied-active-developer-path/56e722f4cf3a1f08a0f9.png",
+        "/images/posts/macos-xcrun-error-invalied-active-developer-path/6f442076331308888dc4.png"
+      ]
+    },
+    {
+      "slug": "python-django-drf-django-restframework",
+      "sourceUrl": "https://0418.tistory.com/16",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-django-drf-django-restframework.md",
+      "imagePaths": [
+        "/images/posts/python-django-drf-django-restframework/972f39691e72aed8de2c.png",
+        "/images/posts/python-django-drf-django-restframework/52deb953fcb33e1abbfc.png",
+        "/images/posts/python-django-drf-django-restframework/911ac0a79fa3d4b5994a.png",
+        "/images/posts/python-django-drf-django-restframework/36da804dd2440e30aa63.png",
+        "/images/posts/python-django-drf-django-restframework/920fae28f5a3e372ce95.png",
+        "/images/posts/python-django-drf-django-restframework/a497c3926c28a24d0ba6.png",
+        "/images/posts/python-django-drf-django-restframework/95a97720608dee5a5a11.png",
+        "/images/posts/python-django-drf-django-restframework/59d7c3519618221674f2.png"
+      ]
+    },
+    {
+      "slug": "mac-github-support-for-password-authentication-was-removed-on",
+      "sourceUrl": "https://0418.tistory.com/15",
+      "category": "Git",
+      "markdownPath": "src/content/posts/mac-github-support-for-password-authentication-was-removed-on.md",
+      "imagePaths": [
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/ca9e0132d87364ba23aa.png",
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/149e032f14c48d5e6a04.png",
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/182e505c156cda0f8674.png",
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/98f7d6eec42f9269a39b.png",
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/89285a9ce8a8e6b93a28.png",
+        "/images/posts/mac-github-support-for-password-authentication-was-removed-on/57f1f3593e616d1442c6.png"
+      ]
+    },
+    {
+      "slug": "python-django-makemigrations",
+      "sourceUrl": "https://0418.tistory.com/13",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-django-makemigrations.md",
+      "imagePaths": []
+    },
+    {
+      "slug": "python-django-pip-install-uwsgi-error-failed-buliding-wheel-for-uwsgi",
+      "sourceUrl": "https://0418.tistory.com/11",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-django-pip-install-uwsgi-error-failed-buliding-wheel-for-uwsgi.md",
+      "imagePaths": [
+        "/images/posts/python-django-pip-install-uwsgi-error-failed-buliding-wheel-for-uwsgi/287fd1630a66b126ae48.png"
+      ]
+    },
+    {
+      "slug": "python-django-aws-ec2-github",
+      "sourceUrl": "https://0418.tistory.com/10",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-django-aws-ec2-github.md",
+      "imagePaths": [
+        "/images/posts/python-django-aws-ec2-github/0b36f1bc230ea08f5b7f.png",
+        "/images/posts/python-django-aws-ec2-github/c532a1318fa275f76c45.png",
+        "/images/posts/python-django-aws-ec2-github/104dbdfa7f222c2741bf.png",
+        "/images/posts/python-django-aws-ec2-github/ed5c77f6fbee7c5ed392.png",
+        "/images/posts/python-django-aws-ec2-github/08c0ccb1853c3e6524be.png",
+        "/images/posts/python-django-aws-ec2-github/59614ec935c65bec5506.png",
+        "/images/posts/python-django-aws-ec2-github/c57c43d404e471b2652c.png",
+        "/images/posts/python-django-aws-ec2-github/512bec6c5f2885a6ca78.png",
+        "/images/posts/python-django-aws-ec2-github/672c89e9eef97efc35ed.png",
+        "/images/posts/python-django-aws-ec2-github/1116abe47272a16e0088.png",
+        "/images/posts/python-django-aws-ec2-github/3bfd75064f1db2fc2391.png",
+        "/images/posts/python-django-aws-ec2-github/581148b78a2f18790cf9.png"
+      ]
+    },
+    {
+      "slug": "python-django",
+      "sourceUrl": "https://0418.tistory.com/9",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-django.md",
+      "imagePaths": [
+        "/images/posts/python-django/5bbe8beb2b988513cafc.png",
+        "/images/posts/python-django/979ac210cab5faeb0923.png",
+        "/images/posts/python-django/14abd61206facaad10d5.png",
+        "/images/posts/python-django/fbf482f4b638d669e1f9.png"
+      ]
+    },
+    {
+      "slug": "python-venv",
+      "sourceUrl": "https://0418.tistory.com/8",
+      "category": "Study",
+      "markdownPath": "src/content/posts/python-venv.md",
+      "imagePaths": [
+        "/images/posts/python-venv/6c280ec91b3733c491dd.png",
+        "/images/posts/python-venv/7e373fcfb809be22a852.png",
+        "/images/posts/python-venv/c89cb2de15ba5edbcf03.png",
+        "/images/posts/python-venv/cf1e36cdd43fb0efa284.png"
+      ]
+    },
+    {
+      "slug": "aws-ec2-ubuntu-18-04-ltsmacos-ec2",
+      "sourceUrl": "https://0418.tistory.com/7",
+      "category": "Study",
+      "markdownPath": "src/content/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2.md",
+      "imagePaths": [
+        "/images/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2/34f1cd090f62610c595d.png",
+        "/images/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2/84bbedb31450d8b106c5.png"
+      ]
+    },
+    {
+      "slug": "ssafy-9-sw",
+      "sourceUrl": "https://0418.tistory.com/6",
+      "category": "일상",
+      "markdownPath": "src/content/posts/ssafy-9-sw.md",
+      "imagePaths": [
+        "/images/posts/ssafy-9-sw/cb06f34ac3364c180b99.png",
+        "/images/posts/ssafy-9-sw/40400b2ee6f0219a4dd3.png",
+        "/images/posts/ssafy-9-sw/9a923181b700db7ade7f.png"
+      ]
+    },
+    {
+      "slug": "toy-project",
+      "sourceUrl": "https://0418.tistory.com/3",
+      "category": "project",
+      "markdownPath": "src/content/posts/toy-project.md",
+      "imagePaths": [
+        "/images/posts/toy-project/8b9774f416294dfaa552.png"
+      ]
+    }
+  ],
+  "skippedSources": [
+    {
+      "sourceUrl": "https://0418.tistory.com/14",
+      "reason": "protected post; public page has no article body"
+    }
+  ]
+}
