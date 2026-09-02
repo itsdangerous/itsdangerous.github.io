@@ -1,23 +1,24 @@
 <button class="theme-toggle" type="button" role="switch" aria-label="라이트 테마로 전환" aria-checked="false" data-theme-toggle>
   <span class="sr-only">테마 변경</span>
   <span class="theme-toggle__track" aria-hidden="true">
-    <span class="theme-toggle__symbol theme-toggle__symbol--sun">☼</span>
-    <span class="theme-toggle__symbol theme-toggle__symbol--moon">☾</span>
-    <span class="theme-toggle__thumb" data-theme-icon>☾</span>
+    <svg class="theme-toggle__symbol theme-toggle__symbol--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    <svg class="theme-toggle__symbol theme-toggle__symbol--moon" viewBox="0 0 24 24"><path d="M19.4 15.2A8.3 8.3 0 0 1 8.8 4.6 8.3 8.3 0 1 0 19.4 15.2z"/></svg>
+    <span class="theme-toggle__thumb">
+      <svg class="theme-toggle__thumb-icon theme-toggle__thumb-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+      <svg class="theme-toggle__thumb-icon theme-toggle__thumb-icon--moon" viewBox="0 0 24 24"><path d="M19.4 15.2A8.3 8.3 0 0 1 8.8 4.6 8.3 8.3 0 1 0 19.4 15.2z"/></svg>
+    </span>
   </span>
 </button>
 
 <script>
   import { applyTheme, THEME_STORAGE_KEY } from '../scripts/theme-init';
   const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
-  const icon = document.querySelector<HTMLElement>('[data-theme-icon]');
   const sync = () => {
     const isLight = document.documentElement.dataset.theme === 'light';
     if (toggle) {
       toggle.setAttribute('aria-checked', String(isLight));
       toggle.setAttribute('aria-label', isLight ? '다크 테마로 전환' : '라이트 테마로 전환');
     }
-    if (icon) icon.textContent = isLight ? '☼' : '☾';
   };
   if (toggle) {
     sync();

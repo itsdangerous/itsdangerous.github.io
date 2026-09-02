@@ -203,9 +203,10 @@ a {
 .site-header nav a span,
 .site-header nav .search-button span {
   color: var(--color-text);
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-family: var(--font-western);
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: 0.015em;
   text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 28%, transparent), 0 -1px 0 rgb(0 0 0 / 62%), 0 2px 2px rgb(0 0 0 / 24%);
 }
 
@@ -215,9 +216,9 @@ a {
   color: var(--sidebar-accent-strong);
   font-weight: 700;
   text-decoration: none;
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  letter-spacing: -0.03em;
+  font-family: var(--font-western);
+  font-size: 1.72rem;
+  letter-spacing: 0.025em;
   text-align: center;
   padding-bottom: 1.8rem;
   border-bottom: 1px solid var(--color-border);
@@ -227,9 +228,10 @@ a {
 .site-header__stats {
   margin: auto 0 2.25rem;
   color: var(--color-text-muted);
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  letter-spacing: 0.01em;
+  font-family: var(--font-western);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 18%, transparent), 0 -1px 0 rgb(0 0 0 / 58%);
 }
 
@@ -266,15 +268,20 @@ a {
 }
 
 .theme-toggle__symbol {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
   color: var(--color-text-muted);
-  font-family: Georgia, serif;
-  font-size: 0.72rem;
-  line-height: 1;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
 }
 
 .theme-toggle__thumb {
   position: absolute;
-  top: 0.17rem;
+  top: 50%;
   left: 0.18rem;
   display: grid;
   place-items: center;
@@ -284,15 +291,29 @@ a {
   border-radius: 999px;
   background: var(--sidebar-accent);
   box-shadow: 0 2px 5px rgb(0 0 0 / 28%);
-  font-family: Georgia, serif;
-  font-size: 0.84rem;
-  line-height: 1;
+  transform: translateY(-50%);
   transition: transform 180ms ease, background-color 180ms ease;
   text-shadow: none;
 }
 
+.theme-toggle__thumb-icon {
+  display: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.theme-toggle[aria-checked='true'] .theme-toggle__thumb-icon--sun,
+.theme-toggle[aria-checked='false'] .theme-toggle__thumb-icon--moon {
+  display: block;
+}
+
 .theme-toggle[aria-checked='false'] .theme-toggle__thumb {
-  transform: translateX(1.72rem);
+  transform: translate(1.72rem, -50%);
 }
 
 .theme-toggle:focus-visible .theme-toggle__track {
