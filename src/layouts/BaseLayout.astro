@@ -6,6 +6,7 @@ import '../themes/midnight.css';
 import '../themes/light.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
 import { earlyThemeScript } from '../scripts/theme-init';
 
 interface Props {
@@ -32,6 +33,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site ?? 'https://itsdangerous.
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <title>{title}</title>
+    <Analytics />
   </head>
   <body>
     <Header />
