@@ -26,7 +26,7 @@ npm run test:e2e
 
 ## Tistory 마이그레이션 확인
 
-원본 URL, Markdown 경로, 로컬 이미지 경로의 현황은 `src/content/tistory-migration-manifest.json`에 관리합니다. 이미지 경로와 누락 파일을 확인하려면 아래 보고서를 실행합니다.
+원본 URL, Markdown 경로, 로컬 이미지 경로의 현황은 `src/content/tistory-migration-manifest.json`에 관리합니다. 현재 원본 URL 30건 중 검증된 공개 글 29건을 게시하며, 보호 글 `https://0418.tistory.com/14`는 소유자가 공개로 전환할 때까지 제외합니다. 이미지 경로와 누락 파일을 확인하려면 아래 보고서를 실행합니다.
 
 ```bash
 node scripts/migration-report.mjs
