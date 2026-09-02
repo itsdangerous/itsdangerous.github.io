@@ -1,11 +1,10 @@
 ---
 title: "[Python | 가상환경] 파이썬 가상환경 venv 사용"
-description: "프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에서는 내장 라이브러리가 아닌 third party 라이브러리인 virtualenv를 사용했습니다.근데 파이썬이 3버전이 나온 이후, venv라는 내장 라이브러리가 제공되어서, 별도 패키지 없이 사용 가능하기 때문에 저는 venv를 사용하도록 하겠습니다. 먼저 python 버전 체크!! 네 저는 3.10.5 버전을 사용하고있습니다. 가상환경을 만들기 위해선, 그 디렉토리로 이동한 다음 다음 명령을 입력해주면 됩니다.python -m venv '가상환경 이름' 저는.."
+description: "Python의 virtualenv와 venv 차이를 비교하고, 프로젝트별 가상환경을 생성·활성화하는 방법을 정리"
 pubDate: 2022-11-22T04:51:44.000Z
 category: "Study"
 tags: ["Django","python","venv","virtualenv","가상환경"]
 slug: "python-venv"
-sourceUrl: "https://0418.tistory.com/8"
 draft: false
 ---
 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다.

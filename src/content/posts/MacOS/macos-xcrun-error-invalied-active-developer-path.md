@@ -1,11 +1,10 @@
 ---
 title: "[MacOS] 오류 해결xcrun: error: invalied active developer path ..."
-description: "xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun error: command '/usr/bin/clang' failed with exit code 1 [end of output] pip install mysqlclient 설치할 때 위와 같은 오류가 떠서 구글링을 해보니... 내가 얼마전에 Ventura로 업그레이드 했기 때문이었다. 해결 방법!! xcode-select --install 해결 후 출처 Mac 업그레이드 후 xcrun: error: invalid active develop.."
+description: "macOS 업그레이드 후 발생한 xcrun invalid active developer path 오류를 xcode-select로 해결하는 방법을 안내"
 pubDate: 2022-12-01T17:12:32.000Z
 category: "MacOS"
 tags: []
 slug: "macos-xcrun-error-invalied-active-developer-path"
-sourceUrl: "https://0418.tistory.com/17"
 draft: false
 ---
 ```

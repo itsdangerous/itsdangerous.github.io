@@ -1,11 +1,10 @@
 ---
 title: "macOS에서 가상 데스크탑(Space) 전환 애니메이션 제거하기"
-description: "macOS의 가상 데스크탑(Space)은 편하지만, 데스크탑을 옮길 때마다 화면이 미끄러지는 애니메이션이 길게 느껴질 수 있다. 이 글에서는 yabai + skhd를 이용해 현재 화면의 이전/다음 Space를 키보드로 전환하고, yabai scripting addition을 통해 전환을 빠르게 처리하는 과정을 정리한다.완료 후 사용할 단축키 예시:단축키동작Ctrl + ←현재 모니터의 이전 SpaceCtrl + →현재 모니터의 다음 Space1. 먼저, 무엇을 바꾸려는가macOS는 기본적으로 Ctrl + ←와 Ctrl + →로 Space를 바꿀 수 있다. 하지만 이 단축키는 macOS Mission Control의 기본 전환 경로를 타므로 yabai가 애니메이션 처리에 개입하지 않는다.이 글의 목표는 ma.."
+description: "yabai와 skhd로 macOS Space 전환 애니메이션을 줄이고 키보드 단축키로 빠르게 이동하는 방법을 설명"
 pubDate: 2026-08-24T11:23:36.000Z
 category: "MacOS"
 tags: []
 slug: "macos-space"
-sourceUrl: "https://0418.tistory.com/34"
 draft: false
 ---
 macOS의 가상 데스크탑(Space)은 편하지만, 데스크탑을 옮길 때마다 화면이 미끄러지는 애니메이션이 길게 느껴질 수 있다. 이 글에서는 `yabai + skhd`를 이용해 현재 화면의 이전/다음 Space를 키보드로 전환하고, yabai scripting addition을 통해 전환을 빠르게 처리하는 과정을 정리한다.

@@ -1,11 +1,10 @@
 ---
 title: "[Toy Project] 채소 가격 데이터 시각화"
-description: "일별 가격 데이터 수집 [Crwaling] 파이썬으로 구현해보았습니다. 농산물유통정보:::KAMIS 홈페이지에서 bs4를 이용하여 크롤링하였습니다. 원래는 API로 데이터 받아서 사용했는데 이게... 1년치까지밖에 못쓴다고 합니다.. 그래서 크롤링으로 사이트에 무리가 가지 않는 선에서 천천히 데이터를 DB에 쌓고 프로젝트를 진행 중입니다 ㅋㅋ import pandas as pd import requests from bs4 import BeautifulSoup as bs from sqlalchemy import create_engine import sqlalchemy import collections import datetime collections.Callable = collections.abc.Call.."
+description: "KAMIS의 일별 농산물 가격을 Python 크롤링으로 수집하고 데이터베이스에 저장·시각화하는 토이 프로젝트를 소개"
 pubDate: 2022-11-02T01:18:42.000Z
 category: "project"
 tags: ["Crawling","mysql","python"]
 slug: "toy-project"
-sourceUrl: "https://0418.tistory.com/3"
 draft: false
 ---
 ## **일별 가격 데이터 수집 \[Crwaling\]**

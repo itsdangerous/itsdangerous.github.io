@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -14,6 +15,8 @@ export async function getStaticPaths() {
 
 const { tag, posts } = Astro.props;
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const pageSize = 10;
+const totalPages = Math.ceil(sortedPosts.length / pageSize);
 ---
 
 <BaseLayout title={`#${tag} 글 — itsdangerous`} description={`${tag} 태그의 글`} canonicalPath={`/tags/${encodeURIComponent(tag)}/`}>
@@ -24,7 +27,8 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
       <p>{sortedPosts.length}개의 기록</p>
     </header>
     <ol class="post-list">
-      {sortedPosts.map((post, index) => <PostCard post={post} index={index} />)}
+      {sortedPosts.slice(0, pageSize).map((post, index) => <PostCard post={post} index={index} />)}
     </ol>
+    <Pagination currentPage={1} totalPages={totalPages} basePath={`/tags/${encodeURIComponent(tag)}`} />
   </main>
 </BaseLayout>

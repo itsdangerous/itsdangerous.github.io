@@ -17,7 +17,6 @@ interface Props {
 }
 
 const { post, headings } = Astro.props;
-const sourceLink = post.data.sourceUrl;
 const commentsCategory = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY?.trim();
 const commentsCategoryId = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY_ID?.trim();
 ---
@@ -42,12 +41,6 @@ const commentsCategoryId = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY_ID?.t
       <div class="article__content">
         <slot />
       </div>
-
-      <footer class="article__footer">
-        {sourceLink && (
-          <a href={sourceLink} target="_blank" rel="noreferrer">티스토리 원문 보기 <span aria-hidden="true">↗</span></a>
-        )}
-      </footer>
 
       <section class="article__comments" aria-label="댓글">
         <GiscusComments

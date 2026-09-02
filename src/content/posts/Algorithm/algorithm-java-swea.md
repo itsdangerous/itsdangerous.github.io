@@ -1,11 +1,10 @@
 ---
 title: "[Algorithm | Java] SWEA-1767 : 프로세서 연결하기"
-description: "SWEA-1767 : 프로세서 연결하기 SW Expert AcademySW 프로그래밍 역량 강화에 도움이 되는 다양한 학습 컨텐츠를 확인하세요!swexpertacademy.com풀이 방법1. DFS로 모든 프로세스에 대해 4방향(상, 우, 하, 좌)을 조사한다2. 각 방향마다 가장자리까지 연결을 시도한다 2-1. 연결을 시도하며 [전선 길이의 합]을 저장해주어야 한다 2-2. 모든 경우와 비교하기 위해, 배열을 복사하는 방법 대신 원본 배열에 Marking, UnMarking 과정을 수행한다.3. 최대 깊이까지 들어갔을 때 [연결된 프로세스 수]와 [전선 길이의 합]을 비교한다Idea처음에는 프로세스가 어느 한 방향으로 연결을 시도할 때 만약 다른 전선이 겹치면 어떻게 해결해야하지?란 생각에 막혔.."
+description: "SWEA-1767 프로세서 연결하기를 DFS와 백트래킹으로 풀며, 연결된 프로세서 수를 최대화하고 전선 길이를 최소화하는 방법을 정리"
 pubDate: 2023-03-02T13:22:58.000Z
 category: "Algorithm"
 tags: ["algorithm","dfs","Java","swea 1767","알고리즘"]
 slug: "algorithm-java-swea"
-sourceUrl: "https://0418.tistory.com/21"
 draft: false
 ---
 **SWEA-1767 : 프로세서 연결하기**

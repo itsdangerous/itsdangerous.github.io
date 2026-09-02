@@ -1,11 +1,10 @@
 ---
 title: "[Database | ERD] QuickDBD 온라인 웹 ERD drawing 서비스 리뷰"
-description: "리뷰erd 다이어그램을 그리기 위해 drawio, erdCloud, mysql 내장 툴, 이클립스 내장 툴 등 여러 툴을 사용해보았다. 그런데 최근에 신기한 툴을 발견했다 quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 다이어그램 설계가 가능하다는 것이다. QuickDatabaseDiagrams.comPretty diagrams make your documents look good and help you communicate clearly.www.quickdatabasediagrams.com사용해보면서 느낀점은.. 나는 원래 마우스를 잘 쓰지 않고 키보드로 왠만한걸 하다보니, 키보드로 타이핑치면서 옆에 그림이 그려지는게 너무 신기했고 작업 속도가 빠르고 직관적이라는 것이다. 문법이.."
+description: "QuickDBD의 텍스트 기반 ERD 작성 방식과 사용 경험을 draw.io 등 다른 도구와 비교해 소개"
 pubDate: 2023-12-11T13:16:21.000Z
 category: "Study"
 tags: ["1년","ERD","ERD다이어그램","PRO","quickDBD","개월","데이터베이스","리뷰","무료"]
 slug: "database-erd-quickdbd-erd-drawing"
-sourceUrl: "https://0418.tistory.com/27"
 draft: false
 ---
 ## 리뷰

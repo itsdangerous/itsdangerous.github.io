@@ -1,11 +1,10 @@
 ---
 title: "[git | zsh] Git merge와 rebase 그리고 fast forward"
-description: "Git을 사용하다 보면 merge, fast-forward, rebase 를 자주 사용하게되는데요처음 Git을 배울 때는 다음과 같은 질문이 자연스럽게 생깁니다.merge는 단순히 브랜치를 합치는 것 아닌가?fast-forward는 왜 어떤 경우에만 발생할까?merge commit은 왜 어떤 경우에만 생성될까?rebase는 merge와 무엇이 다른가?이 글에서는 단순한 명령어 사용법이 아니라 Git이 내부적으로 어떤 기준으로 동작하는지를 기준으로 정리해보겠습니다.Git에서 브랜치는 무엇인가Git을 이해할 때 가장 중요한 개념 중 하나는 브랜치는 복사본이 아니라 특정 commit을 가리키는 포인터라는 점입니다.예를 들어 다음과 같은 상태가 있다고 가정해보겠습니다. A --- B --- C (main)여기서.."
+description: "Git merge, fast-forward, rebase의 관계와 브랜치 이력이 달라지는 원리를 예시로 설명"
 pubDate: 2026-03-11T17:49:20.000Z
 category: "uncategorized"
 tags: []
 slug: "git-zsh-git-merge-rebase-fast-forward"
-sourceUrl: "https://0418.tistory.com/30"
 draft: false
 ---
 Git을 사용하다 보면 `merge`, `fast-forward`, `rebase` 를 자주 사용하게되는데요

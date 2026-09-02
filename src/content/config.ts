@@ -10,7 +10,6 @@ const posts = defineCollection({
     pubDate: z.coerce.date(),
     category: z.enum(categories),
     tags: z.array(z.string()),
-    sourceUrl: z.string().url().optional(),
     draft: z.boolean().default(false),
   }),
 });

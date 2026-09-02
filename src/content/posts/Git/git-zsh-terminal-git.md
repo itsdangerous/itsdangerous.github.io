@@ -1,11 +1,10 @@
 ---
 title: "[git | zsh] terminal git 명령어"
-description: "저는 VSCode의 Git Tool을 사용하는 것보다 terminal에서 git을 사용하는 것이 더 편합니다.그래서 평소에 자주 사용하는 git 명령어들을 정리해 보았습니다.Staging 관리git add는 현재 작업 디렉터리의 변경사항을 스테이징 영역(Staging Area) 에 추가하는 명령어입니다.보통은 아래처럼 사용합니다.git add 파일명하지만 -i 옵션을 사용하면 interactive 모드로 실행됩니다.git add -i이 모드에서는 대화형으로 파일을 선택하면서 스테이징을 관리할 수 있습니다.interactive 모드 메뉴git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보여주고이후 다음과 같은 메뉴가 나타납니다.명령어 설명status현재 staged / unstaged 상태.."
+description: "터미널에서 자주 사용하는 Git 명령어를 스테이징, 커밋, 브랜치, 원격 저장소 관리 중심으로 정리"
 pubDate: 2026-02-20T09:08:09.000Z
 category: "Git"
 tags: ["github","Push"]
 slug: "git-zsh-terminal-git"
-sourceUrl: "https://0418.tistory.com/4"
 draft: false
 ---
 저는 VSCode의 Git Tool을 사용하는 것보다 terminal에서 git을 사용하는 것이 더 편합니다.

@@ -1,11 +1,10 @@
 ---
 title: "[Mac] 디스크 용량 확보 - Spotlight index"
-description: "1. 문제 상황어느 날 저장 공간을 보니 시스템 데이터가 약 300GB 가까이 차지하고 있었다.처음에는 개발 환경 때문에 당연히 Docker를 의심했다. 하지만 Docker 관련 디렉터리를 확인해도 결정적인 수치는 나오지 않았고, 다른 원인을 추적해야 했다.2. 처음 의심했던 것들시스템 데이터가 갑자기 커졌을 때 흔히 의심하는 후보는 대체로 비슷하다.Docker Desktop 디스크 이미지Time Machine 로컬 스냅샷iPhone/iPad 로컬 백업Xcode / Simulator / DerivedData대형 캐시, 로그, 임시 파일Apple도 저장 공간 설정에서 카테고리별 사용량과 추천 정리를 확인할 수 있다고 안내한다. 다만 시스템 데이터는 이름 그대로 범위가 넓어서, 실제 범인은 전혀 다른 곳일 .."
+description: "macOS 시스템 데이터가 비정상적으로 커졌을 때 Spotlight 인덱스를 점검하고 디스크 공간을 확보하는 방법을 정리"
 pubDate: 2026-03-31T02:22:34.000Z
 category: "uncategorized"
 tags: []
 slug: "mac-spotlight-index"
-sourceUrl: "https://0418.tistory.com/32"
 draft: false
 ---
 ## 1. 문제 상황

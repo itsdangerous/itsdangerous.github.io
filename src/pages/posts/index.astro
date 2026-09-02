@@ -2,9 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
 
-const posts = (await getCollection('posts', ({ data }) => !data.draft))
+const allPosts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const pageSize = 10;
+const posts = allPosts.slice(0, pageSize);
+const totalPages = Math.ceil(allPosts.length / pageSize);
 ---
 
 <BaseLayout title="글 목록 — itsdangerous" description="itsdangerous의 모든 기록" canonicalPath="/posts/">
@@ -17,5 +21,6 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
     <ol class="post-list">
       {posts.map((post, index) => <PostCard post={post} index={index} />)}
     </ol>
+    <Pagination currentPage={1} totalPages={totalPages} basePath="/posts" />
   </main>
 </BaseLayout>

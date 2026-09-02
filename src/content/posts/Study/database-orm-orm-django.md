@@ -1,11 +1,10 @@
 ---
 title: "[Database | ORM] ORM이란 무엇인가 (Django)"
-description: "ORM이란Object-Relational Mapping의 약자객체(Object)와 관계형 데이터베이스(Relational Database)의 데이터 매핑(Mapping)해주는 것객체 지향 프로그래밍은 객체(Class)를 사용관계형 데이터베이스는 테이블(Table)을 사용객체 모델 관계형 모델 사이의 불일치 발생ORM을 통해 객체간의 관계를 바탕으로 SQL을 자동으로 생성하여, 불일치 해결DATABASE DATA Object Field즉, DB TABLE을 객체지향 프로그래밍에서 흔히 사용하는 객체(Class)처럼 사용할 수 있도록 해주는 기술. 장점객체 지향적인 코드로 인해 더 직관적이고, 비즈니스 로직에 더 집중할 수 있게 도와준다.선언문, 할당, 종료 등과 같은 부수적인 코드가 급격히 줄어든다.각.."
+description: "ORM의 개념과 객체·관계형 데이터베이스 사이의 매핑 원리를 Django 관점에서 설명"
 pubDate: 2022-12-02T07:00:31.000Z
 category: "Study"
 tags: ["DATABASE","DB","ORM"]
 slug: "database-orm-orm-django"
-sourceUrl: "https://0418.tistory.com/18"
 draft: false
 ---
 > ORM이란

@@ -1,11 +1,10 @@
 ---
 title: "[Python | Django] 로컬 파이썬 장고 프로젝트를 AWS EC2 서버에 올리기(github)"
-description: "git add .git remote add origin https://github.com/itsdangerous/server_dev.gitgit commit -m '1st cmt'git push -u origin main​ 2022.11.22 - [Study & 교육] - [Python | Django] 파이썬 장고 설치 (가상환경) [Python | Django] 파이썬 장고 설치 (가상환경)2022.11.22 - [Study & 교육] - [Python | 가상환경] 파이썬 가상환경 venv 사용 [Python | 가상환경] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환0418.tistory.com 장고 프로젝트를 생성해주었으니 이제 .."
+description: "로컬 Django 프로젝트를 GitHub와 연동한 뒤 AWS EC2 서버에 배포하는 기본 흐름을 정리"
 pubDate: 2022-11-22T09:04:22.000Z
 category: "Study"
 tags: ["AWS EC2","Django","python","서버"]
 slug: "python-django-aws-ec-github"
-sourceUrl: "https://0418.tistory.com/10"
 draft: false
 ---
 ```

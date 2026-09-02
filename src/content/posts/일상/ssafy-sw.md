@@ -1,11 +1,10 @@
 ---
 title: "[SSAFY | 사피] 싸피 9기 후기 SW전공 - 합격"
-description: "[22.11.20] 싸피 9기 SW적성진단(SW전공)을 치뤘습니다. 적성진단 공부한답시고 교보문고 가서 [SSAFY 삼성 청년 SW 아카데미 SW적성진단 5일완성]이란 책을 샀는데샀는데!! 시험 치르기 5일 전에 공지사항을 봤더니 전공자는 코테로 본다고 하더군요..? 사전에 공지사항을 봤더라면 책 사는 일은 없었을텐데 돈 아깝네요... 한 번도 안 본 책이라 중고로 판매합니다ㅋㅋㅋ 댓글 남겨주세요 싸피에 적성진단에 대해서는 보안상 말씀드릴 수가 없지만, 공식적으로는 SW Expert AcademySW 프로그래밍 역량 강화에 도움이 되는 다양한 학습 컨텐츠를 확인하세요!swexpertacademy.comSW Exper Academy 기준으로 D1~D3(백준 기준 최대 실버1)문제 정도의 난이도가 출제.."
+description: "SSAFY 9기 SW전공 지원 과정에서 치른 코딩테스트와 합격 경험을 회고"
 pubDate: 2022-11-20T07:55:52.000Z
 category: "일상"
 tags: []
 slug: "ssafy-sw"
-sourceUrl: "https://0418.tistory.com/6"
 draft: false
 ---
 \[22.11.20\]

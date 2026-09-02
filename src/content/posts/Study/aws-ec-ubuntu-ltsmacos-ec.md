@@ -1,11 +1,10 @@
 ---
 title: "[AWS EC2] Ubuntu 18.04 LTSMacOS EC2 인스턴스에 접속 방법"
-description: "인스턴스를 생성하려면 키 페어를 생성해야합니다. '.pem' 형식의 인증파일 형식으로 저장되는데 이 키 페어는 인스턴스에 접속할 때마다 22번 포트에 접근해서 인증을 해줄때 사용되므로, 잃어버리시면 안되기 때문에 잘 저장해줍니다. MacOS 기준으로 /Users/사용자명/.ssh 경로에 저장해주고, terminal에서 ec2 접속명령은 다음과 같습니다. $ ssh -i {YOUR_KEY_PAIR_FILE.pem} {USER_NAME}@{AWS_PUBLIC_DNS_}제 키페어의 경로는 /Users/Gyu/.ssh/gyu_cloud.pem이 되겠죠. Ubuntu의 경우 user_name의 default값은 ubuntu이며AWS_PUBLIC_DNS_에는 해당 인스턴스의 IPv4 주소를 입력해주면 됩니다. 인.."
+description: "Mac에서 Ubuntu 18.04 AWS EC2 인스턴스에 SSH로 접속하기 위한 키 페어와 명령어를 정리"
 pubDate: 2022-11-22T03:38:42.000Z
 category: "Study"
 tags: []
 slug: "aws-ec-ubuntu-ltsmacos-ec"
-sourceUrl: "https://0418.tistory.com/7"
 draft: false
 ---
 인스턴스를 생성하려면 키 페어를 생성해야합니다.

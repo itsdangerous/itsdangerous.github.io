@@ -32,41 +32,68 @@ const navigableHeadings = headings.filter(({ depth, slug, text }) => (
       <ol>
         {navigableHeadings.map((heading) => (
           <li class:list={[`table-of-contents__item--depth-${heading.depth}`]}>
-            <a href={`#${heading.slug}`}>{heading.text}</a>
+            <a data-toc-link href={`#${heading.slug}`}>{heading.text}</a>
           </li>
         ))}
       </ol>
     </details>
     <script>
-      const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
-      const byId = new Map(links.map((link) => [link.hash.slice(1), link]));
-      const headings = [...byId.keys()]
-        .map((id) => document.getElementById(id))
-        .filter((heading): heading is HTMLElement => Boolean(heading));
+      const initializeToc = () => {
+        if (document.documentElement.dataset.tocInitialized) return;
+        const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+        const headingIds = [...new Set(links.map((link) => decodeURIComponent(link.hash.slice(1))))];
+        const headings = headingIds
+          .map((id) => document.getElementById(id))
+          .filter((heading): heading is HTMLElement => Boolean(heading));
 
-      const setActiveLink = (id: string) => {
-        links.forEach((link) => {
-          if (link.hash === `#${id}`) {
-            link.setAttribute('aria-current', 'location');
-          } else {
-            link.removeAttribute('aria-current');
+        if (links.length === 0 || headings.length === 0) return;
+        document.documentElement.dataset.tocInitialized = 'true';
+
+        const setActiveLink = (id: string) => {
+          const currentIndex = headings.findIndex((heading) => heading.id === id);
+          const activeIds = new Set([id]);
+          if (currentIndex >= 0 && headings[currentIndex].tagName === 'H3') {
+            const parent = [...headings.slice(0, currentIndex)]
+              .reverse()
+              .find((heading) => heading.tagName === 'H2');
+            if (parent) activeIds.add(parent.id);
           }
+
+          links.forEach((link) => {
+            if (activeIds.has(decodeURIComponent(link.hash.slice(1)))) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          });
+          if (decodeURIComponent(window.location.hash.slice(1)) !== id) {
+            window.history.replaceState(window.history.state, '', `#${encodeURIComponent(id)}`);
+          }
+        };
+
+        const updateActiveHeading = () => {
+          if (headings.length === 0) return;
+          const threshold = 48;
+          const current = headings.reduce<HTMLElement>((active, heading) => (
+            heading.getBoundingClientRect().top <= threshold ? heading : active
+          ), headings[0]);
+          setActiveLink(current.id);
+        };
+
+        updateActiveHeading();
+        window.addEventListener('scroll', updateActiveHeading, { passive: true });
+        window.addEventListener('resize', updateActiveHeading);
+
+        document.querySelectorAll<HTMLElement>('.table-of-contents__desktop').forEach((toc) => {
+          let hideScrollbarTimer: number | undefined;
+          toc.addEventListener('scroll', () => {
+            toc.toggleAttribute('data-toc-scrolling', true);
+            window.clearTimeout(hideScrollbarTimer);
+            hideScrollbarTimer = window.setTimeout(() => toc.removeAttribute('data-toc-scrolling'), 800);
+          }, { passive: true });
         });
       };
 
-      if (headings.length > 0) {
-        setActiveLink(headings[0].id);
-        const observer = new IntersectionObserver(
-          (entries) => {
-            const current = entries
-              .filter((entry) => entry.isIntersecting)
-              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-            if (current) setActiveLink(current.target.id);
-          },
-          { rootMargin: '-20% 0px -70% 0px' },
-        );
-        headings.forEach((heading) => observer.observe(heading));
-      }
+      initializeToc();
+      document.addEventListener('DOMContentLoaded', initializeToc, { once: true });
+      document.addEventListener('astro:page-load', initializeToc);
     </script>
   </>
 )}

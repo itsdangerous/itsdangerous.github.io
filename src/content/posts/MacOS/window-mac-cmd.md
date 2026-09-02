@@ -1,11 +1,10 @@
 ---
 title: "[Window] Mac Cmd + `(백틱)처럼  윈도우에서 같은 앱 화면 전환하기"
-description: "Windows에서 macOS처럼 동일 애플리케이션 창 전환 단축키 설정하기macOS에서는 Cmd + ` 단축키로 같은 애플리케이션에 속한 여러 창을 빠르게 전환할 수 있습니다. 반면 Windows의 기본 단축키인 Alt + Tab은 모든 애플리케이션 창을 대상으로 동작하기 때문에, 동일 프로그램 내 창만 순환하고 싶은 경우에는 다소 비효율적입니다.Windows에는 이 기능이 기본 제공되지 않지만, AutoHotkey를 사용하면 비교적 간단하게 유사한 동작을 설정할 수 있습니다. 이 글에서는 AutoHotkey v2 기준으로, 현재 활성 창과 동일한 프로세스의 창끼리 순환하는 단축키를 설정하는 방법을 정리합니다.1. AutoHotkey 설치먼저 AutoHotkey를 설치합니다.AutoHotkey 공식 홈페.."
+description: "Windows에서 AutoHotkey v2로 macOS의 Cmd+`처럼 같은 애플리케이션 창을 전환하는 단축키를 설정"
 pubDate: 2026-03-20T04:23:42.000Z
 category: "MacOS"
 tags: []
 slug: "window-mac-cmd"
-sourceUrl: "https://0418.tistory.com/31"
 draft: false
 ---
 

@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+
+const pageSize = 10;
+
+export async function getStaticPaths() {
+  const pageSize = 10;
+  const allPosts = (await getCollection('posts', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  const totalPages = Math.ceil(allPosts.length / pageSize);
+
+  return Array.from({ length: totalPages - 1 }, (_, index) => {
+    const currentPage = index + 2;
+    return {
+      params: { page: String(currentPage) },
+      props: {
+        currentPage,
+        posts: allPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize),
+        totalPages,
+      },
+    };
+  });
+}
+
+const { currentPage, posts, totalPages: pageCount } = Astro.props;
+const startIndex = (currentPage - 1) * pageSize;
+---
+
+<BaseLayout title={`글 목록 ${currentPage} — itsdangerous`} description="itsdangerous의 모든 기록" canonicalPath={`/posts/${currentPage}/`}>
+  <main class="shell archive-page">
+    <header class="archive-page__header">
+      <p class="eyebrow">Posts</p>
+      <h1>모든 글</h1>
+      <p>{currentPage} / {pageCount} 페이지 · 시간순 기록</p>
+    </header>
+    <ol class="post-list">
+      {posts.map((post, index) => <PostCard post={post} index={startIndex + index} />)}
+    </ol>
+    <Pagination currentPage={currentPage} totalPages={pageCount} basePath="/posts" />
+  </main>
+</BaseLayout>

@@ -28,15 +28,14 @@ afterAll(async () => {
 });
 
 describe('post content', () => {
-  it('loads every migrated entry through Astro with unique slugs and source URLs', async () => {
+  it('loads every migrated entry through Astro with unique slugs', async () => {
     const manifest = JSON.parse(await readFile(join(process.cwd(), 'src/content/tistory-migration-manifest.json'), 'utf8'));
     const { getCollection } = await container.viteServer.ssrLoadModule('astro:content');
-    const posts = (await getCollection('posts')).filter((post: { data: { sourceUrl?: string } }) => manifest.sourceUrls.includes(post.data.sourceUrl));
+    const posts = await getCollection('posts');
 
     expect(posts).toHaveLength(manifest.entries.length);
     expect(posts.every((post: { data: { pubDate: unknown } }) => post.data.pubDate instanceof Date)).toBe(true);
     expect(new Set(posts.map((post: { slug: string }) => post.slug)).size).toBe(posts.length);
-    expect(new Set(posts.map((post: { data: { sourceUrl?: string } }) => post.data.sourceUrl)).size).toBe(posts.length);
     expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z]+)*$/.test(post.slug))).toBe(true);
     await Promise.all(manifest.entries.map(async (entry: { category: string; markdownPath: string; slug: string }) => {
       const frontmatter = await readFile(join(process.cwd(), entry.markdownPath), 'utf8');

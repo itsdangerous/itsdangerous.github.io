@@ -1,11 +1,10 @@
 ---
 title: "[자료구조] Heap(힙)과 HeapSort(힙 정렬)"
-description: "우리는 최대 혹은 최소를 기준으로 Queue에서 빼내오기 위해서 PriorityQueue(우선순위 큐)를 사용한다. Java에서는 PriorityQueue를 구현하기 위해서 Heap(힙)을 사용하였다. 왜 Heap을 사용하였을까? 그리고 Heap이 무엇일까? 먼저 Heap을 이해하기 위해서는 완전 이진 트리(Complete Binary Tree)에 대해서 알고 있어야한다. 완전 이진 트리는 이진 트리 중 모든 부모 노드의 자식이 왼쪽부터 채워져있어야 한다. 이진트리 자 그럼 Heap에 대해 알아보자.HeapHeap은 트리 개념을 사용한 자료구조인데 만약 완전 이진 트리라면 힙 개념을 사용할 수 있다. Heap은 최대 힙(Max Heap)과 최소 힙(Min Heap)으로 두 가지로 나눌 수있다. MaxHe.."
+description: "완전 이진 트리를 기반으로 한 Heap의 구조와 우선순위 큐, HeapSort의 동작 원리를 설명"
 pubDate: 2023-03-07T15:50:12.000Z
 category: "Study"
 tags: []
 slug: "heap-heapsort"
-sourceUrl: "https://0418.tistory.com/23"
 draft: false
 ---
 우리는 최대 혹은 최소를 기준으로 Queue에서 빼내오기 위해서 PriorityQueue(우선순위 큐)를 사용한다.

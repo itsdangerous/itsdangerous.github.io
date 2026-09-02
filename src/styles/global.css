@@ -269,8 +269,9 @@ a {
 .site-header__controls [data-search-open]:focus-visible [data-search-icon] { opacity: 1; filter: saturate(1) brightness(1.06); }
 .site-header__controls [data-search-open] kbd { padding: 0; color: var(--search-control-color); border: 0; font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
 
-.site-frame { display: grid; grid-template-columns: clamp(16rem, 20vw, 20rem) minmax(0, 1fr); gap: clamp(3rem, 5vw, 5rem); width: 100%; margin: 0; }
-.site-content { min-width: 0; }
+.site-frame { display: grid; grid-template-columns: clamp(16rem, 20vw, 20rem) minmax(0, 1fr); gap: clamp(3rem, 5vw, 5rem); width: 100%; min-height: 100svh; margin: 0; }
+.site-content { display: flex; min-width: 0; min-height: 100svh; flex-direction: column; }
+.site-content > .site-footer { margin-top: auto; }
 
 [data-theme-toggle] {
   display: inline-flex;
@@ -315,7 +316,7 @@ a {
 
 .site-footer {
   width: min(calc(100% - 3rem), var(--shell-width));
-  margin: var(--space-16) auto 0;
+  margin: 0;
   padding: var(--space-6) 0;
   color: var(--color-text-muted);
   border-top: 1px solid var(--color-border);
@@ -413,13 +414,13 @@ h1 span {
 @media (max-width: 900px) {
   .site-frame { display: block; width: 100%; }
   .site-header { position: relative; top: 0; height: auto; min-height: auto; border-width: 0 0 1px; border-radius: 0; }
-  .site-header__inner { min-height: auto; padding: var(--space-4) 1rem; }
+  .site-header__inner { min-height: auto; padding: var(--space-4) 1.5rem; }
   .site-header__profile { display: none; }
   .site-header__brand { padding-bottom: 0; border-bottom: 0; }
   .site-header nav { flex-direction: row; flex-wrap: wrap; align-items: center; margin-top: var(--space-4); gap: var(--space-1) var(--space-4); }
   .site-header nav a { padding: var(--space-1) 0; }
   .site-header nav a::before, .site-header nav a:hover::before, .site-header nav a:focus-visible::before { display: none; }
-  .site-header__stats { margin: var(--space-4) 0 0; }
+  .site-header__stats { display: none; }
   .site-header__controls { position: absolute; top: 0.75rem; right: 1rem; padding: 0; border: 0; }
   .shell {
     width: min(calc(100% - 2rem), var(--shell-width));

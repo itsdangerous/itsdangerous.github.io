@@ -1,11 +1,10 @@
 ---
 title: "Google Play Book의 eBook을 pdf로 변환하기"
-description: "이 글로 인해서 생성된 pdf를 무단으로 배포하는 것은 개인의 책임임을 알립니다. eBook 파일 다운 받기eBook을 PDF로 추출하고 사용하기 위해서는 eBook 파일을 ACSM용 EPUB 파일 또는 PDF파일로 받을 수 있어야 합니다.EPUB란?eBook 파일은 대부분 EPUB 파일로 제공됩니다.EPUB는 전자책 등 전자출판물의 오픈 표준 형식입니다. 데스크탑, 노트북, 태블릿, 모바일 등 여러 디바이스에서 각자 화면의 크기에 맞게 재배치 되도록 하는 웹 기술입니다.그리고 다운 받은 EPUB(혹은 pdf) 파일은 ACSM확장자여야 합니다. ACSM이란 Adobe Content Server Message의 약자로, Adobe Digital Editions 혹은 이와 유사한 프로그램에서 사용됩니다.AC.."
+description: "Google Play Books의 ACSM·EPUB 전자책을 PDF로 변환하는 과정과 파일 형식을 정리"
 pubDate: 2023-07-13T00:47:21.000Z
 category: "uncategorized"
 tags: []
 slug: "google-play-book-ebook-pdf"
-sourceUrl: "https://0418.tistory.com/25"
 draft: false
 ---
 **이 글로 인해서 생성된 pdf를 무단으로 배포하는 것은 개인의 책임임을 알립니다.**

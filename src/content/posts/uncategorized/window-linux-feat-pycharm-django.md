@@ -1,11 +1,10 @@
 ---
 title: "[Window | Linux] 윈도우에서 리눅스 사용하기 (feat. Pycharm, Django)"
-description: "매번 맥북으로 개발하려다 집에서 pc로 하고싶은데 terminal에 너무 익숙해서 cmd는 못써먹겠더라.. 그래서 윈도우에서 vmware를 사용하는것 말고 ubuntu를 사용할 수 있는 방법을 찾아냈다. WSL 설치 는 아래 링크 참고했고 [Windows 10] WSL2 설치 및 사용법 Microsoft에서는 2020년 5월 리눅스를 윈도우와 통합해서 사용할 수 있는 WSL2를 발표했습니다. 이 글에서는 WSL2를 설치하고 사용하는 방법을 소개합니다 www.lainyzine.com ubuntu에 python 및 장고 설치 는 이전 포스팅에 ec2서버에 python 및 가상환경 설치하는 것을 그대로 적용해줬다. [Python | Django] 로컬 파이썬 장고 프로젝트를 AWS EC2 서버에 올리기(git.."
+description: "Windows에서 WSL로 Ubuntu 개발 환경을 구성하고 PyCharm과 Django를 사용하는 과정을 정리"
 pubDate: 2022-12-04T09:24:16.000Z
 category: "uncategorized"
 tags: ["Django","python","runserver","window","WSL","윈도우","인터프리터"]
 slug: "window-linux-feat-pycharm-django"
-sourceUrl: "https://0418.tistory.com/19"
 draft: false
 ---
 매번 맥북으로 개발하려다 집에서 pc로 하고싶은데 terminal에 너무 익숙해서 cmd는 못써먹겠더라..

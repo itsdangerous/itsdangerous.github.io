@@ -1,11 +1,10 @@
 ---
 title: "macOS 듀얼 모니터 사이를 키보드로 이동하기: yabai + skhd"
-description: "이 글은 1편: macOS에서 가상 데스크탑 전환 애니메이션 제거하기에서 yabai와 skhd를 설치하고 손쉬운 사용 권한을 준 상태를 전제로 한다. 모니터 포커스 자체는 scripting addition 없이도 사용할 수 있지만, 1편의 구성을 적용하면 Space가 바뀌는 상황에서도 더 안정적으로 동작한다.듀얼 모니터를 쓰면서 가장 자주 반복하는 동작은 “왼쪽 화면의 작업으로 가기”, “오른쪽 화면의 작업으로 돌아오기”다. 이 글에서는 yabai와 skhd로 물리적 화면 배치에 따라 모니터 포커스를 이동하는 단축키를 만든다.yabai는 타일링뿐 아니라 창·Space·디스플레이 포커스를 제어할 수 있는 macOS 창 관리 도구다. skhd는 키보드 단축키를 감지해 yabai 명령을 실행하는 전역 단축키 .."
+description: "yabai와 skhd를 이용해 듀얼 모니터 사이의 포커스를 키보드로 이동하는 설정을 소개"
 pubDate: 2026-08-24T11:28:47.000Z
 category: "MacOS"
 tags: []
 slug: "macos-yabai-skhd"
-sourceUrl: "https://0418.tistory.com/35"
 draft: false
 ---
 

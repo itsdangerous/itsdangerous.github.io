@@ -8,6 +8,57 @@ test('home lists recent posts with stable article links', async ({ page }) => {
   await expect(firstPost.locator('h3 a')).toHaveAttribute('href', /^\/posts\/[a-z]+(?:-[a-z]+)*\/$/);
 });
 
+test('all posts are paginated in groups of ten', async ({ page }) => {
+  await page.goto('/posts/');
+  await expect(page.locator('.post-card')).toHaveCount(10);
+  await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('1');
+  await expect(page.locator('[data-pagination]')).toHaveCSS('justify-content', 'center');
+  await expect(page.locator('[data-pagination] [data-pagination-first]')).toHaveCount(0);
+  await expect(page.locator('[data-pagination] [data-pagination-prev]')).toHaveCount(0);
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/posts/2/');
+  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/posts/3/');
+
+  await page.goto('/posts/2/');
+  await expect(page.locator('.post-card')).toHaveCount(10);
+  await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('2');
+  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] a[data-pagination-first] svg')).toHaveCount(1);
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] a[data-pagination-prev] svg')).toHaveCount(1);
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/posts/3/');
+  await expect(page.locator('[data-pagination] a[data-pagination-next] svg')).toHaveCount(1);
+  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/posts/3/');
+  await expect(page.locator('[data-pagination] a[data-pagination-last] svg')).toHaveCount(1);
+
+  await page.goto('/posts/3/');
+  await expect(page.locator('.post-card')).toHaveCount(9);
+  await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('3');
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/posts/2/');
+  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] [data-pagination-next]')).toHaveCount(0);
+  await expect(page.locator('[data-pagination] [data-pagination-last]')).toHaveCount(0);
+});
+
+test('category lists over ten posts are paginated too', async ({ page }) => {
+  await page.goto('/categories/Study/');
+  await expect(page.locator('.post-card')).toHaveCount(10);
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/categories/Study/2/');
+
+  await page.goto('/categories/Study/2/');
+  await expect(page.locator('.post-card')).toHaveCount(2);
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/categories/Study/');
+  await expect(page.locator('[data-pagination]')).toHaveCSS('justify-content', 'center');
+});
+
+test('short pages fill at least the viewport height', async ({ page }) => {
+  for (const route of ['/about/', '/categories/', '/guestbook/', '/posts/3/']) {
+    await page.goto(route);
+    expect(await page.locator('.site-content').evaluate((element) => (
+      element.getBoundingClientRect().height >= window.innerHeight
+    ))).toBe(true);
+  }
+});
+
 test('sidebar controls stay compact and left-aligned without styling wrapper classes', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
@@ -64,6 +115,63 @@ test('article shows a sticky desktop TOC and a mobile disclosure', async ({ page
   await page.setViewportSize({ width: 360, height: 800 });
   await expect(desktopToc).toBeHidden();
   await expect(page.locator('.article__mobile-toc details.table-of-contents__mobile')).toBeVisible();
+});
+
+test('long desktop TOC scrolls independently within the viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 700 });
+  await page.goto('/posts/macos-space/');
+
+  const toc = page.locator('.article__desktop-toc .table-of-contents__desktop');
+  await expect(toc).toHaveCSS('overflow-y', 'auto');
+  const metrics = await toc.evaluate((element) => ({
+    height: element.getBoundingClientRect().height,
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight,
+  }));
+  expect(metrics.height).toBeLessThanOrEqual(700 - 64);
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+});
+
+test('desktop TOC aligns to the right edge of the content viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/posts/macos-space/');
+
+  const toc = await page.locator('.article__desktop-toc').boundingBox();
+  const content = await page.locator('.site-content').boundingBox();
+  expect(toc).not.toBeNull();
+  expect(content).not.toBeNull();
+  expect(toc!.x + toc!.width).toBe(content!.x + content!.width);
+});
+
+test('desktop TOC updates its active color and URL hash as headings pass', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/posts/git-reset-vs-git-revert/');
+
+  await page.locator('#특징').evaluate((heading) => {
+    const top = heading.getBoundingClientRect().top + window.scrollY - 40;
+    window.scrollTo(0, top);
+  });
+
+  const activeLink = page.locator('.article__desktop-toc nav a[href="#특징"]');
+  const inactiveLink = page.locator('.article__desktop-toc nav a[href="#git-revert"]');
+  const parentLink = page.locator('.article__desktop-toc nav a[href="#git-reset"]');
+  await expect(activeLink).toHaveAttribute('aria-current', 'location');
+  await expect(parentLink).toHaveAttribute('aria-current', 'location');
+  await expect.poll(() => page.evaluate(() => decodeURIComponent(window.location.hash))).toBe('#특징');
+  expect(await activeLink.evaluate((link) => getComputedStyle(link).color))
+    .not.toBe(await inactiveLink.evaluate((link) => getComputedStyle(link).color));
+});
+
+test('clicking a heading keeps that heading active until the next heading passes', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/posts/macos-space/');
+
+  await page.locator('.article__desktop-toc nav a[href="#5-recovery-mode에서-sip-부분-해제하기"]').click();
+
+  await expect(page.locator('.article__desktop-toc nav a[href="#5-recovery-mode에서-sip-부분-해제하기"]'))
+    .toHaveAttribute('aria-current', 'location');
+  await expect(page.locator('.article__desktop-toc nav a[href="#왜-필요한가"]'))
+    .not.toHaveAttribute('aria-current', 'location');
 });
 
 test('article metadata keeps the Tistory date in Asia/Seoul', async ({ page }) => {

@@ -1,11 +1,10 @@
 ---
 title: "[Python | Django] 파이썬 장고 설치 (가상환경)"
-description: "2022.11.22 - [Study & 교육] - [Python | 가상환경] 파이썬 가상환경 venv 사용 [Python | 가상환경] 파이썬 가상환경 venv 사용프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에0418.tistory.com 여기서 가상환경 세팅에 대해 다뤘으니 가상환경 위에서 Django 프로젝트를 생성해보도록 하겠습니다. 먼저, 가상환경을 설치한 디렉토리에 들어가서 pip install django를 입력하여 장고를 설치해줍니다. 만약 pip 버전이 낮아 설치가 안된다면, 다음과 같이 .."
+description: "Python 가상환경 위에 Django를 설치하고 기본 프로젝트를 생성하는 과정을 단계별로 정리"
 pubDate: 2022-11-22T05:57:31.000Z
 category: "Study"
 tags: ["Django","mysql","python"]
 slug: "python-django"
-sourceUrl: "https://0418.tistory.com/9"
 draft: false
 ---
 [2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용](https://0418.tistory.com/8)

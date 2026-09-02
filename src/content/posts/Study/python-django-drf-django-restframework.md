@@ -1,11 +1,10 @@
 ---
 title: "[Python | Django] DRF(Django-restframework)"
-description: "Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하여 연습해 볼 것이다. Django에 Login API 만들기login app 만들기먼저, 나는 Django에 MySQL을 연동한 상태이며, 가상환경을 사용중이다. 이전 포스트에 자세한 내용이 있다. [Python | 가상환경] 파이썬 가상환경 venv 사용프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에0418.tistory.com [Python | Django] 파이썬 장고 설치 (가상환경)2022.11.22 - [Study.."
+description: "Django REST Framework로 로그인 API를 구성하는 기본 구조와 MySQL 연동 환경에서의 설정 과정을 설명"
 pubDate: 2022-12-01T17:03:33.000Z
 category: "Study"
 tags: ["API","Django","djangorestframework","DRF","python"]
 slug: "python-django-drf-django-restframework"
-sourceUrl: "https://0418.tistory.com/16"
 draft: false
 ---
 Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하여 연습해 볼 것이다.

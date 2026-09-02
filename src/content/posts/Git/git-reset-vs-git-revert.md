@@ -1,11 +1,10 @@
 ---
 title: "git reset vs git revert 차이"
-description: "Git을 사용하다 보면 이전 커밋을 되돌려야 하는 상황이 종종 발생합니다.이때 많이 사용되는 명령어가 git reset과 git revert입니다.두 명령어 모두 커밋을 되돌린다는 점에서는 비슷해 보이지만, 실제 동작 방식은 꽤 다릅니다.git resetgit reset은 커밋 기록 자체를 이전 상태로 되돌리는 명령어입니다.예를 들어 가장 최근 커밋 하나를 삭제하고 싶다면 다음과 같이 사용할 수 있습니다.git reset --hard HEAD~1위 명령어는 현재 HEAD 기준으로 한 단계 이전 커밋 상태로 돌아가게 합니다.특징커밋 기록 자체가 사라집니다.Git 히스토리가 변경됩니다.이미 push된 커밋에 사용하면 문제가 발생할 수 있습니다.예를 들어 현재 커밋 상태가 아래와 같다고 가정해 보겠습니다.A .."
+description: "Git reset과 revert의 동작 차이와 커밋 기록에 미치는 영향을 비교하고, 상황별 안전한 사용법을 설명"
 pubDate: 2026-03-11T04:42:48.000Z
 category: "Git"
 tags: []
 slug: "git-reset-vs-git-revert"
-sourceUrl: "https://0418.tistory.com/29"
 draft: false
 ---
 Git을 사용하다 보면 이전 커밋을 되돌려야 하는 상황이 종종 발생합니다.

@@ -1,0 +1,34 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  basePath: string;
+}
+
+const { currentPage, totalPages, basePath } = Astro.props;
+const pageHref = (page: number) => page === 1 ? `${basePath}/` : `${basePath}/${page}/`;
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" data-pagination aria-label="페이지 탐색">
+    {currentPage > 1 && <a href={pageHref(1)} data-pagination-first aria-label="첫 페이지">
+      <svg class="pagination__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-7 7 7 7M20 5l-7 7 7 7" /></svg>
+    </a>}
+    {currentPage > 1 && <a href={pageHref(currentPage - 1)} data-pagination-prev rel="prev" aria-label="이전 페이지">
+      <svg class="pagination__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg>
+    </a>}
+    <div class="pagination__pages">
+      {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => page === currentPage ? (
+        <span aria-current="page">{page}</span>
+      ) : (
+        <a href={pageHref(page)}>{page}</a>
+      ))}
+    </div>
+    {currentPage < totalPages && <a href={pageHref(currentPage + 1)} data-pagination-next rel="next" aria-label="다음 페이지">
+      <svg class="pagination__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+    </a>}
+    {currentPage < totalPages && <a href={pageHref(totalPages)} data-pagination-last aria-label="마지막 페이지">
+      <svg class="pagination__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 5 7 7-7 7M13 5l7 7-7 7" /></svg>
+    </a>}
+  </nav>
+)}
