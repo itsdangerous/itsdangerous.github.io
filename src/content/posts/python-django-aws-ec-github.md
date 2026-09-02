@@ -4,7 +4,7 @@ description: "git add .git remote add origin https://github.com/itsdangerous/ser
 pubDate: 2022-11-22T09:04:22.000Z
 category: "Study"
 tags: ["AWS EC2","Django","python","서버"]
-slug: "python-django-aws-ec2-github"
+slug: "python-django-aws-ec-github"
 sourceUrl: "https://0418.tistory.com/10"
 draft: false
 ---
@@ -33,13 +33,13 @@ git commit -m '1st cmt'
 git push -u origin main
 ```
 
-![](/images/posts/python-django-aws-ec2-github/0b36f1bc230ea08f5b7f.png) 짝짞짞ㄱ짜!!
+![](/images/posts/python-django-aws-ec-github/0b36f1bc230ea08f5b7f.png) 짝짞짞ㄱ짜!!
 
 이제 이걸 서버에서 가져와서 작업하면 되겠군요?
 
 ec2 서버에 들어가봅시다!
 
-![](/images/posts/python-django-aws-ec2-github/c532a1318fa275f76c45.png) 먼저 python과 pip를 설치해봅니다
+![](/images/posts/python-django-aws-ec-github/c532a1318fa275f76c45.png) 먼저 python과 pip를 설치해봅니다
 
 ```
 sudo apt update
@@ -60,7 +60,7 @@ sudo apt install python3.10
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 ```
 
-![](/images/posts/python-django-aws-ec2-github/104dbdfa7f222c2741bf.png) 잘 설치 됐네요
+![](/images/posts/python-django-aws-ec-github/104dbdfa7f222c2741bf.png) 잘 설치 됐네요
 
 > 제가 사진은 첨부하지 못했지만,
 > 로컬에 설치되어 있는 파이썬 버전으로 가상환경을 만들어주면
@@ -76,7 +76,7 @@ curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 
 먼저, 파이썬3.10의 위치를 찾아줄게요
 
-![](/images/posts/python-django-aws-ec2-github/ed5c77f6fbee7c5ed392.png) 이렇게 확인해보니 링크된 폴더에 파이썬이 여러 버전이 깔려있네요 ㄷ ㄷ
+![](/images/posts/python-django-aws-ec-github/ed5c77f6fbee7c5ed392.png) 이렇게 확인해보니 링크된 폴더에 파이썬이 여러 버전이 깔려있네요 ㄷ ㄷ
 
 ```
 sudo update-alternatives --config python # python python의 버전 변경 가능
@@ -105,11 +105,11 @@ sudo update-alternatives --config python
 
 을 입력해주면 아래와 같이 설정되어있는 python 버전 선택 메뉴가 등장하게 되는데,
 
-![](/images/posts/python-django-aws-ec2-github/08c0ccb1853c3e6524be.png) 원하는 Selection의 번호를 입력하고 Enter를 누르면 python의 해당 버전으로 default path로 설정됩니다.
+![](/images/posts/python-django-aws-ec-github/08c0ccb1853c3e6524be.png) 원하는 Selection의 번호를 입력하고 Enter를 누르면 python의 해당 버전으로 default path로 설정됩니다.
 
 뭐 이방법 말고 저는 bash 쓰니까 .bashrc에 PATH 설정해줘도 되긴 합니다. 이부분은 pass
 
-![](/images/posts/python-django-aws-ec2-github/59614ec935c65bec5506.png) 이러고 나서 python -m venv .venv를 입력해서 가상환경을 설정했으나...
+![](/images/posts/python-django-aws-ec-github/59614ec935c65bec5506.png) 이러고 나서 python -m venv .venv를 입력해서 가상환경을 설정했으나...
 
 ```
 Error: Command '['/home/ubuntu/server_dev/.venv/bin/python', '-Im', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
@@ -143,7 +143,7 @@ python -m venv .venv
 
 를 입력하게되면, '.venv'라는 이름으로 가상환경이 생깁니다.
 
-![](/images/posts/python-django-aws-ec2-github/c57c43d404e471b2652c.png) 잘 됐네요 ㅎㅎ
+![](/images/posts/python-django-aws-ec-github/c57c43d404e471b2652c.png) 잘 됐네요 ㅎㅎ
 
 자, 이제 ec2 서버에 가상환경도 만들어 주었겠다...
 
@@ -163,7 +163,7 @@ pip freeze > requirements.txt
 
 [\[Python | Django\] makemigrations 오류 해결 python manage.py makemigrations를 하니... mysqlclient가 없어서 안된다나 머라나 그래서 pip install mysqlclient를 했더니 설치가 안된다드라 구글링 결과 다음을 하니 해결이 되었다.... sudo apt-get update sudo apt-get 0418.tistory.com](https://0418.tistory.com/13) 이걸 git에 등록하고 push한 뒤, 서버에서 pull로 받아봅니다.
 
-![](/images/posts/python-django-aws-ec2-github/512bec6c5f2885a6ca78.png) push는 리모트와 브런치가 정해졌다면, 다음과 같이 하면 됩니다.
+![](/images/posts/python-django-aws-ec-github/512bec6c5f2885a6ca78.png) push는 리모트와 브런치가 정해졌다면, 다음과 같이 하면 됩니다.
 
 ```
 git add .
@@ -183,7 +183,7 @@ git fetch
 git pull origin main
 ```
 
-![](/images/posts/python-django-aws-ec2-github/672c89e9eef97efc35ed.png) 잘 내려받았습니다.
+![](/images/posts/python-django-aws-ec-github/672c89e9eef97efc35ed.png) 잘 내려받았습니다.
 
 이제 requirements.txt에 있는 패키지 버전을 서버 가상환경에 그대로 설치해줍니다.
 
@@ -208,7 +208,7 @@ sudo apt-get install python3.10-dev libmysqlclient-dev gcc # python 버전에 �
 python manage.py runserver
 ```
 
-![](/images/posts/python-django-aws-ec2-github/1116abe47272a16e0088.png) 성공했슴돠~!~~!!~!
+![](/images/posts/python-django-aws-ec-github/1116abe47272a16e0088.png) 성공했슴돠~!~~!!~!
 
 빨간 줄로 you have 18머시기 뜬건 해석해보니
 
@@ -224,7 +224,7 @@ python manage.py migrate
 
 입력후 다시 서버 가동 하면?
 
-![](/images/posts/python-django-aws-ec2-github/3bfd75064f1db2fc2391.png) 잘 되는 것 같은데요? 자 이제 127.0.0.1:8000로 들어가봅니다.
+![](/images/posts/python-django-aws-ec-github/3bfd75064f1db2fc2391.png) 잘 되는 것 같은데요? 자 이제 127.0.0.1:8000로 들어가봅니다.
 
 페이지를 찾을 수 없다고 나옵니다.
 
@@ -240,7 +240,7 @@ python manage.py migrate
 
 해볼게요
 
-![](/images/posts/python-django-aws-ec2-github/581148b78a2f18790cf9.png) 잘 되네요 ㅎㅎ
+![](/images/posts/python-django-aws-ec-github/581148b78a2f18790cf9.png) 잘 되네요 ㅎㅎ
 
 접속은 URL은 \['ec2의 퍼블릭 dns주소':8000\] 입니다.
 

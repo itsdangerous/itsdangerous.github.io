@@ -37,6 +37,6 @@ describe('post content', () => {
     expect(posts.every((post: { data: { pubDate: unknown } }) => post.data.pubDate instanceof Date)).toBe(true);
     expect(new Set(posts.map((post: { slug: string }) => post.slug)).size).toBe(posts.length);
     expect(new Set(posts.map((post: { data: { sourceUrl?: string } }) => post.data.sourceUrl)).size).toBe(posts.length);
-    expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z0-9]+)*$/.test(post.slug) && !/^\d+$/.test(post.slug))).toBe(true);
+    expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z]+)*$/.test(post.slug))).toBe(true);
   });
 });

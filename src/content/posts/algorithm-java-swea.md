@@ -4,7 +4,7 @@ description: "SWEA-1767 : 프로세서 연결하기 SW Expert AcademySW 프로�
 pubDate: 2023-03-02T13:22:58.000Z
 category: "Algorithm"
 tags: ["algorithm","dfs","Java","swea 1767","알고리즘"]
-slug: "algorithm-java-swea-1767"
+slug: "algorithm-java-swea"
 sourceUrl: "https://0418.tistory.com/21"
 draft: false
 ---
@@ -38,17 +38,17 @@ draft: false
 
 **2번이 무슨 말이냐 하면~**
 
-![](/images/posts/algorithm-java-swea-1767/06c34c8e7c7b92b37e7c.png) **이렇게 프로세스가 4개가 있다고 하고**
+![](/images/posts/algorithm-java-swea/06c34c8e7c7b92b37e7c.png) **이렇게 프로세스가 4개가 있다고 하고**
 
 **방향을 (상, 우, 하 ,좌)의 순서로 준다고 하면,**
 
 **제일 처음 제일 깊게 들어갔을 때는 다음과 같은 상태가 된다.**
 
-![](/images/posts/algorithm-java-swea-1767/e09e37f4b16aae83dde1.png) **제일 밑에서부터 빠져 나오면서 4방향을 마저 탐색해야하는데, 그 다음 상태는 아래와 같다.**
+![](/images/posts/algorithm-java-swea/e09e37f4b16aae83dde1.png) **제일 밑에서부터 빠져 나오면서 4방향을 마저 탐색해야하는데, 그 다음 상태는 아래와 같다.**
 
-![](/images/posts/algorithm-java-swea-1767/391f5622b90c4476dc9c.png) **그 다음은**
+![](/images/posts/algorithm-java-swea/391f5622b90c4476dc9c.png) **그 다음은**
 
-![](/images/posts/algorithm-java-swea-1767/e469f70b8bc80647ff7e.png) **이렇게 되겠지**
+![](/images/posts/algorithm-java-swea/e469f70b8bc80647ff7e.png) **이렇게 되겠지**
 
 **위에 그림들 한 장 한 장이 경우의 수인데, 이것들을 그리기 위해서 2가지 방법을 생각했었다**
 
@@ -66,11 +66,11 @@ draft: false
 
 **그 프로세서가 연결한 전선의 경로를 (i+2)로 마킹해준다면 다음과 같은 그림이 된다.**
 
-![](/images/posts/algorithm-java-swea-1767/25ab93a7e595f9611092.png) **프로세서의 번호는 실제 Map에서는 1로 되어있으니 걱정할 필요없다.**
+![](/images/posts/algorithm-java-swea/25ab93a7e595f9611092.png) **프로세서의 번호는 실제 Map에서는 1로 되어있으니 걱정할 필요없다.**
 
 **이 다음 과정은 아래와 같다******
 
-![](/images/posts/algorithm-java-swea-1767/a1f50ece76fdfaec4c05.png) **이렇게 전선을 그려주었다 지워주고 다시 그려준다면 메모리 낭비없이 모든 경우에 대해서 완전 탐색을 수행할 수 있다.**
+![](/images/posts/algorithm-java-swea/a1f50ece76fdfaec4c05.png) **이렇게 전선을 그려주었다 지워주고 다시 그려준다면 메모리 낭비없이 모든 경우에 대해서 완전 탐색을 수행할 수 있다.**
 
 **여기까지가 이 문제의 핵심이다!**
 

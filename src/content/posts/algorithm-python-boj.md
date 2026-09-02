@@ -4,7 +4,7 @@ description: "BOJ-15685 : 드래곤 커브https://www.acmicpc.net/problem/15685 
 pubDate: 2026-03-09T13:51:28.000Z
 category: "Algorithm"
 tags: ["python","시뮬레이션","알고리즘"]
-slug: "algorithm-python-boj-15685"
+slug: "algorithm-python-boj"
 sourceUrl: "https://0418.tistory.com/28"
 draft: false
 ---

@@ -87,10 +87,10 @@
       "imagePaths": []
     },
     {
-      "slug": "algorithm-python-boj-15685",
+      "slug": "algorithm-python-boj",
       "sourceUrl": "https://0418.tistory.com/28",
       "category": "Algorithm",
-      "markdownPath": "src/content/posts/algorithm-python-boj-15685.md",
+      "markdownPath": "src/content/posts/algorithm-python-boj.md",
       "imagePaths": []
     },
     {
@@ -186,17 +186,17 @@
       ]
     },
     {
-      "slug": "algorithm-java-swea-1767",
+      "slug": "algorithm-java-swea",
       "sourceUrl": "https://0418.tistory.com/21",
       "category": "Algorithm",
-      "markdownPath": "src/content/posts/algorithm-java-swea-1767.md",
+      "markdownPath": "src/content/posts/algorithm-java-swea.md",
       "imagePaths": [
-        "/images/posts/algorithm-java-swea-1767/06c34c8e7c7b92b37e7c.png",
-        "/images/posts/algorithm-java-swea-1767/e09e37f4b16aae83dde1.png",
-        "/images/posts/algorithm-java-swea-1767/391f5622b90c4476dc9c.png",
-        "/images/posts/algorithm-java-swea-1767/e469f70b8bc80647ff7e.png",
-        "/images/posts/algorithm-java-swea-1767/25ab93a7e595f9611092.png",
-        "/images/posts/algorithm-java-swea-1767/a1f50ece76fdfaec4c05.png"
+        "/images/posts/algorithm-java-swea/06c34c8e7c7b92b37e7c.png",
+        "/images/posts/algorithm-java-swea/e09e37f4b16aae83dde1.png",
+        "/images/posts/algorithm-java-swea/391f5622b90c4476dc9c.png",
+        "/images/posts/algorithm-java-swea/e469f70b8bc80647ff7e.png",
+        "/images/posts/algorithm-java-swea/25ab93a7e595f9611092.png",
+        "/images/posts/algorithm-java-swea/a1f50ece76fdfaec4c05.png"
       ]
     },
     {
@@ -281,23 +281,23 @@
       ]
     },
     {
-      "slug": "python-django-aws-ec2-github",
+      "slug": "python-django-aws-ec-github",
       "sourceUrl": "https://0418.tistory.com/10",
       "category": "Study",
-      "markdownPath": "src/content/posts/python-django-aws-ec2-github.md",
+      "markdownPath": "src/content/posts/python-django-aws-ec-github.md",
       "imagePaths": [
-        "/images/posts/python-django-aws-ec2-github/0b36f1bc230ea08f5b7f.png",
-        "/images/posts/python-django-aws-ec2-github/c532a1318fa275f76c45.png",
-        "/images/posts/python-django-aws-ec2-github/104dbdfa7f222c2741bf.png",
-        "/images/posts/python-django-aws-ec2-github/ed5c77f6fbee7c5ed392.png",
-        "/images/posts/python-django-aws-ec2-github/08c0ccb1853c3e6524be.png",
-        "/images/posts/python-django-aws-ec2-github/59614ec935c65bec5506.png",
-        "/images/posts/python-django-aws-ec2-github/c57c43d404e471b2652c.png",
-        "/images/posts/python-django-aws-ec2-github/512bec6c5f2885a6ca78.png",
-        "/images/posts/python-django-aws-ec2-github/672c89e9eef97efc35ed.png",
-        "/images/posts/python-django-aws-ec2-github/1116abe47272a16e0088.png",
-        "/images/posts/python-django-aws-ec2-github/3bfd75064f1db2fc2391.png",
-        "/images/posts/python-django-aws-ec2-github/581148b78a2f18790cf9.png"
+        "/images/posts/python-django-aws-ec-github/0b36f1bc230ea08f5b7f.png",
+        "/images/posts/python-django-aws-ec-github/c532a1318fa275f76c45.png",
+        "/images/posts/python-django-aws-ec-github/104dbdfa7f222c2741bf.png",
+        "/images/posts/python-django-aws-ec-github/ed5c77f6fbee7c5ed392.png",
+        "/images/posts/python-django-aws-ec-github/08c0ccb1853c3e6524be.png",
+        "/images/posts/python-django-aws-ec-github/59614ec935c65bec5506.png",
+        "/images/posts/python-django-aws-ec-github/c57c43d404e471b2652c.png",
+        "/images/posts/python-django-aws-ec-github/512bec6c5f2885a6ca78.png",
+        "/images/posts/python-django-aws-ec-github/672c89e9eef97efc35ed.png",
+        "/images/posts/python-django-aws-ec-github/1116abe47272a16e0088.png",
+        "/images/posts/python-django-aws-ec-github/3bfd75064f1db2fc2391.png",
+        "/images/posts/python-django-aws-ec-github/581148b78a2f18790cf9.png"
       ]
     },
     {
@@ -325,24 +325,24 @@
       ]
     },
     {
-      "slug": "aws-ec2-ubuntu-18-04-ltsmacos-ec2",
+      "slug": "aws-ec-ubuntu-ltsmacos-ec",
       "sourceUrl": "https://0418.tistory.com/7",
       "category": "Study",
-      "markdownPath": "src/content/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2.md",
+      "markdownPath": "src/content/posts/aws-ec-ubuntu-ltsmacos-ec.md",
       "imagePaths": [
-        "/images/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2/34f1cd090f62610c595d.png",
-        "/images/posts/aws-ec2-ubuntu-18-04-ltsmacos-ec2/84bbedb31450d8b106c5.png"
+        "/images/posts/aws-ec-ubuntu-ltsmacos-ec/34f1cd090f62610c595d.png",
+        "/images/posts/aws-ec-ubuntu-ltsmacos-ec/84bbedb31450d8b106c5.png"
       ]
     },
     {
-      "slug": "ssafy-9-sw",
+      "slug": "ssafy-sw",
       "sourceUrl": "https://0418.tistory.com/6",
       "category": "일상",
-      "markdownPath": "src/content/posts/ssafy-9-sw.md",
+      "markdownPath": "src/content/posts/ssafy-sw.md",
       "imagePaths": [
-        "/images/posts/ssafy-9-sw/cb06f34ac3364c180b99.png",
-        "/images/posts/ssafy-9-sw/40400b2ee6f0219a4dd3.png",
-        "/images/posts/ssafy-9-sw/9a923181b700db7ade7f.png"
+        "/images/posts/ssafy-sw/cb06f34ac3364c180b99.png",
+        "/images/posts/ssafy-sw/40400b2ee6f0219a4dd3.png",
+        "/images/posts/ssafy-sw/9a923181b700db7ade7f.png"
       ]
     },
     {

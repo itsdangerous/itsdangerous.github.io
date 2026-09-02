@@ -89,8 +89,8 @@ function imageExtension(url, contentType) {
 
 function sourceSlug(title) {
   const normalized = title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
-  const candidate = normalized.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  if (/[a-z]/.test(candidate)) return candidate;
+  const candidate = normalized.toLowerCase().match(/[a-z]+/g)?.join('-') ?? '';
+  if (candidate) return candidate;
   return `post-${createHash('sha256').update(title).digest('hex').slice(0, 12)}`;
 }
 

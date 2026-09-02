@@ -4,7 +4,7 @@ description: "[22.11.20] 싸피 9기 SW적성진단(SW전공)을 치뤘습니다
 pubDate: 2022-11-20T07:55:52.000Z
 category: "일상"
 tags: []
-slug: "ssafy-9-sw"
+slug: "ssafy-sw"
 sourceUrl: "https://0418.tistory.com/6"
 draft: false
 ---
@@ -14,7 +14,7 @@ draft: false
 
 적성진단 공부한답시고 교보문고 가서 \[SSAFY 삼성 청년 SW 아카데미 SW적성진단 5일완성\]이란 책을 샀는데
 
-![](/images/posts/ssafy-9-sw/cb06f34ac3364c180b99.png) 샀는데!! 시험 치르기 5일 전에 공지사항을 봤더니 전공자는 코테로 본다고 하더군요..?
+![](/images/posts/ssafy-sw/cb06f34ac3364c180b99.png) 샀는데!! 시험 치르기 5일 전에 공지사항을 봤더니 전공자는 코테로 본다고 하더군요..?
 
 사전에 공지사항을 봤더라면 책 사는 일은 없었을텐데 돈 아깝네요...
 
@@ -42,7 +42,7 @@ draft: false
 
 제 알고리즘 실력을 살짝 말씀드리자면 저는 백준 골드5티어이고...(실버 양치기가 좀 많아요) 프로그래머스 3단계는 시간이 많이 주어지면 풀 수 있는 정도의 실력입니다.
 
-![](/images/posts/ssafy-9-sw/40400b2ee6f0219a4dd3.png) 이제 면접 스터디와 전공CS지식 공부하며 면접대비를 해야겠네요!!!!
+![](/images/posts/ssafy-sw/40400b2ee6f0219a4dd3.png) 이제 면접 스터디와 전공CS지식 공부하며 면접대비를 해야겠네요!!!!
 
 다음에는 면접후기로 돌아오겠습니다!!!
 
@@ -68,7 +68,7 @@ draft: false
 
 ㅜ구
 
-![](/images/posts/ssafy-9-sw/9a923181b700db7ade7f.png) 합격했습니다...
+![](/images/posts/ssafy-sw/9a923181b700db7ade7f.png) 합격했습니다...
 
 면접스터디의 빛을 발한 것인지, 저의 간절한 마음이 통한것인지 둘 다인지!!
 
