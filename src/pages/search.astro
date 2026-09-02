@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pagefindUnavailableInDev = import.meta.env.DEV;
 ---
 
 <BaseLayout
@@ -7,6 +9,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   description="기술 블로그의 글을 검색합니다."
   canonicalPath="/search/"
 >
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  </Fragment>
+
   <main class="shell search-page" data-pagefind-ignore>
     <section class="intro" aria-labelledby="search-title">
       <p class="eyebrow">Search</p>
@@ -15,17 +21,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </section>
     <section class="search-page__form" aria-label="글 검색">
       <div id="pagefind-search" class="pagefind-ui"></div>
+      {pagefindUnavailableInDev && (
+        <p class="search-page__notice" role="status">
+          개발 서버에서는 Pagefind 색인이 생성되지 않습니다. <code>npm run build</code> 후 미리보기에서 검색할 수 있습니다.
+        </p>
+      )}
     </section>
   </main>
+
+  {!pagefindUnavailableInDev && (
+    <Fragment slot="body-end">
+      <script>
+        import { PagefindUI } from '@pagefind/default-ui';
+
+        new PagefindUI({ element: '#pagefind-search' });
+      </script>
+    </Fragment>
+  )}
 </BaseLayout>
-
-<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-
-<script>
-  import { PagefindUI } from '@pagefind/default-ui';
-
-  new PagefindUI({ element: '#pagefind-search' });
-</script>
 
 <style is:global>
   [data-theme='midnight'] .search-page,
@@ -54,5 +67,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .pagefind-ui {
     color: var(--color-text);
+  }
+
+  .search-page__notice {
+    margin-top: var(--space-4);
+    color: var(--color-text-muted);
   }
 </style>

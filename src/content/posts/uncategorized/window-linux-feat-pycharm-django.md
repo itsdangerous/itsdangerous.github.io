@@ -16,11 +16,15 @@ draft: false
 
 는 아래 링크 참고했고
 
-[\[Windows 10\] WSL2 설치 및 사용법 Microsoft에서는 2020년 5월 리눅스를 윈도우와 통합해서 사용할 수 있는 WSL2를 발표했습니다. 이 글에서는 WSL2를 설치하고 사용하는 방법을 소개합니다 www.lainyzine.com](https://www.lainyzine.com/ko/article/how-to-install-wsl2-and-use-linux-on-windows-10/) ## ubuntu에 python 및 장고 설치
+[\[Windows 10\] WSL2 설치 및 사용법  Microsoft에서는 2020년 5월 리눅스를 윈도우와 통합해서 사용할 수 있는 WSL2를 발표했습니다. 이 글에서는 WSL2를 설치하고 사용하는 방법을 소개합니다  www.lainyzine.com](https://www.lainyzine.com/ko/article/how-to-install-wsl2-and-use-linux-on-windows-10/)
+
+## ubuntu에 python 및 장고 설치
 
 는 이전 포스팅에 ec2서버에 python 및 가상환경 설치하는 것을 그대로 적용해줬다.
 
-[\[Python | Django\] 로컬 파이썬 장고 프로젝트를 AWS EC2 서버에 올리기(github) git add . git remote add origin https://github.com/itsdangerous/server\_dev.git git commit -m '1st cmt' git push -u origin main​ 2022.11.22 - \[Study & 교육\] - \[Python | Django\] 파이썬 장고 설치 (가상환경) \[Python | Django\] 파이썬 장고 0418.tistory.com](https://0418.tistory.com/10) cmd에서 확인한 python 버전과
+[\[Python | Django\] 로컬 파이썬 장고 프로젝트를 AWS EC2 서버에 올리기(github)  git add . git remote add origin https://github.com/itsdangerous/server\_dev.git git commit -m '1st cmt' git push -u origin main​ 2022.11.22 - \[Study & 교육\] - \[Python | Django\] 파이썬 장고 설치 (가상환경) \[Python | Django\] 파이썬 장고  0418.tistory.com](https://0418.tistory.com/10)
+
+cmd에서 확인한 python 버전과
 
 ubuntu에서 확인한 python 버전은 달랐다.
 
@@ -44,23 +48,35 @@ WSL와 연결하고 싶으면 무료로는 VSCode를 사용하면 된다.
 
 기존 프로젝트를 열어준다.
 
-![](/images/posts/window-linux-feat-pycharm-django/f5b6dafd662eaf56fce4.png) ![](/images/posts/window-linux-feat-pycharm-django/d0247af7bbcabd632a95.png) 이제 인터프리터(Interpreter)를 설정해야한다.
+![](/images/posts/window-linux-feat-pycharm-django/f5b6dafd662eaf56fce4.png)
+
+![](/images/posts/window-linux-feat-pycharm-django/d0247af7bbcabd632a95.png)
+
+이제 인터프리터(Interpreter)를 설정해야한다.
 
 인터프리터란, 어떤 버전의, 어느 환경에 있는 파이썬을 써서 그 프로젝트를 돌리는 것인데, WSL의 가상환경에서 쓰고있으니 설정해주도록 한다.
 
 오른쪽 하단 윈도우 작업표시줄의 시간부분 위에 usr/bin/python3이 default를 클릭한 뒤, Interpreter Settings...를 클릭해준다.
 
-![](/images/posts/window-linux-feat-pycharm-django/e506a9c51713a0cd1eec.png) Add Interpreter를 클릭 후 On WSL ...을 눌러준다.
+![](/images/posts/window-linux-feat-pycharm-django/e506a9c51713a0cd1eec.png)
 
-![](/images/posts/window-linux-feat-pycharm-django/6e8a0bb20c593b591c5e.png) 현재 깔린 ubuntu버전을 자동으로 읽어온다.
+Add Interpreter를 클릭 후 On WSL ...을 눌러준다.
+
+![](/images/posts/window-linux-feat-pycharm-django/6e8a0bb20c593b591c5e.png)
+
+현재 깔린 ubuntu버전을 자동으로 읽어온다.
 
 Next를 눌러준다.
 
-![](/images/posts/window-linux-feat-pycharm-django/03b0311a61c537d25530.png) 왼쪽의 System Interpreter로 들어가서
+![](/images/posts/window-linux-feat-pycharm-django/03b0311a61c537d25530.png)
+
+왼쪽의 System Interpreter로 들어가서
 
 본인이 사용하고 싶은 interpreter 경로를 적어주면 된다.
 
-![](/images/posts/window-linux-feat-pycharm-django/0b1276b2a45daae8cb99.png) 나는 /home/gyu/Project/server\_dev/.venv/bin/python 경로에 있다.
+![](/images/posts/window-linux-feat-pycharm-django/0b1276b2a45daae8cb99.png)
+
+나는 /home/gyu/Project/server\_dev/.venv/bin/python 경로에 있다.
 
 > WSL 환경에서는 프로젝트를 /home/사용자명/Proejct 경로에 관리하는 것이 좋다고한다.
 
@@ -72,11 +88,17 @@ Next를 눌러준다.
 
 이 부분은 다음과 같이 해결할 수 있었다.
 
-![](/images/posts/window-linux-feat-pycharm-django/57b7acf7146e750e5f32.png) 실행 버튼 왼쪽의 Edit COnfigurations... 클릭
+![](/images/posts/window-linux-feat-pycharm-django/57b7acf7146e750e5f32.png)
 
-![](/images/posts/window-linux-feat-pycharm-django/932c23b1a0fe14e8afe8.png) Python Configuration을 새로 만들어 준 뒤
+실행 버튼 왼쪽의 Edit COnfigurations... 클릭
 
-![](/images/posts/window-linux-feat-pycharm-django/f91e2aecaa7cbd905588.png) Name : Runserver
+![](/images/posts/window-linux-feat-pycharm-django/932c23b1a0fe14e8afe8.png)
+
+Python Configuration을 새로 만들어 준 뒤
+
+![](/images/posts/window-linux-feat-pycharm-django/f91e2aecaa7cbd905588.png)
+
+Name : Runserver
 
 script path : 프로젝트의 manage.py 경로
 
@@ -86,4 +108,6 @@ Parameters : runserver
 
 프로젝트 실행을 눌러보면
 
-![](/images/posts/window-linux-feat-pycharm-django/33234b727d68b60def55.png) 잘 돌아가는 것을 볼 수 있다.
+![](/images/posts/window-linux-feat-pycharm-django/33234b727d68b60def55.png)
+
+잘 돌아가는 것을 볼 수 있다.

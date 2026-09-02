@@ -26,7 +26,7 @@ Git을 이해할 때 가장 중요한 개념 중 하나는 **브랜치는 복사
 예를 들어 다음과 같은 상태가 있다고 가정해보겠습니다.
 
 ```
-A --- B --- C (main)
+ A --- B --- C (main)
 ```
 
 여기서 `main` 브랜치는 commit `C`를 가리키는 포인터입니다.
@@ -34,7 +34,7 @@ A --- B --- C (main)
 이 상태에서 새로운 브랜치 `feature`를 만들면 다음과 같습니다.
 
 ```
-A --- B --- C (main, feature)
+ A --- B --- C (main, feature)
 ```
 
 처음에는 두 브랜치가 같은 commit을 가리킵니다.
@@ -42,9 +42,9 @@ A --- B --- C (main, feature)
 이후 feature 브랜치에서 commit이 추가되면 다음과 같이 그래프가 분기됩니다.
 
 ```
-A --- B --- C (main)
-\
-D --- E (feature)
+ A --- B --- C (main)
+                         \
+                            D --- E (feature)
 ```
 
 즉 브랜치가 분기된다는 것은 파일이 복사되는 것이 아니라 **commit 그래프가 분기되는 것**입니다.
@@ -70,9 +70,9 @@ merge를 할 때 Git은 먼저 다음 질문을 합니다.
 다음 commit 그래프를 보겠습니다.
 
 ```
-A --- B --- C (main)
-\
-D --- E (feature)
+ A --- B --- C (main)
+                         \ 
+                            D --- E (feature)
 ```
 
 현재 상태
@@ -83,8 +83,8 @@ D --- E (feature)
 이 상태에서 다음 명령을 실행합니다.
 
 ```
-git checkout main
-git merge feature
+ git checkout main
+ git merge feature
 ```
 
 Git은 먼저 다음을 확인합니다.
@@ -94,7 +94,7 @@ Git은 먼저 다음을 확인합니다.
 commit 관계는 다음과 같습니다.
 
 ```
-E | D | C | B | A
+ E | D | C | B | A
 ```
 
 즉 C는 E의 조상입니다.
@@ -104,7 +104,7 @@ E | D | C | B | A
 브랜치 포인터만 이동하면 되기 때문입니다.
 
 ```
-A --- B --- C --- D --- E (main, feature)
+ A --- B --- C --- D --- E (main, feature)
 ```
 
 이 동작을 **fast-forward**라고 합니다.
@@ -116,9 +116,9 @@ A --- B --- C --- D --- E (main, feature)
 이번에는 다음 상태를 보겠습니다.
 
 ```
-A --- B --- C --- F (main)
-\
-D --- E (feature)
+ A --- B --- C --- F (main)
+                        \
+                          D --- E (feature)
 ```
 
 현재 상태
@@ -129,8 +129,8 @@ D --- E (feature)
 이 상태에서 merge를 실행하면
 
 ```
-git checkout main
-git merge feature
+ git checkout main
+ git merge feature
 ```
 
 Git은 다음을 검사합니다.
@@ -140,8 +140,8 @@ Git은 다음을 검사합니다.
 하지만 commit 관계는 다음과 같습니다.
 
 ```
-E --- D --- C --- B --- A
-F --- C --- B --- A
+ E --- D --- C --- B --- A
+ F --- C --- B --- A
 ```
 
 즉 F는 E의 조상이 아닙니다.
@@ -149,9 +149,9 @@ F --- C --- B --- A
 이 경우 Git은 두 히스토리를 연결하기 위해 새로운 commit을 생성합니다.
 
 ```
-A --- B --- C -------- M (main)
-\ /
-D --- E (feature)
+A --- B --- C -------- M   (main)
+                        \              /
+                          D --- E   (feature)
 ```
 
 이 commit이 바로 **merge commit**입니다.
@@ -170,15 +170,15 @@ Git은 기본적으로 fast-forward가 가능하면 merge commit을 만들지 �
 이때 사용하는 옵션이 `--no-ff` 입니다.
 
 ```
-git merge --no-ff feature
+ git merge --no-ff feature
 ```
 
 이 옵션을 사용하면 fast-forward가 가능한 상황에서도 merge commit이 생성됩니다.
 
 ```
-A --- B --- C -------- M (main)
-\ /
-D --- E (feature)
+A --- B --- C -------- M   (main)
+                        \             /
+                          D --- E   (feature)
 ```
 
 이렇게 하면 **어떤 브랜치가 언제 merge되었는지**를 히스토리에서 쉽게 확인할 수 있습니다.
@@ -190,21 +190,21 @@ D --- E (feature)
 예를 들어 다음 상태에서
 
 ```
-A --- B --- C --- F (main)
-\
-D --- E (feature)
+ A --- B --- C --- F (main)
+                         \ 
+                           D --- E (feature)
 ```
 
 다음 명령을 실행하면
 
 ```
-git rebase main
+ git rebase main
 ```
 
 feature 브랜치의 commit이 main 위로 재배치됩니다.
 
 ```
-A --- B --- C --- F --- D' --- E'
+ A --- B --- C --- F --- D' --- E'
 ```
 
 여기서 `D'`, `E'`는 기존 commit을 복사해서 다시 만든 **새로운 commit**입니다.

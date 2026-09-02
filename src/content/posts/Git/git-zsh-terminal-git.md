@@ -32,8 +32,9 @@ git add -i
 
 ### interactive 모드 메뉴
 
-![](/images/posts/git-zsh-terminal-git/f49ac4ba26e01dcc6574.png) git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보여주고
-이후 다음과 같은 메뉴가 나타납니다.
+![](/images/posts/git-zsh-terminal-git/f49ac4ba26e01dcc6574.png)
+
+git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보여주고 이후 다음과 같은 메뉴가 나타납니다.
 
 명령어 설명
 
@@ -81,9 +82,9 @@ git add -p
 ```
 diff --git a/app.py b/app.py
 @@ -10,6 +10,7 @@
-def login():
-user = request.user
-+ print(user)
+ def login():
+     user = request.user
++    print(user)
 
 Stage this hunk [y,n,q,a,d,e,?]?
 ```
@@ -106,7 +107,7 @@ Stage this hunk [y,n,q,a,d,e,?]?
 ```
 # 버그 수정
 if user is None:
-return redirect("/login")
+    return redirect("/login")
 
 # 디버그 코드
 print(user)
@@ -140,8 +141,8 @@ user_name = user.name
 
 ```
 git log --oneline --graph --decorate=short \
---date=format:"%Y-%m-%d %H:%M" \
---pretty=format:"%C(yellow)%h %C(cyan)%ad %C(green)%an %C(reset)%s %C(auto)%d"
+  --date=format:"%Y-%m-%d %H:%M" \
+  --pretty=format:"%C(yellow)%h %C(cyan)%ad %C(green)%an %C(reset)%s %C(auto)%d"
 ```
 
 이 명령어는 커밋 로그를 그래프 형태 + 색상 표시로 출력해줍니다.

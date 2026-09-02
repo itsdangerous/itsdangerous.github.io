@@ -20,4 +20,4 @@ draft: false
 
 테스트 방법은 아래 깃허브에 정리해 두었다.
 
-[GitHub - itsdangerous/emotion-predict: Flask를 활용한 표정 예측 서버 Flask를 활용한 표정 예측 서버. Contribute to itsdangerous/emotion-predict development by creating an account on GitHub. github.com](https://github.com/itsdangerous/emotion-predict)
+[GitHub - itsdangerous/emotion-predict: Flask를 활용한 표정 예측 서버  Flask를 활용한 표정 예측 서버. Contribute to itsdangerous/emotion-predict development by creating an account on GitHub.  github.com](https://github.com/itsdangerous/emotion-predict)

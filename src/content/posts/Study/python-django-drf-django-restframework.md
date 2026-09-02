@@ -18,15 +18,23 @@ Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하
 
 이전 포스트에 자세한 내용이 있다.
 
-[\[Python | 가상환경\] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에 0418.tistory.com](https://0418.tistory.com/entry/Python-가상환경-파이썬-가상환경-venv-사용) [\[Python | Django\] 파이썬 장고 설치 (가상환경) 2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용 \[Python | 가상환경\] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환 0418.tistory.com](https://0418.tistory.com/entry/Python-Django-파이썬-장고-설치-가상환경) Django로 app 생성
+[\[Python | 가상환경\] 파이썬 가상환경 venv 사용  프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에  0418.tistory.com](https://0418.tistory.com/entry/Python-가상환경-파이썬-가상환경-venv-사용)
+
+[\[Python | Django\] 파이썬 장고 설치 (가상환경)  2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용 \[Python | 가상환경\] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환  0418.tistory.com](https://0418.tistory.com/entry/Python-Django-파이썬-장고-설치-가상환경)
+
+Django로 app 생성
 
 ```
 python manage.py startapp appname
 ```
 
-![](/images/posts/python-django-drf-django-restframework/972f39691e72aed8de2c.png) app을 만들게 되면, 아래와 같이프로젝트 안에 login이라는 폴더가 생성된다.
+![](/images/posts/python-django-drf-django-restframework/972f39691e72aed8de2c.png)
 
-![](/images/posts/python-django-drf-django-restframework/52deb953fcb33e1abbfc.png) 그 다음에는
+app을 만들게 되면, 아래와 같이프로젝트 안에 login이라는 폴더가 생성된다.
+
+![](/images/posts/python-django-drf-django-restframework/52deb953fcb33e1abbfc.png)
+
+그 다음에는
 
 models.py에서 사용자의 ID와 PW를 저장할 모델을 만들어준다.
 
@@ -36,12 +44,12 @@ models.py에서 사용자의 ID와 PW를 저장할 모델을 만들어준다.
 from django.db import models
 
 class LoginUser(models.Model) :
-user_id = models.CharField(max_length=20, null=False, default=False)
-user_pw = models.CharField(max_length=20, null=False, default=False)
+    user_id = models.CharField(max_length=20, null=False, default=False)
+    user_pw = models.CharField(max_length=20, null=False, default=False)
 
-class Meta :
-db_table = 'login_user'
-verbose_name = '로그인 테스트 테이블'
+    class Meta :
+        db_table = 'login_user'
+        verbose_name = '로그인 테스트 테이블'
 ```
 
 최대 길이가 20인 id와 pw 필드를 생성했다.
@@ -79,7 +87,9 @@ python manage.py migrate
 
 \*추가적인 migration 기능
 
-더보기 ```
+더보기
+
+```
 python manage.py showmigrations [app_name]
 # 프로젝트의 마이그레이션에 대해 적용 여부를 한 눈에 보여줌
 # app_name 생략 : 전체 앱에 대해 보여줌
@@ -97,7 +107,9 @@ python manage.py sqlmigrate app_name migration_name
 
 2. python manage.py migrate app\_name zero 마이그레이션을 초기화
 
-![](/images/posts/python-django-drf-django-restframework/911ac0a79fa3d4b5994a.png) login\_user 테이블이 생성되었다.
+![](/images/posts/python-django-drf-django-restframework/911ac0a79fa3d4b5994a.png)
+
+login\_user 테이블이 생성되었다.
 
 id, user\_id, user\_pw필드가 생긴 걸 볼 수 있다.
 
@@ -117,7 +129,9 @@ pip install djangorestframework
 
 settings.py의 INSTALLED\_APP에 'rest\_framework'추가 해준다.
 
-![](/images/posts/python-django-drf-django-restframework/36da804dd2440e30aa63.png) login앱 폴더의 views.py 파일에 새로운 api call을 만든다.
+![](/images/posts/python-django-drf-django-restframework/36da804dd2440e30aa63.png)
+
+login앱 폴더의 views.py 파일에 새로운 api call을 만든다.
 
 ```
 # login/views.py
@@ -127,20 +141,20 @@ from rest_framework.response import Response
 from .models import LoginUser
 
 class RegistUser(APIView) :
-def post(self, request):
-user_id = request.data.get('user_id', "") # 클라이언트에서 올리는 user_id
-user_pw = request.data.get('user_pw', "") # 클라이언트에서 올리는 user_pw
+    def post(self, request):
+        user_id = request.data.get('user_id', "") # 클라이언트에서 올리는 user_id
+        user_pw = request.data.get('user_pw', "") # 클라이언트에서 올리는 user_pw
 
-LoginUser.objects.create(user_id=user_id, user_pw=user_pw) # LoginUser 모델에 새로운 object 생성
-
-# 클라이언트한테 내려줄 데이터 정의
-
-data = dict(
-user_id = user_id,
-user_pw = user_pw
-)
-
-return Response(data=data)
+        LoginUser.objects.create(user_id=user_id, user_pw=user_pw) # LoginUser 모델에 새로운 object 생성
+        
+        # 클라이언트한테 내려줄 데이터 정의
+        
+        data = dict(
+            user_id = user_id,
+            user_pw = user_pw
+         )
+        
+        return Response(data=data)
 ```
 
 RegistUser라는 클래스를 만들고,
@@ -168,7 +182,7 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
-path('regist_user', views.RegistUser.as_view(), name='regist_user'),
+    path('regist_user', views.RegistUser.as_view(), name='regist_user'),
 
 ]
 ```
@@ -186,8 +200,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-path('admin/', admin.site.urls),
-path('login/', include('login.urls')),
+    path('admin/', admin.site.urls),
+    path('login/', include('login.urls')),
 ]
 ```
 
@@ -215,7 +229,11 @@ https://localhost:8000/url1/url2로 된단 말이다.
 
 잘 들어간 것을 볼 수 있다.
 
-![](/images/posts/python-django-drf-django-restframework/920fae28f5a3e372ce95.png) ![](/images/posts/python-django-drf-django-restframework/a497c3926c28a24d0ba6.png) ### api 수정 - 유효성 검증(Validation)
+![](/images/posts/python-django-drf-django-restframework/920fae28f5a3e372ce95.png)
+
+![](/images/posts/python-django-drf-django-restframework/a497c3926c28a24d0ba6.png)
+
+### api 수정 - 유효성 검증(Validation)
 
 #### ID 유효성 검증
 
@@ -231,26 +249,26 @@ from rest_framework.response import Response
 from .models import LoginUser
 
 class RegistUser(APIView) :
-def post(self, request):
-user_id = request.data.get('user_id', "")# 클라이언트에서 올리는 user_id
-user_pw = request.data.get('user_pw', "")# 클라이언트에서 올리는 user_pw
+    def post(self, request):
+        user_id = request.data.get('user_id', "")# 클라이언트에서 올리는 user_id
+        user_pw = request.data.get('user_pw', "")# 클라이언트에서 올리는 user_pw
 
-if LoginUser.objects.filter(user_id=user_id).exists() : # LoginUser 모델의 object의 id 중복 처리
-data = dict(
-msg = "이미 존재하는 아이디입니다."
-)
-return Response(data)
+        if LoginUser.objects.filter(user_id=user_id).exists() : # LoginUser 모델의 object의 id 중복 처리
+            data = dict(
+                msg = "이미 존재하는 아이디입니다."
+            )
+            return Response(data)
+        
+        LoginUser.objects.create(user_id=user_id, user_pw=user_pw) # LoginUser 모델에 새로운 object 생성
 
-LoginUser.objects.create(user_id=user_id, user_pw=user_pw) # LoginUser 모델에 새로운 object 생성
+        # 클라이언트한테 내려줄 데이터 정의
 
-# 클라이언트한테 내려줄 데이터 정의
+        data = dict(
+            user_id=user_id,
+            user_pw=user_pw
+         )
 
-data = dict(
-user_id=user_id,
-user_pw=user_pw
-)
-
-return Response(data=data)
+        return Response(data=data)
 ```
 
 View에서 if 문을 통해 중복값 검사 로직을 추가하였는데, 코드상에서 예외처리한다고 해도 DB에 같은 값이 들어갈 수도있다.
@@ -263,12 +281,12 @@ View에서 if 문을 통해 중복값 검사 로직을 추가하였는데, 코�
 from django.db import models
 
 class LoginUser(models.Model) :
-user_id = models.CharField(max_length=20, unique=True, null=False, default=False)
-user_pw = models.CharField(max_length=20, null=False, default=False)
+    user_id = models.CharField(max_length=20, unique=True, null=False, default=False)
+    user_pw = models.CharField(max_length=20, null=False, default=False)
 
-class Meta :
-db_table = 'login_user'
-verbose_name = '로그인 테스트 테이블'
+    class Meta :
+        db_table = 'login_user'
+        verbose_name = '로그인 테스트 테이블'
 ```
 
 이와 같은 행위를
@@ -279,7 +297,9 @@ unique 옵션은 default값으로 False이다. True로 설정할 경우, DB에�
 
 유효성 검증의 순서는 models.py에서 먼저 하고 통과했을 경우 views.py에서 검증한다.
 
-![](/images/posts/python-django-drf-django-restframework/95a97720608dee5a5a11.png) 중복처리 외에도 특수문자 불가능, 숫자로 시작 불가능, 길이 제한 등 여러 조건을 설정해야 할 상황도 존재한다. 그건 그때 가서 구글링 해야겠다.
+![](/images/posts/python-django-drf-django-restframework/95a97720608dee5a5a11.png)
+
+중복처리 외에도 특수문자 불가능, 숫자로 시작 불가능, 길이 제한 등 여러 조건을 설정해야 할 상황도 존재한다. 그건 그때 가서 구글링 해야겠다.
 
 #### PW 유효성 검증
 
@@ -306,13 +326,13 @@ from django.db import models
 
 
 class LoginUser(models.Model) :
-user_id = models.CharField(max_length=20, unique=True, null=False, default=False)
-user_pw = models.CharField(max_length=255, null=False, default=False)
+    user_id = models.CharField(max_length=20, unique=True, null=False, default=False)
+    user_pw = models.CharField(max_length=255, null=False, default=False)
 
 
-class Meta :
-db_table = 'login_user'
-verbose_name = '로그인 테스트 테이블'
+    class Meta :
+        db_table = 'login_user'
+        verbose_name = '로그인 테스트 테이블'
 ```
 
 암호화 되면 길이가 길어지기 때문에 필드의 제한 길이를 255로 바꿈
@@ -327,38 +347,40 @@ from django.contrib.auth.hashers import make_password
 
 
 class RegistUser(APIView) :
-def post(self, request):
-user_id = request.data.get('user_id', "")# 클라이언트에서 올리는 user_id
-user_pw = request.data.get('user_pw', "")# 클라이언트에서 올리는 user_pw
-user_pw_crypted = make_password(user_pw) # 암호화
+    def post(self, request):
+        user_id = request.data.get('user_id', "")# 클라이언트에서 올리는 user_id
+        user_pw = request.data.get('user_pw', "")# 클라이언트에서 올리는 user_pw
+        user_pw_crypted = make_password(user_pw) # 암호화
 
-if LoginUser.objects.filter(user_id=user_id).exists() : # LoginUser 모델의 object의 id 중복 처리
-# db에 있는 값 출력할 때, 어떻게 나오는지 보기 위해 user 객체에 담음
-user = LoginUser.objects.filter(user_id=user_id).first()
-data = dict(
-msg = "이미 존재하는 아이디입니다.",
-user_id = user.user_id,
-user_pw = user.user_pw
-)
-return Response(data)
+        if LoginUser.objects.filter(user_id=user_id).exists() : # LoginUser 모델의 object의 id 중복 처리
+            # db에 있는 값 출력할 때, 어떻게 나오는지 보기 위해 user 객체에 담음
+            user = LoginUser.objects.filter(user_id=user_id).first()
+            data = dict(
+                msg = "이미 존재하는 아이디입니다.",
+                user_id = user.user_id,
+                user_pw = user.user_pw
+            )
+            return Response(data)
 
-LoginUser.objects.create(user_id=user_id, user_pw=user_pw_crypted) # LoginUser 모델에 새로운 object 생성
+        LoginUser.objects.create(user_id=user_id, user_pw=user_pw_crypted) # LoginUser 모델에 새로운 object 생성
 
-# 클라이언트한테 내려줄 데이터 정의
+        # 클라이언트한테 내려줄 데이터 정의
 
-data = dict(
-user_id=user_id,
-user_pw=user_pw_crypted
-)
+        data = dict(
+            user_id=user_id,
+            user_pw=user_pw_crypted
+         )
 
-return Response(data=data)
+        return Response(data=data)
 ```
 
 views.py에서는 make\_password라는 django의 기본 함수를 사용하여 user\_pw를 암호화하고,
 
 암호화한 비밀번호를 보내준다.
 
-![](/images/posts/python-django-drf-django-restframework/59d7c3519618221674f2.png) 이 비밀번호는 복호화가 불가능하다.
+![](/images/posts/python-django-drf-django-restframework/59d7c3519618221674f2.png)
+
+이 비밀번호는 복호화가 불가능하다.
 
 > 그럼 어떻게 인증하냐?
 > 클라이언트에서 올린 user\_pw를 동일한 방법으로 암호화 해서 비교함. 즉, 같은 데이터를 암호화해서 같은 데이터가 나옴.
@@ -376,23 +398,23 @@ from .models import LoginUser
 from django.contrib.auth.hashers import make_password, check_password
 
 class AppLogin(APIView) :
-def post(self, request) :
-user_id = request.data.get('user_id', "")
-user_pw = request.data.get('user_id', "")
-user = LoginUser.objects.filter(user_id=user_id).first()
-
-if user is None :
-return Response(dict(msg="해당 ID의 사용자가 없습니다."))
-if check_password(user_pw, user.user_pw) :
-return Response(dict(msg="로그인 성공"))
-else :
-return Response(dict(msg="로그인 실패. 패스워드 불일치!!"))
-
+    def post(self, request) :
+        user_id = request.data.get('user_id', "")
+        user_pw = request.data.get('user_id', "")
+        user = LoginUser.objects.filter(user_id=user_id).first()
+        
+        if user is None :
+            return Response(dict(msg="해당 ID의 사용자가 없습니다."))
+        if check_password(user_pw, user.user_pw) :
+            return Response(dict(msg="로그인 성공"))
+        else :
+            return Response(dict(msg="로그인 실패. 패스워드 불일치!!"))
+            
 class RegistUser(APIView) :
-...
+     ...
 ```
 
-> check\_password
+> check\_password 
 > 첫 번째 인자 : 클라이언트로부터 받은 password
 > 두 번째 인자 : 사용자의 password
 > 첫 번째 인자를 암호화한 것과 두 번째 인자를 비교하여, 같으면 True, 틀리면 False를 반환.

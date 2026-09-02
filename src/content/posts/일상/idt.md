@@ -8,7 +8,9 @@ slug: "idt"
 sourceUrl: "https://0418.tistory.com/24"
 draft: false
 ---
-![](/images/posts/idt/f226e898d00e13173f47.png) 나는 이 지원 공고를 보고 \[시스템 운영 및 개발\] 직군에 지원했다
+![](/images/posts/idt/f226e898d00e13173f47.png)
+
+나는 이 지원 공고를 보고 \[시스템 운영 및 개발\] 직군에 지원했다
 
 자기소개서에는 내가 자라면서 얻게 된 나의 성격과 그로인해 빚어진 결과, 그리고 SSAFY에서 있었던 경험에 대해 솔직하게 작성하니 합격을 할 수 있었고
 

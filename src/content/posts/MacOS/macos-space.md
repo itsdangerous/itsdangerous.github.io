@@ -36,11 +36,11 @@ skhd는 전역 키보드 단축키 데몬이다. 키 입력을 감지해 shell �
 
 ```
 Ctrl + ← / →
-↓
+      ↓
 skhd: 전역 단축키 감지
-↓
+      ↓
 focus-space-on-current-display.sh
-↓
+      ↓
 yabai: 현재 모니터의 Space를 포커스
 ```
 
@@ -190,7 +190,7 @@ vim ~/.config/yabai/yabairc
 
 sudo /opt/homebrew/bin/yabai --load-sa
 yabai -m signal --add label="load_scripting_addition" \
-event=dock_did_restart action="sudo /opt/homebrew/bin/yabai --load-sa"
+  event=dock_did_restart action="sudo /opt/homebrew/bin/yabai --load-sa"
 ```
 
 ```
@@ -214,17 +214,17 @@ target="$1"
 spaces="$(yabai -m query --spaces --display)"
 
 case "$target" in
-prev)
-space_id="$(printf '%s\n' "$spaces" | jq -r \
-'to_entries | (map(select(.value["has-focus"]))[0].key) as $i | if $i > 0 then .[($i - 1)].value.index else empty end')"
-;;
-next)
-space_id="$(printf '%s\n' "$spaces" | jq -r \
-'to_entries | (map(select(.value["has-focus"]))[0].key) as $i | .[($i + 1)].value.index // empty')"
-;;
-*)
-exit 2
-;;
+  prev)
+    space_id="$(printf '%s\n' "$spaces" | jq -r \
+      'to_entries | (map(select(.value["has-focus"]))[0].key) as $i | if $i > 0 then .[($i - 1)].value.index else empty end')"
+    ;;
+  next)
+    space_id="$(printf '%s\n' "$spaces" | jq -r \
+      'to_entries | (map(select(.value["has-focus"]))[0].key) as $i | .[($i + 1)].value.index // empty')"
+    ;;
+  *)
+    exit 2
+    ;;
 esac
 
 [ -n "$space_id" ] && yabai -m space --focus "$space_id"
@@ -244,7 +244,7 @@ vim ~/.config/skhd/skhdrc
 
 ```
 # 이전/다음 Space: Ctrl + ← / →
-ctrl - left : ~/.config/yabai/focus-space-on-current-display.sh prev
+ctrl - left  : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
 ```
 

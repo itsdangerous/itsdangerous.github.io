@@ -16,9 +16,9 @@ draft: false
 
 ```
 백그라운드 작업 완료
--> 애플리케이션이 Telegram Bot API 호출
--> 비공개 운영 알림 채널에 메시지 게시
--> 채널 구독자의 기기에 푸시 알림 표시
+  -> 애플리케이션이 Telegram Bot API 호출
+  -> 비공개 운영 알림 채널에 메시지 게시
+  -> 채널 구독자의 기기에 푸시 알림 표시
 ```
 
 설정은 세 단계로 나뉜다.
@@ -242,11 +242,11 @@ EOF
 
 ```
 {
-"ok": true,
-"result": {
-"is_bot": true,
-"username": "example_operations_bot"
-}
+  "ok": true,
+  "result": {
+    "is_bot": true,
+    "username": "example_operations_bot"
+  }
 }
 ```
 
@@ -260,10 +260,10 @@ EOF
 
 ```
 curl --silent --show-error --config - <<EOF | jq '
-.result[]
-| select(.channel_post.chat.type == "channel")
-| .channel_post.chat
-| {id, title, type}
+  .result[]
+  | select(.channel_post.chat.type == "channel")
+  | .channel_post.chat
+  | {id, title, type}
 '
 url = "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates"
 EOF
@@ -273,9 +273,9 @@ EOF
 
 ```
 {
-"id": -1001234567890,
-"title": "Example Operations Alerts",
-"type": "channel"
+  "id": -1001234567890,
+  "title": "Example Operations Alerts",
+  "type": "channel"
 }
 ```
 
@@ -320,10 +320,10 @@ TELEGRAM_NOTIFICATION_CHAT_ID='-1001234567890'
 
 ```
 curl --silent --show-error \
---request POST \
---data-urlencode "chat_id=${TELEGRAM_NOTIFICATION_CHAT_ID}" \
---data-urlencode 'text=✅ Telegram 운영 알림 연결 테스트가 완료되었습니다.' \
---config - <<EOF | jq .
+  --request POST \
+  --data-urlencode "chat_id=${TELEGRAM_NOTIFICATION_CHAT_ID}" \
+  --data-urlencode 'text=✅ Telegram 운영 알림 연결 테스트가 완료되었습니다.' \
+  --config - <<EOF | jq .
 url = "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
 EOF
 ```
@@ -332,7 +332,7 @@ EOF
 
 ```
 {
-"ok": true
+  "ok": true
 }
 ```
 

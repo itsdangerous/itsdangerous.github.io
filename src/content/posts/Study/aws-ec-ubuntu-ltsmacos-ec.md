@@ -16,7 +16,9 @@ draft: false
 
 잃어버리시면 안되기 때문에 잘 저장해줍니다.
 
-![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/34f1cd090f62610c595d.png)키 이름 : 키페어 이름 MacOS 기준으로 /Users/사용자명/.ssh 경로에 저장해주고,
+![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/34f1cd090f62610c595d.png)
+
+키 이름 : 키페어 이름MacOS 기준으로 /Users/사용자명/.ssh 경로에 저장해주고,
 
 terminal에서 ec2 접속명령은 다음과 같습니다.
 
@@ -32,7 +34,9 @@ AWS\_PUBLIC\_DNS\_에는 해당 인스턴스의 IPv4 주소를 입력해주면 �
 
 인스턴스 DNS 확인 방법은 인스턴스 세부정보를 들어가면 확인할 수 있습니다.
 
-![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/84bbedb31450d8b106c5.png) 처음 접속하면 여러 문구가 뜨는데, yes를 입력해주면 접속 가능합니다.
+![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/84bbedb31450d8b106c5.png)
+
+처음 접속하면 여러 문구가 뜨는데, yes를 입력해주면 접속 가능합니다.
 
 여기서 만약 접속이 안된다면, 인스턴스의 보안규칙에 ssh 인증 port가 바운딩 되지 않아서일 확률이 큽니다.
 

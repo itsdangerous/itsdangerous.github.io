@@ -24,7 +24,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await container.close();
+  await container?.close();
 });
 
 describe('post content', () => {
@@ -38,5 +38,10 @@ describe('post content', () => {
     expect(new Set(posts.map((post: { slug: string }) => post.slug)).size).toBe(posts.length);
     expect(new Set(posts.map((post: { data: { sourceUrl?: string } }) => post.data.sourceUrl)).size).toBe(posts.length);
     expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z]+)*$/.test(post.slug))).toBe(true);
+    await Promise.all(manifest.entries.map(async (entry: { category: string; markdownPath: string; slug: string }) => {
+      const frontmatter = await readFile(join(process.cwd(), entry.markdownPath), 'utf8');
+      expect(entry.markdownPath).toBe(`src/content/posts/${entry.category}/${entry.slug}.md`);
+      expect(frontmatter).toContain(`slug: "${entry.slug}"`);
+    }));
   });
 });

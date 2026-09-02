@@ -50,8 +50,7 @@ BOJ-15685 : 드래곤 커브
 
 새로운 세대를 만들 때 추가되는 방향들은 단순히 새로 계산되는 것이 아니라, **기존 방향들의 변형된 형태**라는 것이다.
 
-특히 끝점을 기준으로 회전하여 붙는 구조이기 때문에,
-추가되는 방향들은 **기존 방향을 거꾸로 따라가며 회전한 형태**로 나타난다.
+특히 끝점을 기준으로 회전하여 붙는 구조이기 때문에, 추가되는 방향들은 **기존 방향을 거꾸로 따라가며 회전한 형태**로 나타난다.
 
 이 관찰을 통해 다음과 같은 규칙을 발견할 수 있다.
 
@@ -73,13 +72,7 @@ BOJ-15685 : 드래곤 커브
 
 **드래곤 커브 생성**
 
-O(N \* 2^g)
-
-N \<= 20
-g \<= 10
-
-**최대**
-20 \* 1024 ≈ 20,480
+O(N \* 2^g) N \<= 20 g \<= 10 **최대** 20 \* 1024 ≈ 20,480
 
 **정사각형 검사**
 
@@ -99,67 +92,64 @@ N = int(input())
 arr = [[False] * 101 for _ in range(101)]
 
 DIR = [
-[0, 1],
-[-1, 0],
-[0, -1],
-[1, 0],
+    [0, 1],
+    [-1, 0],
+    [0, -1],
+    [1, 0],
 ]
 
 
 def draw_arr(x, y, d, g):
-global arr
+    global arr
 
-# 방향 리스트 구하기
-cur_g = 0
-directions = [d]
-while cur_g < g:
-cur_g += 1
-next_directions = directions[::-1]
-for i in range(len(next_directions)):
-next_directions[i] = (next_directions[i] + 1) % 4
-directions = directions + next_directions
+    # 방향 리스트 구하기
+    cur_g = 0
+    directions = [d]
+    while cur_g < g:
+        cur_g += 1
+        next_directions = directions[::-1]
+        for i in range(len(next_directions)):
+            next_directions[i] = (next_directions[i] + 1) % 4
+        directions = directions + next_directions
 
-# 좌표 표기하기
-nx, ny = x, y
-arr[ny][nx] = True
-for i in directions:
-ny, nx = ny + DIR[i][0], nx + DIR[i][1]
-arr[ny][nx] = True
+    # 좌표 표기하기
+    nx, ny = x, y
+    arr[ny][nx] = True
+    for i in directions:
+        ny, nx = ny + DIR[i][0], nx + DIR[i][1]
+        arr[ny][nx] = True
 
 
 for n in range(N):
-x, y, d, g = map(int, input().split())
-draw_arr(x, y, d, g)
+    x, y, d, g = map(int, input().split())
+    draw_arr(x, y, d, g)
 
 
 def check(r, c):
-return 0 <= r < 100 and 0 <= c < 100
+    return 0 <= r < 100 and 0 <= c < 100
 
 
 result = 0
 for r in range(101):
-for c in range(101):
-# 현재 점 체크
-if not check(r, c): continue
-if not arr[r][c]: continue
+    for c in range(101):
+        # 현재 점 체크
+        if not check(r, c): continue
+        if not arr[r][c]: continue
 
-if not arr[r][c + 1]: continue # 우
-if not arr[r + 1][c]: continue # 하
-if not arr[r + 1][c + 1]: continue # 우측 아래 대각선
+        if not arr[r][c + 1]: continue  # 우
+        if not arr[r + 1][c]: continue  # 하
+        if not arr[r + 1][c + 1]: continue  # 우측 아래 대각선
 
-# 개수 카운트
-result += 1
+        # 개수 카운트
+        result += 1
 
 print(result)
 ```
 
 ## 정리
 
-처음에는 드래곤 커브의 좌표를 직접 계산하려고 했지만,
-문제를 관찰하면서 **좌표보다 중요한 것은 이동 방향의 순서**라는 사실을 깨닫게 된다.
+처음에는 드래곤 커브의 좌표를 직접 계산하려고 했지만, 문제를 관찰하면서 **좌표보다 중요한 것은 이동 방향의 순서**라는 사실을 깨닫게 된다.
 
-따라서 이 문제의 핵심은 드래곤 커브의 모양을 계산하는 것이 아니라,
-**세대에 따라 확장되는 방향 리스트를 만드는 것**이라고 볼 수 있다.
+따라서 이 문제의 핵심은 드래곤 커브의 모양을 계산하는 것이 아니라, **세대에 따라 확장되는 방향 리스트를 만드는 것**이라고 볼 수 있다.
 
-이렇게 방향 리스트를 생성한 뒤 그 방향대로 이동하며 격자에 표시하면,
-마지막에는 네 꼭짓점이 모두 채워진 1×1 정사각형의 개수를 세는 방식으로 문제를 해결할 수 있다.
+이렇게 방향 리스트를 생성한 뒤 그 방향대로 이동하며 격자에 표시하면, 마지막에는 네 꼭짓점이 모두 채워진 1×1 정사각형의 개수를 세는 방식으로 문제를 해결할 수 있다.

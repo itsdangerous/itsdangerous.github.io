@@ -14,7 +14,9 @@ draft: false
 
 **"+", "\*"와 같이 정규표현식에 활용되는 특별한 의미가 있는 문자는 아래와 같이 Dangling quantifier 오류가 발생한다.**
 
-![](/images/posts/java-dangling-quantifier/bc48d1e766012d6325cf.png) **이러한 오류는 다음과 같이 문자임을 표시하여 해결이 가능하다.**
+![](/images/posts/java-dangling-quantifier/bc48d1e766012d6325cf.png)
+
+**이러한 오류는 다음과 같이 문자임을 표시하여 해결이 가능하다.**
 
 ```
 String[] tmp = str.split("\\+");

@@ -1,6 +1,6 @@
 # itsdangerous.github.io
 
-Astro 정적 기술 블로그입니다. 기본 테마는 어두운 `midnight`이며, 게시물은 `src/content/posts/`의 Markdown으로 관리합니다.
+Astro 정적 기술 블로그입니다. 기본 테마는 어두운 `midnight`이며, 게시물은 `src/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
 
 ## 로컬 개발
 

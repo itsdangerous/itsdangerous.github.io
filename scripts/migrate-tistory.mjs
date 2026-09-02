@@ -66,9 +66,18 @@ function cleanText(value) {
   return value.replace(/\u00a0/g, ' ').replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').trim();
 }
 
+function block(value) {
+  const trimmed = value.trim();
+  return trimmed ? `${trimmed}\n\n` : '';
+}
+
 function codeFence(value) {
   const longestTicks = Math.max(0, ...(value.match(/`+/g) ?? []).map((item) => item.length));
   return '`'.repeat(Math.max(3, longestTicks + 1));
+}
+
+function hasBlockChild(node) {
+  return (node.childNodes ?? []).some((child) => ['img', 'pre', 'table'].includes(child.tagName?.toLowerCase()));
 }
 
 function imageExtension(url, contentType) {
@@ -189,15 +198,26 @@ async function tableMarkdown(node, context) {
 }
 
 async function markdownFromNode(node, context) {
-  if (node.nodeName === '#text') return escapeInline(node.value.replace(/\s+/g, ' '));
+  if (node.nodeName === '#text') {
+    // Formatting newlines between HTML blocks must not indent the following
+    // Markdown block (notably a fenced code block or heading).
+    if (!context.inline && /^\s+$/.test(node.value)) return '';
+    return escapeInline(node.value.replace(/\s+/g, ' '));
+  }
   if (node.nodeName === '#comment') return '';
   const name = node.tagName?.toLowerCase();
   if (!name) return markdownFromNodes(node.childNodes, context);
 
-  if (/^h[1-6]$/.test(name)) return `${'#'.repeat(Number(name[1]))} ${await inlineMarkdown(node.childNodes, context)}\n\n`;
-  if (name === 'p' || name === 'div' || name === 'section') {
+  if (/^h[1-6]$/.test(name)) return block(`${'#'.repeat(Number(name[1]))} ${await inlineMarkdown(node.childNodes, context)}`);
+  if (name === 'p') {
+    const body = hasBlockChild(node)
+      ? await markdownFromNodes(node.childNodes, context)
+      : await inlineMarkdown(node.childNodes, context);
+    return block(body);
+  }
+  if (name === 'div' || name === 'section') {
     const body = await markdownFromNodes(node.childNodes, context);
-    return body.trim() ? `${body.trim()}\n\n` : '';
+    return block(body);
   }
   if (name === 'br') return '\n';
   if (name === 'hr') return '---\n\n';
@@ -208,26 +228,33 @@ async function markdownFromNode(node, context) {
   if (name === 'a') {
     const href = attr(node, 'href') ?? '';
     const label = await inlineMarkdown(node.childNodes, context);
-    return href ? `[${label || href}](${href})` : label;
+    const markdown = href ? `[${label || href}](${href})` : label;
+    return context.inline ? markdown : block(markdown);
   }
   if (name === 'img') {
     const src = attr(node, 'src') ?? attr(node, 'data-src') ?? attr(node, 'data-original');
     const localPath = await localAsset(src, context);
-    return localPath ? `![${attr(node, 'alt') ?? ''}](${localPath})` : '';
+    const markdown = localPath ? `![${attr(node, 'alt') ?? ''}](${localPath})` : '';
+    return context.inline ? markdown : block(markdown);
   }
   if (name === 'pre') {
-    const value = textContent(node).replace(/^\n|\n$/g, '');
+    // A preformatted block is the one place where source whitespace is content.
+    // Do not pass it through cleanText(), trim(), or inline Markdown conversion.
+    const value = textContent(node);
     const fence = codeFence(value);
-    return `${fence}\n${value}\n${fence}\n\n`;
+    return `${fence}\n${value}${value.endsWith('\n') ? '' : '\n'}${fence}\n\n`;
   }
   if (name === 'table') return tableMarkdown(node, context);
   if (name === 'blockquote') {
-    const body = cleanText(await markdownFromNodes(node.childNodes, context));
-    return body ? `${body.split('\n').map((line) => `> ${line}`).join('\n')}\n\n` : '';
+    const body = (await markdownFromNodes(node.childNodes, context)).trim();
+    return body ? block(body.split('\n').map((line) => line ? `> ${line}` : '>').join('\n')) : '';
   }
   if (name === 'ul' || name === 'ol') {
     const items = (node.childNodes ?? []).filter((item) => item.tagName?.toLowerCase() === 'li');
-    const lines = await Promise.all(items.map(async (item, index) => `${name === 'ol' ? `${index + 1}.` : '-'} ${cleanText(await markdownFromNodes(item.childNodes, context))}`));
+    const lines = await Promise.all(items.map(async (item, index) => {
+      const body = (await markdownFromNodes(item.childNodes, context)).trim();
+      return `${name === 'ol' ? `${index + 1}.` : '-'} ${body}`;
+    }));
     return lines.length ? `${lines.join('\n')}\n\n` : '';
   }
   if (name === 'iframe' || name === 'video') {
@@ -277,13 +304,15 @@ export async function migrateHtmlExport(html, options) {
     sourceUrl,
     draft: false,
   };
-  const markdown = cleanText(await markdownFromNodes(contentNode(article).childNodes, {
+  // Block renderers own their boundaries.  In particular, never run a whole
+  // document cleanup pass here: it would alter whitespace inside fenced code.
+  const markdown = (await markdownFromNodes(contentNode(article).childNodes, {
     slug,
     assetDirectory: options.assetDirectory ?? defaultAssetDirectory,
     fetchImpl: options.fetchImpl ?? fetch,
     assets,
     missingAssets,
-  }));
+  })).trim();
   return { post, markdown, assets, missingAssets };
 }
 
@@ -345,8 +374,10 @@ async function main() {
   const generated = results.filter((result) => !result.skipped);
   assertUniqueSlugs(generated.map((result) => result.post.slug));
   for (const result of generated) {
-    const target = join(defaultPostsDirectory, `${result.post.slug}.md`);
+    const categoryDirectory = join(defaultPostsDirectory, result.post.category);
+    const target = join(categoryDirectory, `${result.post.slug}.md`);
     if (!overwrite && await readFile(target, 'utf8').then(() => true).catch(() => false)) throw new Error(`Refusing to overwrite existing post: ${relative(projectRoot, target)}`);
+    await mkdir(categoryDirectory, { recursive: true });
     await writeFile(target, `${frontmatter(result.post)}${result.markdown}\n`);
   }
   const manifest = {
@@ -357,7 +388,7 @@ async function main() {
       slug: result.post.slug,
       sourceUrl: result.post.sourceUrl,
       category: result.post.category,
-      markdownPath: `src/content/posts/${result.post.slug}.md`,
+      markdownPath: `src/content/posts/${result.post.category}/${result.post.slug}.md`,
       imagePaths: result.assets.map((asset) => asset.localPath),
     })),
     skippedSources: results.flatMap((result) => result.skipped ? [result.skipped] : []),

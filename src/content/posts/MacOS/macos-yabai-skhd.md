@@ -54,7 +54,7 @@ yabai -m display --focus east
 
 ```
 yabai -m query --displays | jq -r \
-'.[] | "index=\(.index), x=\(.frame.x), y=\(.frame.y), focused=\(."has-focus")"'
+  '.[] | "index=\(.index), x=\(.frame.x), y=\(.frame.y), focused=\(."has-focus")"'
 ```
 
 `x` 값이 작을수록 왼쪽 화면이다. 예를 들어 왼쪽 모니터가 `x=-1920`, 메인 모니터가 `x=0`, 오른쪽 모니터가 `x=1920`이라면 `west/east`가 기대한 대로 동작한다.
@@ -70,7 +70,7 @@ vim ~/.config/skhd/skhdrc
 기존의 아래 두 줄은 제거한다.
 
 ```
-ctrl - left : ~/.config/yabai/focus-space-on-current-display.sh prev
+ctrl - left  : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
 ```
 
@@ -96,7 +96,7 @@ vim ~/.config/skhd/skhdrc
 
 ```
 # 물리적으로 왼쪽/오른쪽 모니터의 활성 창으로 포커스 이동
-ctrl - left : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus west
+ctrl - left  : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus west
 ctrl - right : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus east
 ```
 
@@ -133,7 +133,7 @@ skhd --restart-service
 
 ```
 yabai -m signal --add label="remember_last_work_window" \
-event=window_focused action="$HOME/.config/yabai/remember-last-work-window.sh"
+  event=window_focused action="$HOME/.config/yabai/remember-last-work-window.sh"
 ```
 
 처음에는 최소 구성으로 시작하고, 실제로 알림 창 때문에 작업 흐름이 끊길 때만 이 확장을 추가하는 것을 권장한다.

@@ -35,10 +35,12 @@ const canonicalUrl = new URL(canonicalPath, Astro.site ?? 'https://itsdangerous.
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <Analytics />
+    <slot name="head" />
   </head>
   <body>
     <Header />
     <slot />
     <Footer />
+    <slot name="body-end" />
   </body>
 </html>

@@ -22,7 +22,7 @@ draft: false
 >
 > 즉, DB TABLE을 객체지향 프로그래밍에서 흔히 사용하는 객체(Class)처럼 사용할 수 있도록 해주는 기술.
 
-- **장점** - 객체 지향적인 코드로 인해 더 직관적이고, 비즈니스 로직에 더 집중할 수 있게 도와준다.
+- **장점**- 객체 지향적인 코드로 인해 더 직관적이고, 비즈니스 로직에 더 집중할 수 있게 도와준다.
 - 선언문, 할당, 종료 등과 같은 부수적인 코드가 급격히 줄어든다.
 - 각종 객체에 대한 코드를 별도로 작성하기 때문에 코드의 가동성을 높여준다.
 - SQL의 절차적이고 순차적인 접근이 아닌, 객체 지향적인 접근으로 인해 생산성이 증가한다.
@@ -53,9 +53,9 @@ book_list = new list();
 sql = "SELECT book FROM library WHERE author = 'kim'";
 data = query(sql);
 while (row = data.next()){
-book = new Book();
-book.setAuthor(row.get('author'));
-book_list.add(book);
+    book = new Book();
+    book.setAuthor(row.get('author'));
+    book_list.add(book);
 }
 ```
 
@@ -69,16 +69,16 @@ book_list = BookTable.query(author="kim")
 
 ```
 1. objects.all() # 데이터 가져오기
-ex) Book.objects.all()
+	ex) Book.objects.all()
 
 2. objects.create() # 데이터 추가하기
-ex) Book.objects.create(title='Developer', author='hyelyn')
-
+	ex) Book.objects.create(title='Developer', author='hyelyn')
+   
 3. objects.filter() # 데이터 검색
-ex) Book.objects.filter(author='heylyn')
+	ex) Book.objects.filter(author='heylyn')
 4. objects.delete() # 데이터 삭제
-ex) d = Book.objects.get(title='Developer')
-d.delete()
+	ex) d = Book.objects.get(title='Developer')
+    	d.delete()
 ```
 
 그 외 더 자세한 내용은

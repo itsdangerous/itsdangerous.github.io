@@ -16,17 +16,23 @@ erd 다이어그램을 그리기 위해 drawio, erdCloud, mysql 내장 툴, 이�
 
 quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 다이어그램 설계가 가능하다는 것이다.
 
-[QuickDatabaseDiagrams.com Pretty diagrams make your documents look good and help you communicate clearly. www.quickdatabasediagrams.com](https://www.quickdatabasediagrams.com/) 사용해보면서 느낀점은.. 나는 원래 마우스를 잘 쓰지 않고 키보드로 왠만한걸 하다보니, 키보드로 타이핑치면서 옆에 그림이 그려지는게 너무 신기했고 작업 속도가 빠르고 직관적이라는 것이다.
+[QuickDatabaseDiagrams.com  Pretty diagrams make your documents look good and help you communicate clearly.  www.quickdatabasediagrams.com](https://www.quickdatabasediagrams.com/)
+
+사용해보면서 느낀점은.. 나는 원래 마우스를 잘 쓰지 않고 키보드로 왠만한걸 하다보니, 키보드로 타이핑치면서 옆에 그림이 그려지는게 너무 신기했고 작업 속도가 빠르고 직관적이라는 것이다.
 
 문법이 처음에는 조금 어색하고 적응 안됐는데 사실 erd 다이어그램이 많은 기능이 필요하진 않아서 금방 적응했다.
 
-![](/images/posts/database-erd-quickdbd-erd-drawing/f601b3b107ab6a9fbdf3.png) **먼저, 기본 문법은 table 이름을 적고 대쉬(-)를 사용하여 attribute를 설정할 수 있다. 기본적으로 not null 형태로 제공되고, 필요 시 null 옵션을 줄 수 있는 것 같다.**
+![](/images/posts/database-erd-quickdbd-erd-drawing/f601b3b107ab6a9fbdf3.png)
+
+**먼저, 기본 문법은 table 이름을 적고 대쉬(-)를 사용하여 attribute를 설정할 수 있다. 기본적으로 not null 형태로 제공되고, 필요 시 null 옵션을 줄 수 있는 것 같다.**
 
 **FK 설정은 마우스를 테이블 위에 갖다 대면 끌어서 사용할 수 있는데 그렇게 FK 설정을 할 수 있다.**
 
 **그리고 생각보다 괜찮았던 것이...**
 
-![](/images/posts/database-erd-quickdbd-erd-drawing/330e4780d45bdcc5962f.png) **이 사진을 보면 알겠지만, 테이블 이름이 중복된다면 오류가 발생한다 이건 좀 좋은 기능같다.ㅎㅎ**
+![](/images/posts/database-erd-quickdbd-erd-drawing/330e4780d45bdcc5962f.png)
+
+**이 사진을 보면 알겠지만, 테이블 이름이 중복된다면 오류가 발생한다 이건 좀 좋은 기능같다.ㅎㅎ**
 
 ## **아쉬운 점**
 
@@ -54,7 +60,9 @@ quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 
 
 **그리고 텍스트 지향 erd다이어그램 툴중 비슷한 것이 dbdiagram이라고 있는데, 굉장히 유사한 방식으로 erd를 설계하기에 좋다.**
 
-[dbdiagram.io - Database Relationship Diagrams Design Tool dbdiagram.io](https://dbdiagram.io/home) **하지만 난 QuickDBD를 선택했다 왜냐하면 일단 텍스트 문법 자체가 quickDBD가 더 직관적이었고, dbdiagram은 json형식이라 좀 불편했나보다.**
+[dbdiagram.io - Database Relationship Diagrams Design Tool   dbdiagram.io](https://dbdiagram.io/home)
+
+**하지만 난 QuickDBD를 선택했다 왜냐하면 일단 텍스트 문법 자체가 quickDBD가 더 직관적이었고, dbdiagram은 json형식이라 좀 불편했나보다.**
 
 **dbdiagram이 나쁘단 것은 아니다! 오히려 무료로 사용하기에는 dbdiagram이 더 좋고, ui 자체는 오히려 dbdiagram이 더 좋았던 것은 사실이다.(다크모드 지원?ㅎㅎ)**
 
@@ -68,7 +76,9 @@ quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 
 
 **[참조사이트](https://computer-science-student.tistory.com/380)**
 
-[QuickDBD Review(리뷰) QuickDBD Pro 버전을 무료로 받기 위해 이 게시물을 작성하고자 한다. QuickDBD의 후기를 쓰기 전에 우선적으로 ERD에 대한 개념에 대해 알아보고 사용 후기를 작성하려고 한다. ERD(Entity Relationship Diagram computer-science-student.tistory.com](https://computer-science-student.tistory.com/380) > ****\[트위터를 통해 Pro 버전 free 권한 받기\]** **1. 트위터에 @Quick\_DBD에 대해 트윗한다.** **2. 2개월 Pro 버전 free 권한을 얻는다.** \[블로그를 통해 Pro 버전 free 권한 받기\]**
+[QuickDBD Review(리뷰)  QuickDBD Pro 버전을 무료로 받기 위해 이 게시물을 작성하고자 한다. QuickDBD의 후기를 쓰기 전에 우선적으로 ERD에 대한 개념에 대해 알아보고 사용 후기를 작성하려고 한다. ERD(Entity Relationship Diagram  computer-science-student.tistory.com](https://computer-science-student.tistory.com/380)
+
+> ****\[트위터를 통해 Pro 버전 free 권한 받기\]** **1. 트위터에 @Quick\_DBD에 대해 트윗한다.** **2. 2개월 Pro 버전 free 권한을 얻는다.** \[블로그를 통해 Pro 버전 free 권한 받기\]**
 > **1. QuickDBD를 사용한 후 블로그에 review를 작성한다. 이때, 블로그 리뷰는 500 단어 이상을 작성해야 한다. 주의해야 할 것이 500자가 아닌 500 단어라는 점을 숙지해야한다!**
 > **2. promo@quickdbd.com 으로 free 권한을 원한다는 이메일을 보낸다. 이때, review 작성한 블로그 링크도 함께 첨부해서 보내야 한다. 이메일 양식은 아래를 참고하면 좋을 것 같다.**
 > **============== 이메일 양식 ==============**

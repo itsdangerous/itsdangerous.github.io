@@ -18,7 +18,9 @@ Windows에는 이 기능이 기본 제공되지 않지만, `AutoHotkey`를 사�
 
 먼저 AutoHotkey를 설치합니다.
 
-- [AutoHotkey 공식 홈페이지](https://www.autohotkey.com/)에 접속합니다.
+- [AutoHotkey 공식 홈페이지](https://www.autohotkey.com/)
+
+에 접속합니다.
 - **Download**를 눌러 최신 버전인 **v2**를 설치합니다.
 - 특별한 설정이 필요하지 않다면 기본값으로 설치하면 됩니다.
 
@@ -31,21 +33,20 @@ AutoHotkey 스크립트 파일을 하나 생성한 뒤, 해당 파일에 단축�
 ```
 ; Alt + ` 입력 시 동일 프로세스 창만 순환
 !`:: {
-activeProcessName := WinGetProcessName("A")
-winList := WinGetList("ahk_exe " activeProcessName)
+    activeProcessName := WinGetProcessName("A")
+    winList := WinGetList("ahk_exe " activeProcessName)
 
-; 전환할 창이 2개 미만이면 종료
-if (winList.Length < 2)
-return
+    ; 전환할 창이 2개 미만이면 종료
+    if (winList.Length < 2)
+        return
 
-; 현재 창을 뒤로 보내고 같은 프로세스의 다음 창 활성화
-WinMoveBottom("A")
-WinActivate("ahk_exe " activeProcessName)
+    ; 현재 창을 뒤로 보내고 같은 프로세스의 다음 창 활성화
+    WinMoveBottom("A")
+    WinActivate("ahk_exe " activeProcessName)
 }
 ```
 
-그 다음, 파일을 아무 이름으로 저장합니다. 대신, 확장자는 꼭 .ahk로 저장해야합니다.
-- ex) MacWindow.ahk
+그 다음, 파일을 아무 이름으로 저장합니다. 대신, 확장자는 꼭 .ahk로 저장해야합니다. - ex) MacWindow.ahk
 
 마지막으로, 생성된 .ahk 확장자 파일을 더블클릭하여 실행하면 백그라운드로 `Alt + \\`` 단축키가 같은 앱간 전환으로 적용됩니다.
 

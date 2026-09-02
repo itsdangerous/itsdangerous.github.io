@@ -39,6 +39,36 @@ describe('Tistory migration fixture', () => {
     expect(() => assertUniqueSlugs(['same-post', 'same-post'])).toThrow(/Duplicate slug: same-post/);
   });
 
+  it('preserves indented fenced code exactly and keeps headings after images and links as blocks', async () => {
+    const { createMarkdownProcessor } = await import('@astrojs/markdown-remark');
+    const { migrateHtmlExport } = await import('../../scripts/migrate-tistory.mjs');
+    const assetDirectory = await mkdtemp(join(tmpdir(), 'tistory-migration-'));
+    temporaryDirectories.push(assetDirectory);
+    const source = [
+      '<article><h1>Whitespace fixture</h1>',
+      '<pre><code>  if (ready) {\n\treturn "keep this indentation";\n  }\n\n</code></pre>',
+      '<img src="https://assets.example.test/diagram.png" alt="diagram"><h2>After image</h2>',
+      '<a href="https://example.com/reference">Reference</a><h2>After link</h2></article>',
+    ].join('');
+    const result = await migrateHtmlExport(source, {
+      assetDirectory,
+      fetchImpl: async () => new Response('fixture image', { headers: { 'content-type': 'image/png' } }),
+      sourceUrl: 'https://0418.tistory.com/1002',
+    });
+
+    expect(result.markdown).toContain('```\n  if (ready) {\n\treturn "keep this indentation";\n  }\n\n```');
+    expect(result.markdown).toMatch(/(^|\n)```\n  if \(ready\)/);
+    expect(result.markdown).toMatch(/!\[diagram\]\([^\n]+\)\n\n## After image/);
+    expect(result.markdown).toContain('[Reference](https://example.com/reference)\n\n## After link');
+
+    const rendered = await (await createMarkdownProcessor()).render(result.markdown);
+    expect(rendered.code).toContain('<h2 id="after-image">After image</h2>');
+    expect(rendered.code).toContain('<h2 id="after-link">After link</h2>');
+    expect(rendered.code).toContain('<span>  if (ready) {</span>');
+    expect(rendered.code).toContain('<span>\treturn "keep this indentation";</span>');
+    expect(rendered.code).toContain('<span>  }</span>');
+  });
+
   it('uses an alphabetic fallback slug for Korean-only titles', async () => {
     const { migrateHtmlExport } = await import('../../scripts/migrate-tistory.mjs');
     const result = await migrateHtmlExport('<article><h1>한글 제목</h1><p>본문</p></article>', {
