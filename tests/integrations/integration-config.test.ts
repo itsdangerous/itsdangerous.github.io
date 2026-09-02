@@ -19,6 +19,11 @@ describe('external integrations', () => {
     expect(postLayout).toContain('<GiscusComments mapping="pathname" />');
     expect(guestbook).toContain('PUBLIC_GUESTBOOK_DISCUSSION_NUMBER');
     expect(guestbook).toContain('<GiscusComments mapping="specific" discussionNumber={discussionNumber} />');
+    expect(readFileSync('src/components/GiscusComments.astro', 'utf8')).toContain(
+      "const giscusMapping = mapping === 'specific' ? 'number' : mapping;",
+    );
+    expect(readFileSync('src/components/GiscusComments.astro', 'utf8')).toContain('data-mapping={giscusMapping}');
+    expect(readFileSync('src/components/GiscusComments.astro', 'utf8')).toContain("root.dataset.mapping === 'number'");
   });
 
   it('propagates theme changes, provides a discussion fallback, and keeps GA4 opt-in', () => {

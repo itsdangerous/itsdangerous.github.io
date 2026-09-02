@@ -10,6 +10,7 @@ const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID?.trim();
 const category = import.meta.env.PUBLIC_GISCUS_CATEGORY?.trim();
 const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID?.trim();
 const hasDiscussionNumber = Number.isSafeInteger(discussionNumber) && discussionNumber > 0;
+const giscusMapping = mapping === 'specific' ? 'number' : mapping;
 const isConfigured = Boolean(repo && repoId && category && categoryId);
 const canLoadGiscus = isConfigured && (mapping === 'pathname' || hasDiscussionNumber);
 const discussionHref = repo
@@ -26,7 +27,7 @@ const discussionHref = repo
       data-repo-id={repoId}
       data-category={category}
       data-category-id={categoryId}
-      data-mapping={mapping}
+      data-mapping={giscusMapping}
       data-discussion-number={mapping === 'specific' ? discussionNumber : undefined}
     ></div>
   ) : (
@@ -68,7 +69,7 @@ const discussionHref = repo
       giscus.setAttribute('data-lang', 'ko');
       giscus.setAttribute('data-loading', 'lazy');
 
-      if (root.dataset.mapping === 'specific') {
+      if (root.dataset.mapping === 'number') {
         giscus.setAttribute('data-term', root.dataset.discussionNumber ?? '');
       }
 
