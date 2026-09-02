@@ -38,4 +38,22 @@ describe('Tistory migration fixture', () => {
 
     expect(() => assertUniqueSlugs(['same-post', 'same-post'])).toThrow(/Duplicate slug: same-post/);
   });
+
+  it('uses an alphabetic fallback slug for Korean-only titles', async () => {
+    const { migrateHtmlExport } = await import('../../scripts/migrate-tistory.mjs');
+    const result = await migrateHtmlExport('<article><h1>한글 제목</h1><p>본문</p></article>', {
+      sourceUrl: 'https://0418.tistory.com/1000',
+    });
+
+    expect(result.post.slug).toMatch(/^post-[a-z]+$/);
+  });
+
+  it('rejects an override slug outside the lowercase English-hyphen contract', async () => {
+    const { migrateHtmlExport } = await import('../../scripts/migrate-tistory.mjs');
+
+    await expect(migrateHtmlExport('<article><h1>Fixture post</h1></article>', {
+      slug: 'fixture-42',
+      sourceUrl: 'https://0418.tistory.com/1001',
+    })).rejects.toThrow(/Invalid slug/);
+  });
 });

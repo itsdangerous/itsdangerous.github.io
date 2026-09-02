@@ -30,6 +30,8 @@ describe('migration report', () => {
     }, root);
 
     expect(report.generatedCount).toBe(1);
+    expect(report.assetCount).toBe(3);
+    expect(report.numericAssetDirectories).toEqual([]);
     expect(report.missingAssets).toEqual(expect.arrayContaining([
       expect.objectContaining({ path: 'https://example.test/remote.png' }),
       expect.objectContaining({ path: '/images/posts/fixture-post/missing.png' }),

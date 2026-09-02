@@ -9,6 +9,7 @@ const defaultPostsDirectory = join(projectRoot, 'src/content/posts');
 const defaultAssetDirectory = join(projectRoot, 'public/images/posts');
 const migrationManifestPath = join(projectRoot, 'src/content/tistory-migration-manifest.json');
 const namedCategories = new Set(['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm']);
+const slugPattern = /^[a-z]+(?:-[a-z]+)*$/;
 
 function attr(node, name) {
   return node.attrs?.find((item) => item.name === name)?.value;
@@ -91,7 +92,10 @@ function sourceSlug(title) {
   const normalized = title.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
   const candidate = normalized.toLowerCase().match(/[a-z]+/g)?.join('-') ?? '';
   if (candidate) return candidate;
-  return `post-${createHash('sha256').update(title).digest('hex').slice(0, 12)}`;
+  const alphabeticHash = [...createHash('sha256').update(title).digest().subarray(0, 12)]
+    .map((byte) => String.fromCharCode(97 + (byte % 26)))
+    .join('');
+  return `post-${alphabeticHash}`;
 }
 
 function yamlString(value) {
@@ -236,8 +240,15 @@ async function markdownFromNode(node, context) {
 export function assertUniqueSlugs(slugs) {
   const seen = new Set();
   for (const slug of slugs) {
+    assertValidSlug(slug);
     if (seen.has(slug)) throw new Error(`Duplicate slug: ${slug}`);
     seen.add(slug);
+  }
+}
+
+export function assertValidSlug(slug) {
+  if (typeof slug !== 'string' || !slugPattern.test(slug)) {
+    throw new Error(`Invalid slug: ${String(slug)}. Slugs must match ${slugPattern}.`);
   }
 }
 
@@ -251,6 +262,7 @@ export async function migrateHtmlExport(html, options) {
   const articleHeading = findAll(article, (item) => /^h1$/i.test(item.tagName ?? ''))[0];
   const title = (meta(document, 'og:title') ?? cleanText(articleHeading ? textContent(articleHeading) : '')) || 'post';
   const slug = options.slug ?? sourceSlug(title);
+  assertValidSlug(slug);
   const description = meta(document, 'og:description') ?? '';
   const dateValue = meta(document, 'article:published_time');
   const pubDate = dateValue ? new Date(dateValue) : new Date(0);

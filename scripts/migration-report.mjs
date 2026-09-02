@@ -1,4 +1,4 @@
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -44,9 +44,12 @@ async function inspectImage(destination, entry, projectDirectory, missingAssets)
 
 export async function inspectManifest(manifest, projectDirectory = projectRoot) {
   const missingAssets = [];
+  let assetCount = 0;
   for (const entry of manifest.entries) {
     const markdown = await markdownForEntry(entry, projectDirectory, missingAssets);
-    for (const destination of imageDestinations(markdown)) await inspectImage(destination, entry, projectDirectory, missingAssets);
+    const destinations = imageDestinations(markdown);
+    assetCount += destinations.length;
+    for (const destination of destinations) await inspectImage(destination, entry, projectDirectory, missingAssets);
   }
   const slugs = manifest.entries.map((entry) => entry.slug);
   const sourceUrls = manifest.entries.map((entry) => entry.sourceUrl);
@@ -55,6 +58,11 @@ export async function inspectManifest(manifest, projectDirectory = projectRoot) 
   return {
     sourceCount: manifest.sourceUrls.length,
     generatedCount: manifest.entries.length,
+    assetCount,
+    numericAssetDirectories: (await readdir(join(projectDirectory, 'public/images/posts'), { withFileTypes: true }))
+      .filter((entry) => entry.isDirectory() && /^\d+$/.test(entry.name))
+      .map((entry) => entry.name)
+      .sort(),
     missingAssets,
     duplicateSlugs: [...new Set(duplicateSlugs)],
     duplicateSourceUrls: [...new Set(duplicateSourceUrls)],
