@@ -1,29 +1,34 @@
----
-import { themes } from '../themes/registry';
----
-
-<label class="theme-picker">
-  <span class="sr-only">테마 선택</span>
-  <select aria-label="테마 선택">
-    {themes.map((theme) => <option value={theme.id}>{theme.label}</option>)}
-  </select>
-</label>
+<button class="theme-toggle" type="button" aria-label="라이트 테마로 전환" aria-pressed="false" data-theme-toggle>
+  <span class="theme-toggle__icon" data-theme-icon aria-hidden="true">☾</span>
+  <span class="theme-toggle__label">Theme</span>
+  <span class="theme-toggle__state" data-theme-state>Dark</span>
+</button>
 
 <script>
   import { applyTheme, THEME_STORAGE_KEY } from '../scripts/theme-init';
-  import { getTheme } from '../themes/registry';
-
-  const picker = document.querySelector<HTMLSelectElement>('.theme-picker select');
-  if (picker) {
-    picker.value = getTheme(document.documentElement.dataset.theme).id;
-    picker.addEventListener('change', () => {
-      const theme = applyTheme(picker.value);
+  const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const icon = document.querySelector<HTMLElement>('[data-theme-icon]');
+  const state = document.querySelector<HTMLElement>('[data-theme-state]');
+  const sync = () => {
+    const isLight = document.documentElement.dataset.theme === 'light';
+    if (toggle) {
+      toggle.setAttribute('aria-pressed', String(isLight));
+      toggle.setAttribute('aria-label', isLight ? '다크 테마로 전환' : '라이트 테마로 전환');
+    }
+    if (icon) icon.textContent = isLight ? '☼' : '☾';
+    if (state) state.textContent = isLight ? 'Light' : 'Dark';
+  };
+  if (toggle) {
+    sync();
+    toggle.addEventListener('click', () => {
+      const theme = applyTheme(document.documentElement.dataset.theme === 'light' ? 'midnight' : 'light');
       try {
         localStorage.setItem(THEME_STORAGE_KEY, theme.id);
       } catch {
         // Continue the current session when storage is unavailable.
       }
       window.dispatchEvent(new CustomEvent('themechange', { detail: theme }));
+      sync();
     });
   }
 </script>

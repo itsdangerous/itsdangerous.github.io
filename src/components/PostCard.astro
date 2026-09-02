@@ -8,22 +8,21 @@ interface Props {
 
 const { post, index } = Astro.props;
 const { category, description, pubDate, title } = post.data;
-const date = new Intl.DateTimeFormat('ko-KR', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-}).format(pubDate);
+const date = [pubDate.getFullYear(), String(pubDate.getMonth() + 1).padStart(2, '0'), String(pubDate.getDate()).padStart(2, '0')].join('.');
 const categoryHref = `/categories/${encodeURIComponent(category)}/`;
 ---
 
-<li class="post-card">
+<li class:list={['post-card', { 'post-card--plain': index === undefined }]}>
   {index !== undefined && <span class="post-card__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
   <article>
-    <div class="post-card__meta">
-      <a href={categoryHref}>{category}</a>
-      <time datetime={pubDate.toISOString()}>{date}</time>
+    <div class="post-card__copy">
+      <h3><a href={`/posts/${post.slug}/`}>{title}</a></h3>
+      <p>{description}</p>
     </div>
-    <h3><a href={`/posts/${post.slug}/`}>{title}</a></h3>
-    <p>{description}</p>
+    <div class="post-card__meta">
+      <time datetime={pubDate.toISOString()}>{date}</time>
+      <span aria-hidden="true">·</span>
+      <a href={categoryHref}>{category}</a>
+    </div>
   </article>
 </li>

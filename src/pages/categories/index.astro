@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const categories = [...new Set(posts.map((post) => post.data.category))]
+  .map((name) => ({ name, count: posts.filter((post) => post.data.category === name).length }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout title="카테고리 — itsdangerous" description="주제별로 모아 본 기록" canonicalPath="/categories/">
+  <main class="shell archive-page">
+    <header class="archive-page__header">
+      <p class="eyebrow">Categories</p>
+      <h1>카테고리</h1>
+      <p>{categories.length}개의 주제로 기록을 나누었습니다.</p>
+    </header>
+    <ul class="category-list">
+      {categories.map(({ name, count }) => (
+        <li>
+          <a href={`/categories/${encodeURIComponent(name)}/`}>
+            <span>{name}</span><small>{String(count).padStart(2, '0')}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</BaseLayout>

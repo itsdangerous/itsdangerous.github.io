@@ -1,0 +1,73 @@
+<div class="search-modal" data-search-modal hidden data-pagefind-ignore>
+  <button class="search-modal__backdrop" type="button" data-search-close aria-label="검색 닫기"></button>
+  <section class="search-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="search-modal-title">
+    <header class="search-modal__header">
+      <div>
+        <p class="eyebrow">Search</p>
+        <h2 id="search-modal-title">무엇을 찾고 있나요?</h2>
+      </div>
+      <button class="search-modal__close" type="button" data-search-close aria-label="검색 닫기">Esc</button>
+    </header>
+    <div class="search-modal__body">
+      <div id="pagefind-search-modal" class="pagefind-ui"></div>
+      <p class="search-modal__hint">Enter로 결과를 열고, Esc로 닫습니다.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const modal = document.querySelector<HTMLElement>('[data-search-modal]');
+  const openButtons = document.querySelectorAll<HTMLElement>('[data-search-open]');
+  const closeButtons = document.querySelectorAll<HTMLElement>('[data-search-close]');
+  let initialized = false;
+
+  const openSearch = async () => {
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.classList.add('search-modal-open');
+    if (!initialized) {
+      initialized = true;
+      try {
+        const { PagefindUI } = await import('@pagefind/default-ui');
+        new PagefindUI({ element: '#pagefind-search-modal', showImages: false });
+      } catch {
+        const container = document.querySelector('#pagefind-search-modal');
+        if (container) container.textContent = '검색 색인은 배포 후 사용할 수 있습니다.';
+      }
+    }
+    window.setTimeout(() => {
+      document.querySelector<HTMLInputElement>('.search-modal .pagefind-ui__search-input')?.focus();
+    }, 80);
+  };
+
+  const closeSearch = () => {
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove('search-modal-open');
+  };
+
+  openButtons.forEach((button) => button.addEventListener('click', openSearch));
+  closeButtons.forEach((button) => button.addEventListener('click', closeSearch));
+  window.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      openSearch();
+    }
+    if (event.key === 'Escape' && modal && !modal.hidden) closeSearch();
+  });
+</script>
+
+<style is:global>
+  body.search-modal-open { overflow: hidden; }
+  .search-modal[hidden] { display: none; }
+  .search-modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: start center; padding: clamp(5rem, 16vh, 9rem) 1rem 2rem; }
+  .search-modal__backdrop { position: absolute; inset: 0; border: 0; background: color-mix(in srgb, var(--color-background) 78%, transparent); backdrop-filter: blur(12px); cursor: default; }
+  .search-modal__dialog { position: relative; width: min(680px, 100%); overflow: hidden; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface); box-shadow: 0 24px 80px rgb(0 0 0 / 35%); }
+  .search-modal__header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.35rem 1rem; border-bottom: 1px solid var(--color-border); }
+  .search-modal__header .eyebrow { margin: 0 0 .3rem; }
+  .search-modal__header h2 { margin: 0; font-size: 1.15rem; }
+  .search-modal__close { border: 1px solid var(--color-border); border-radius: 7px; padding: .25rem .5rem; color: var(--color-text-muted); background: var(--color-surface-raised); font: inherit; font-size: .75rem; cursor: pointer; }
+  .search-modal__body { padding: 1rem 1.35rem 1.2rem; }
+  .search-modal__hint { margin: .75rem 0 0; color: var(--color-text-muted); font-size: .78rem; }
+  .search-modal .pagefind-ui { color: var(--color-text); }
+</style>

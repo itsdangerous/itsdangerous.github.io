@@ -14,19 +14,16 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
   canonicalPath="/"
 >
   <main class="shell">
-    <section class="intro" aria-labelledby="site-title">
-      <p class="eyebrow">itsdangerous.github.io</p>
-      <h1 id="site-title">기록하고,<br /><span>더 나은 답을 찾습니다.</span></h1>
-      <p class="intro__description">기술을 탐구하며 배운 것과 만든 것을 차분하게 기록합니다.</p>
+    <section class="intro intro--home" aria-labelledby="site-title">
+      <h1 id="site-title">기록하고, 더 나은 답을 찾습니다.</h1>
     </section>
 
     <section class="recent" aria-labelledby="recent-title">
       <div class="section-heading">
-        <p class="eyebrow">Archive</p>
-        <h2 id="recent-title">최근 글</h2>
+        <h2 id="recent-title">Recent Posts</h2>
       </div>
       <ol class="post-list">
-        {posts.map((post, index) => <PostCard post={post} index={index} />)}
+        {posts.map((post) => <PostCard post={post} />)}
       </ol>
       <a class="archive-link" href="/posts/">모든 글 보기 <span aria-hidden="true">→</span></a>
     </section>

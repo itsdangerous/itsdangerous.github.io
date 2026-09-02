@@ -7,12 +7,34 @@
   border-top: 1px solid var(--color-border);
 }
 
+.category-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.category-list li { border-bottom: 1px solid var(--color-border); }
+.category-list a { display: flex; justify-content: space-between; padding: var(--space-4) 0; color: var(--color-text); text-decoration: none; }
+.category-list a:hover { color: var(--color-accent); }
+.category-list small { color: var(--color-text-muted); font-family: var(--font-mono); }
+
 .post-card {
   display: grid;
   grid-template-columns: 3.5rem minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-6) 0;
   border-bottom: 1px solid var(--color-border);
+}
+
+.post-card--plain { grid-template-columns: minmax(0, 1fr); }
+
+.post-card article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(var(--space-6), 4vw, var(--space-12));
+  align-items: center;
+  min-width: 0;
 }
 
 .post-card__number {
@@ -32,6 +54,13 @@
   font-size: 0.8125rem;
 }
 
+.post-card__meta {
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  white-space: nowrap;
+  font-family: var(--font-display);
+}
+
 .post-card__meta a,
 .article-meta a {
   color: var(--color-accent);
@@ -39,8 +68,9 @@
 }
 
 .post-card h3 {
-  margin: var(--space-2) 0;
-  font-size: 1.25rem;
+  margin: 0 0 0.35rem;
+  font-size: 1.22rem;
+  font-weight: 500;
   line-height: 1.4;
 }
 
@@ -59,6 +89,17 @@
 .simple-page > p:last-child {
   margin: 0;
   color: var(--color-text-muted);
+}
+
+.post-card p {
+  display: -webkit-box;
+  max-width: 45rem;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
 .archive-link {
@@ -354,9 +395,14 @@
     padding: var(--space-4) 0;
   }
 
+  .post-card--plain { grid-template-columns: minmax(0, 1fr); }
+
   .post-card h3 {
     font-size: 1.0625rem;
   }
+
+  .post-card article { display: block; }
+  .post-card__meta { justify-content: flex-start; margin-top: var(--space-2); }
 
   .article__header {
     margin-bottom: var(--space-8);

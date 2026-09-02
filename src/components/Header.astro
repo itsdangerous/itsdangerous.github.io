@@ -1,15 +1,27 @@
 ---
 import ThemePicker from './ThemePicker.astro';
 import SearchButton from './SearchButton.astro';
+
+const pathname = Astro.url.pathname;
+const isCurrent = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-header__brand" href="/">itsdangerous</a>
+    <div class="site-header__profile">
+      <img src="/profile1.png" alt="itsdangerous 프로필" width="128" height="128" />
+    </div>
+    <a class="site-header__brand" href="/" aria-label="itsdangerous 홈">itsdangerous</a>
     <nav aria-label="주요 메뉴">
-      <a href="/">Archive</a>
-      <SearchButton />
-      <ThemePicker />
+      <a href="/" class:list={{ 'is-current': isCurrent('/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg><span>Home</span></a>
+      <a href="/posts/" class:list={{ 'is-current': isCurrent('/posts/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 0 5 22z"/><path d="M5 4.5v15A2.5 2.5 0 0 1 7.5 17H19"/></svg><span>Posts</span></a>
+      <a href="/categories/" class:list={{ 'is-current': isCurrent('/categories/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4z"/><path d="M4 9h16"/></svg><span>Categories</span></a>
+      <a href="/guestbook/" class:list={{ 'is-current': isCurrent('/guestbook/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M7 10h10M7 14h6"/></svg><span>Guestbook</span></a>
     </nav>
+    <p class="site-header__stats">29 posts · 7 categories</p>
+    <div class="site-header__controls">
+      <ThemePicker />
+      <SearchButton />
+    </div>
   </div>
 </header>

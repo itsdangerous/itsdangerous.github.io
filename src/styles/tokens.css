@@ -1,6 +1,7 @@
 :root {
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-display: "Noto Serif KR", "Nanum Myeongjo", "Song Myung", Georgia, serif;
   --font-size-body: 1rem;
   --line-height-body: 1.75;
   --space-1: 0.25rem;
