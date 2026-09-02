@@ -1,0 +1,83 @@
+---
+title: "[Python | 가상환경] 파이썬 가상환경 venv 사용"
+description: "프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에서는 내장 라이브러리가 아닌 third party 라이브러리인 virtualenv를 사용했습니다.근데 파이썬이 3버전이 나온 이후, venv라는 내장 라이브러리가 제공되어서, 별도 패키지 없이 사용 가능하기 때문에 저는 venv를 사용하도록 하겠습니다. 먼저 python 버전 체크!! 네 저는 3.10.5 버전을 사용하고있습니다. 가상환경을 만들기 위해선, 그 디렉토리로 이동한 다음 다음 명령을 입력해주면 됩니다.python -m venv '가상환경 이름' 저는.."
+pubDate: 2022-11-22T04:51:44.000Z
+category: "Study"
+tags: ["Django","python","venv","virtualenv","가상환경"]
+slug: "python-venv"
+sourceUrl: "https://0418.tistory.com/8"
+draft: false
+---
+프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다.
+
+python의 가상환경으로는 크게 2가지가 있습니다.
+
+1. virtualenv
+
+2. venv
+
+먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에서는 내장 라이브러리가 아닌 third party 라이브러리인 virtualenv를 사용했습니다.
+
+근데 파이썬이 3버전이 나온 이후, venv라는 내장 라이브러리가 제공되어서, 별도 패키지 없이 사용 가능하기 때문에
+
+저는 venv를 사용하도록 하겠습니다.
+
+먼저 python 버전 체크!!
+
+![](/images/posts/python-venv/6c280ec91b3733c491dd.png)
+
+네 저는 3.10.5 버전을 사용하고있습니다.
+
+가상환경을 만들기 위해선, 그 디렉토리로 이동한 다음 다음 명령을 입력해주면 됩니다.
+
+```
+python -m venv '가상환경 이름'
+```
+
+저는 .venv라는 이름으로 생성하였습니다.
+
+![](/images/posts/python-venv/7e373fcfb809be22a852.png)
+
+아무것도 안보이죠?
+
+리눅스 명령어 중 현재 디렉토리의 숨김파일을 포함한 모든 파일의 목록을 나타내는 명령어로 확인해보니 뜨네요 ㅎㅎ
+
+```
+ls -a
+```
+
+![](/images/posts/python-venv/c89cb2de15ba5edbcf03.png)
+
+이제 보입니다.이유는... 파일명 앞에 '.'을 붙이면 이 파일 및 폴더를 숨겨라란 뜻이며,
+
+대부분의 파이썬 프로젝트들이 따르는 관행이기도 합니다.
+
+가상환경을 만들었으니 가상환경에 들어가봅니다.
+
+가상환경 디렉토리 -\> bin 에 들어가보면 activate라는 가상환경을 활성화시키는 파일이 들어있고, 활성화시키는 법은 다음과 같습니다.
+
+```
+source .venv/bin/activate 
+또는
+. .venv/bin/activate
+```
+
+![](/images/posts/python-venv/cf1e36cdd43fb0efa284.png)
+
+비활성화 하기 위해선 아래와 같이 쳐줍니다
+
+```
+deactivate
+```
+
+가상환경을 삭제하는 법은 다음과 같습니다.
+
+```
+rm -rf '가상환경 이름'
+```
+
+저는 이 .venv폴더의 내용은 github에 올리지 않을 것이기 때문에, gitignore에 추가해줄 것이기 때문에 다음과 같은 커맨드도 입력해주었습니다.
+
+```
+echo '.venv' >> .gitignore
+```

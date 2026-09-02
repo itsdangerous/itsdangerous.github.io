@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GiscusComments from '../components/GiscusComments.astro';
+
+const configuredDiscussionNumber = Number(import.meta.env.PUBLIC_GUESTBOOK_DISCUSSION_NUMBER?.trim());
+const discussionNumber = Number.isSafeInteger(configuredDiscussionNumber) && configuredDiscussionNumber > 0
+  ? configuredDiscussionNumber
+  : undefined;
+---
+
+<BaseLayout title="방명록 — itsdangerous" description="itsdangerous 방명록" canonicalPath="/guestbook/">
+  <main class="shell simple-page">
+    <p class="eyebrow">Guestbook</p>
+    <h1>방명록</h1>
+    <p>방명록은 GitHub Discussions로 운영합니다.</p>
+    <GiscusComments mapping="specific" discussionNumber={discussionNumber} />
+  </main>
+</BaseLayout>

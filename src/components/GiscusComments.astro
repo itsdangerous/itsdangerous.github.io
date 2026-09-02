@@ -1,0 +1,101 @@
+---
+interface Props {
+  mapping: 'pathname' | 'specific';
+  discussionNumber?: number;
+}
+
+const { mapping, discussionNumber } = Astro.props;
+const repo = import.meta.env.PUBLIC_GISCUS_REPO?.trim();
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID?.trim();
+const category = import.meta.env.PUBLIC_GISCUS_CATEGORY?.trim();
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID?.trim();
+const hasDiscussionNumber = Number.isSafeInteger(discussionNumber) && discussionNumber > 0;
+const giscusMapping = mapping === 'specific' ? 'number' : mapping;
+const isConfigured = Boolean(repo && repoId && category && categoryId);
+const canLoadGiscus = isConfigured && (mapping === 'pathname' || hasDiscussionNumber);
+const discussionHref = repo
+  ? `https://github.com/${repo}/discussions${mapping === 'specific' && hasDiscussionNumber ? `/${discussionNumber}` : ''}`
+  : undefined;
+---
+
+<div class="giscus-comments">
+  {canLoadGiscus ? (
+    <div
+      class="giscus giscus-comments__embed"
+      data-giscus-root
+      data-repo={repo}
+      data-repo-id={repoId}
+      data-category={category}
+      data-category-id={categoryId}
+      data-mapping={giscusMapping}
+      data-discussion-number={mapping === 'specific' ? discussionNumber : undefined}
+    ></div>
+  ) : (
+    <p class="giscus-comments__unavailable">댓글 설정이 아직 완료되지 않았습니다.</p>
+  )}
+
+  {discussionHref && (
+    <p class="giscus-comments__fallback" data-giscus-fallback hidden={canLoadGiscus}>
+      댓글이 표시되지 않으면 <a href={discussionHref} target="_blank" rel="noreferrer">GitHub Discussions에서 보기</a>
+    </p>
+  )}
+</div>
+
+{canLoadGiscus && (
+  <script>
+    import { getTheme } from '../themes/registry';
+
+    const root = document.querySelector<HTMLElement>('[data-giscus-root]');
+
+    if (root) {
+      const fallback = root.parentElement?.querySelector<HTMLElement>('[data-giscus-fallback]');
+      const showFallback = () => fallback?.removeAttribute('hidden');
+      const currentGiscusTheme = () => getTheme(document.documentElement.dataset.theme).giscusTheme;
+      const giscus = document.createElement('script');
+
+      giscus.src = 'https://giscus.app/client.js';
+      giscus.async = true;
+      giscus.crossOrigin = 'anonymous';
+      giscus.setAttribute('data-repo', root.dataset.repo ?? '');
+      giscus.setAttribute('data-repo-id', root.dataset.repoId ?? '');
+      giscus.setAttribute('data-category', root.dataset.category ?? '');
+      giscus.setAttribute('data-category-id', root.dataset.categoryId ?? '');
+      giscus.setAttribute('data-mapping', root.dataset.mapping ?? 'pathname');
+      giscus.setAttribute('data-strict', '0');
+      giscus.setAttribute('data-reactions-enabled', '1');
+      giscus.setAttribute('data-emit-metadata', '0');
+      giscus.setAttribute('data-input-position', 'top');
+      giscus.setAttribute('data-theme', currentGiscusTheme());
+      giscus.setAttribute('data-lang', 'ko');
+      giscus.setAttribute('data-loading', 'lazy');
+
+      if (root.dataset.mapping === 'number') {
+        giscus.setAttribute('data-term', root.dataset.discussionNumber ?? '');
+      }
+
+      giscus.addEventListener('error', showFallback);
+      root.append(giscus);
+
+      const updateGiscusTheme = () => {
+        const frame = root.querySelector('iframe.giscus-frame');
+        if (frame instanceof HTMLIFrameElement) {
+          frame.contentWindow?.postMessage(
+            { giscus: { setConfig: { theme: currentGiscusTheme() } } },
+            'https://giscus.app',
+          );
+        }
+      };
+
+      const embedObserver = new MutationObserver(updateGiscusTheme);
+      embedObserver.observe(root, { childList: true });
+      new MutationObserver(updateGiscusTheme).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme'],
+      });
+      window.addEventListener('themechange', updateGiscusTheme);
+      window.setTimeout(() => {
+        if (!root.querySelector('iframe.giscus-frame')) showFallback();
+      }, 10_000);
+    }
+  </script>
+)}

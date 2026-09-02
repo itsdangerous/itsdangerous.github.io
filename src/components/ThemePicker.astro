@@ -1,0 +1,29 @@
+---
+import { themes } from '../themes/registry';
+---
+
+<label class="theme-picker">
+  <span class="sr-only">테마 선택</span>
+  <select aria-label="테마 선택">
+    {themes.map((theme) => <option value={theme.id}>{theme.label}</option>)}
+  </select>
+</label>
+
+<script>
+  import { applyTheme, THEME_STORAGE_KEY } from '../scripts/theme-init';
+  import { getTheme } from '../themes/registry';
+
+  const picker = document.querySelector<HTMLSelectElement>('.theme-picker select');
+  if (picker) {
+    picker.value = getTheme(document.documentElement.dataset.theme).id;
+    picker.addEventListener('change', () => {
+      const theme = applyTheme(picker.value);
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, theme.id);
+      } catch {
+        // Continue the current session when storage is unavailable.
+      }
+      window.dispatchEvent(new CustomEvent('themechange', { detail: theme }));
+    });
+  }
+</script>

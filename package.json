@@ -1,0 +1,28 @@
+{
+  "name": "itsdangerous.github.io",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "test": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "@pagefind/default-ui": "^1.5.2",
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.0",
+    "pagefind": "^1.5.2",
+    "parse5": "^7.3.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "yaml": "^2.9.0"
+  }
+}

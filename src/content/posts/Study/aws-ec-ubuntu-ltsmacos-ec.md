@@ -1,0 +1,47 @@
+---
+title: "[AWS EC2] Ubuntu 18.04 LTSMacOS EC2 인스턴스에 접속 방법"
+description: "인스턴스를 생성하려면 키 페어를 생성해야합니다. '.pem' 형식의 인증파일 형식으로 저장되는데 이 키 페어는 인스턴스에 접속할 때마다 22번 포트에 접근해서 인증을 해줄때 사용되므로, 잃어버리시면 안되기 때문에 잘 저장해줍니다. MacOS 기준으로 /Users/사용자명/.ssh 경로에 저장해주고, terminal에서 ec2 접속명령은 다음과 같습니다. $ ssh -i {YOUR_KEY_PAIR_FILE.pem} {USER_NAME}@{AWS_PUBLIC_DNS_}제 키페어의 경로는 /Users/Gyu/.ssh/gyu_cloud.pem이 되겠죠. Ubuntu의 경우 user_name의 default값은 ubuntu이며AWS_PUBLIC_DNS_에는 해당 인스턴스의 IPv4 주소를 입력해주면 됩니다. 인.."
+pubDate: 2022-11-22T03:38:42.000Z
+category: "Study"
+tags: []
+slug: "aws-ec-ubuntu-ltsmacos-ec"
+sourceUrl: "https://0418.tistory.com/7"
+draft: false
+---
+인스턴스를 생성하려면 키 페어를 생성해야합니다.
+
+'.pem' 형식의 인증파일 형식으로 저장되는데
+
+이 키 페어는 인스턴스에 접속할 때마다 22번 포트에 접근해서 인증을 해줄때 사용되므로,
+
+잃어버리시면 안되기 때문에 잘 저장해줍니다.
+
+![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/34f1cd090f62610c595d.png)
+
+키 이름 : 키페어 이름MacOS 기준으로 /Users/사용자명/.ssh 경로에 저장해주고,
+
+terminal에서 ec2 접속명령은 다음과 같습니다.
+
+```
+$ ssh -i {YOUR_KEY_PAIR_FILE.pem} {USER_NAME}@{AWS_PUBLIC_DNS_}
+```
+
+제 키페어의 경로는 /Users/Gyu/.ssh/gyu\_cloud.pem이 되겠죠.
+
+Ubuntu의 경우 user\_name의 default값은 ubuntu이며
+
+AWS\_PUBLIC\_DNS\_에는 해당 인스턴스의 IPv4 주소를 입력해주면 됩니다.
+
+인스턴스 DNS 확인 방법은 인스턴스 세부정보를 들어가면 확인할 수 있습니다.
+
+![](/images/posts/aws-ec-ubuntu-ltsmacos-ec/84bbedb31450d8b106c5.png)
+
+처음 접속하면 여러 문구가 뜨는데, yes를 입력해주면 접속 가능합니다.
+
+여기서 만약 접속이 안된다면, 인스턴스의 보안규칙에 ssh 인증 port가 바운딩 되지 않아서일 확률이 큽니다.
+
+ssh는 well-known 포트인 22번포트를 사용하는데, 인스턴스를 처음 만들고 보안 그룹도 처음 만드신 경우라면 인바운딩 규칙을 설정에 들어가셔서, 22번 포트를 열어주시기 바랍니다.
+
+ubuntu 관리자 이름을 바꾸면 접속 이름도 바꿀 수 있으니 참고하시고,
+
+이상 ec2 인스턴스 접속 방법이었습니다.

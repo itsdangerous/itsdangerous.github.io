@@ -1,0 +1,205 @@
+---
+title: "macOS 듀얼 모니터 사이를 키보드로 이동하기: yabai + skhd"
+description: "이 글은 1편: macOS에서 가상 데스크탑 전환 애니메이션 제거하기에서 yabai와 skhd를 설치하고 손쉬운 사용 권한을 준 상태를 전제로 한다. 모니터 포커스 자체는 scripting addition 없이도 사용할 수 있지만, 1편의 구성을 적용하면 Space가 바뀌는 상황에서도 더 안정적으로 동작한다.듀얼 모니터를 쓰면서 가장 자주 반복하는 동작은 “왼쪽 화면의 작업으로 가기”, “오른쪽 화면의 작업으로 돌아오기”다. 이 글에서는 yabai와 skhd로 물리적 화면 배치에 따라 모니터 포커스를 이동하는 단축키를 만든다.yabai는 타일링뿐 아니라 창·Space·디스플레이 포커스를 제어할 수 있는 macOS 창 관리 도구다. skhd는 키보드 단축키를 감지해 yabai 명령을 실행하는 전역 단축키 .."
+pubDate: 2026-08-24T11:28:47.000Z
+category: "MacOS"
+tags: []
+slug: "macos-yabai-skhd"
+sourceUrl: "https://0418.tistory.com/35"
+draft: false
+---
+이 글은 [1편: macOS에서 가상 데스크탑 전환 애니메이션 제거하기](https://0418.tistory.com/34)에서 yabai와 skhd를 설치하고 손쉬운 사용 권한을 준 상태를 전제로 한다. 모니터 포커스 자체는 scripting addition 없이도 사용할 수 있지만, 1편의 구성을 적용하면 Space가 바뀌는 상황에서도 더 안정적으로 동작한다.
+
+---
+
+듀얼 모니터를 쓰면서 가장 자주 반복하는 동작은 “왼쪽 화면의 작업으로 가기”, “오른쪽 화면의 작업으로 돌아오기”다. 이 글에서는 yabai와 skhd로 물리적 화면 배치에 따라 모니터 포커스를 이동하는 단축키를 만든다.
+
+yabai는 타일링뿐 아니라 창·Space·디스플레이 포커스를 제어할 수 있는 macOS 창 관리 도구다. skhd는 키보드 단축키를 감지해 yabai 명령을 실행하는 전역 단축키 데몬이다. 이 글에서는 1편의 Space 전환 설정에 이어, `skhd → yabai` 조합으로 yabai의 **디스플레이 포커스 기능**을 사용한다.
+
+완료 후 사용할 단축키 예시:
+
+| 단축키 | 동작 |
+| --- | --- |
+| `Ctrl + ←` | 현재 화면을 기준으로 왼쪽 모니터의 활성 창으로 이동 |
+| `Ctrl + →` | 현재 화면을 기준으로 오른쪽 모니터의 활성 창으로 이동 |
+
+## 1. 모니터 번호 대신 방향을 쓰는 이유
+
+모니터가 두 개일 때도 macOS의 display index는 항상 “왼쪽이 1, 오른쪽이 2”를 보장하지 않는다. 도킹, 재연결, 내장 디스플레이 사용 여부에 따라 번호가 달라질 수 있다.
+
+yabai에는 현재 디스플레이를 기준으로 방향을 지정하는 선택자가 있다.
+
+```
+yabai -m display --focus west
+yabai -m display --focus east
+```
+
+따라서 사용자는 “왼쪽/오른쪽”만 기억하면 되고, 현재 모니터 배열이 바뀌어도 실제 화면 위치 기준으로 동작한다.
+
+## 2. 먼저 터미널에서 동작 확인
+
+왼쪽 모니터로 이동:
+
+```
+yabai -m display --focus west
+```
+
+오른쪽 모니터로 이동:
+
+```
+yabai -m display --focus east
+```
+
+현재 yabai가 인식한 모니터 배치는 다음으로 확인할 수 있다.
+
+```
+yabai -m query --displays | jq -r \
+  '.[] | "index=\(.index), x=\(.frame.x), y=\(.frame.y), focused=\(."has-focus")"'
+```
+
+`x` 값이 작을수록 왼쪽 화면이다. 예를 들어 왼쪽 모니터가 `x=-1920`, 메인 모니터가 `x=0`, 오른쪽 모니터가 `x=1920`이라면 `west/east`가 기대한 대로 동작한다.
+
+## 3. 1편의 Space 단축키를 `Ctrl + \[` / `\]`로 옮기기
+
+1편에서는 `Ctrl + ←/→`를 Space 전환에 사용했다. 이 글에서는 그 두 키를 모니터 이동에 쓰므로, 먼저 기존 Space 단축키를 `Ctrl + \[`와 `Ctrl + \]`로 옮긴다.
+
+```
+vim ~/.config/skhd/skhdrc
+```
+
+기존의 아래 두 줄은 제거한다.
+
+```
+ctrl - left  : ~/.config/yabai/focus-space-on-current-display.sh prev
+ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
+```
+
+대신 다음 두 줄을 넣는다.
+
+```
+# 현재 모니터의 이전/다음 Space
+ctrl - 0x21 : ~/.config/yabai/focus-space-on-current-display.sh prev
+ctrl - 0x1E : ~/.config/yabai/focus-space-on-current-display.sh next
+```
+
+`0x21`은 `\[` 키, `0x1E`는 `\]` 키의 macOS 키코드다. `0x1e`처럼 소문자 `e`를 쓰면 skhd 파서가 실패할 수 있으므로 대문자로 쓴다.
+
+## 4. skhd에 모니터 이동 단축키 등록
+
+설정 파일을 연다.
+
+```
+vim ~/.config/skhd/skhdrc
+```
+
+아래를 추가한다.
+
+```
+# 물리적으로 왼쪽/오른쪽 모니터의 활성 창으로 포커스 이동
+ctrl - left  : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus west
+ctrl - right : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus east
+```
+
+Apple Silicon Homebrew는 일반적으로 `/opt/homebrew/bin`을 사용하고, Intel Homebrew는 보통 `/usr/local/bin`을 사용한다. 위처럼 두 경로를 모두 `PATH`에 넣으면 어느 쪽에서도 동작한다.
+
+설정을 반영한다.
+
+```
+skhd --restart-service
+```
+
+이제 `Ctrl + ←/→`를 누르면 대상 모니터의 현재 활성 Space 및 macOS가 기억한 포커스 창으로 이동한다.
+
+## 5. “보이는 창”과 “마지막 포커스 창”은 다를 수 있다
+
+`display --focus`는 화면 위에 보이는 창을 이미지처럼 분석해 가장 앞 창을 찾는 기능이 아니다. macOS가 해당 모니터에서 마지막으로 활성화했다고 기억하는 창을 포커스한다.
+
+이 차이는 Outlook·캘린더·메신저 알림처럼 잠깐 포커스를 가져가는 창에서 드러난다. VS Code가 화면에 보이더라도 Outlook 알림이 마지막 포커스였다면 Outlook으로 이동할 수 있다.
+
+이 정도 동작이면 위의 두 줄로 충분하다. “알림이 포커스를 빼앗아도 마지막 작업 창으로 돌아가기”가 필요하다면 다음 확장 구성을 고려한다.
+
+## 6. 선택 사항: 모니터별 마지막 작업 창 기억하기
+
+기본 `display --focus` 대신 다음 정책을 쓸 수 있다.
+
+1. `window\_focused` yabai event가 발생할 때 display UUID별 마지막 창 ID를 기록한다.
+2. Outlook의 `미리 알림`/`Reminder`처럼 알림성 창은 기록하지 않는다.
+3. 모니터 이동 시 저장 창이 여전히 존재하고, 대상 모니터의 현재 보이는 Space에 있으면 그 창을 직접 포커스한다.
+4. 창이 닫혔거나 다른 Space에 있으면 기본 `display --focus`로 폴백한다.
+
+이 방식은 모니터당 창 ID 하나만 저장하면 되며, 별도 상주 프로세스가 필요 없다. 대신 “어떤 앱/제목을 알림으로 간주해 제외할지”라는 개인 정책을 정해야 한다.
+
+핵심은 `window\_focused` signal이다.
+
+```
+yabai -m signal --add label="remember_last_work_window" \
+  event=window_focused action="$HOME/.config/yabai/remember-last-work-window.sh"
+```
+
+처음에는 최소 구성으로 시작하고, 실제로 알림 창 때문에 작업 흐름이 끊길 때만 이 확장을 추가하는 것을 권장한다.
+
+## 7. 선택 사항: 이동한 모니터를 잠깐 표시하기
+
+모니터가 세 개 이상이면 포커스가 어디로 이동했는지 순간적으로 헷갈릴 수 있다. 이 경우 대상 모니터 가장자리에 0.3초 정도의 투명한 컬러 테두리를 띄우는 작은 AppKit/Swift overlay를 붙일 수 있다.
+
+구현 원칙은 간단하다.
+
+- 대상 display UUID를 yabai에서 얻는다.
+- `NSScreen`의 display UUID와 매칭한다.
+- 마우스 이벤트를 받지 않는 투명 패널을 대상 화면에 올린다.
+- 테두리를 그린 뒤 0.3초 후 프로세스를 종료한다.
+
+이 기능은 사용자 경험 개선용이며, 모니터 포커스 자체에 필수는 아니다.
+
+## 8. 문제 해결
+
+### 단축키가 먹지 않는다
+
+먼저 skhd가 실행 중인지 확인한다.
+
+```
+pgrep -fl '(^|/)skhd( |$)'
+tail -50 /tmp/skhd_$USER.err.log
+```
+
+`skhd: must be run with accessibility access! abort..`가 나오면 시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용에서 현재 skhd 실행 파일을 다시 허용한 뒤 재시작한다.
+
+```
+skhd --restart-service
+```
+
+### 한쪽 방향만 동작하지 않는다
+
+현재 모니터보다 더 왼쪽 또는 더 오른쪽에 모니터가 없으면 `west/east`는 이동하지 않는다. 먼저 아래로 실제 배열을 확인한다.
+
+```
+yabai -m query --displays
+```
+
+### 모니터 번호가 예상과 다르다
+
+이 글의 구성은 `display --focus 1` 같은 번호 대신 `west/east`를 사용하므로, 일반적으로 번호를 수정할 필요가 없다. 물리적 배열만 시스템 설정 → 디스플레이에서 원하는 위치로 맞추면 된다.
+
+## 9. 재부팅 후에도 동작하게 하기
+
+yabai와 skhd 서비스가 등록돼 있다면 로그인 뒤 자동 시작한다.
+
+```
+yabai --start-service
+skhd --start-service
+
+launchctl list | rg 'yabai|skhd'
+```
+
+설정 파일은 다음 경로에 둔다.
+
+```
+~/.config/skhd/skhdrc
+~/.config/yabai/yabairc
+```
+
+## 참고 자료
+
+- [yabai 공식 명령어 문서: display focus](https://github.com/asmvik/yabai/wiki/Commands)
+- [yabai 공식 설정 문서](https://github.com/asmvik/yabai/wiki/Configuration)
+- [skhd 공식 README](https://github.com/asmvik/skhd)

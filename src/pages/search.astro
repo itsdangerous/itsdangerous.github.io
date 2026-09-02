@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pagefindUnavailableInDev = import.meta.env.DEV;
+---
+
+<BaseLayout
+  title="검색 — itsdangerous"
+  description="기술 블로그의 글을 검색합니다."
+  canonicalPath="/search/"
+>
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  </Fragment>
+
+  <main class="shell search-page" data-pagefind-ignore>
+    <section class="intro" aria-labelledby="search-title">
+      <p class="eyebrow">Search</p>
+      <h1 id="search-title">글 검색</h1>
+      <p class="intro__description">기록된 글에서 원하는 내용을 찾아보세요.</p>
+    </section>
+    <section class="search-page__form" aria-label="글 검색">
+      <div id="pagefind-search" class="pagefind-ui"></div>
+      {pagefindUnavailableInDev && (
+        <p class="search-page__notice" role="status">
+          개발 서버에서는 Pagefind 색인이 생성되지 않습니다. <code>npm run build</code> 후 미리보기에서 검색할 수 있습니다.
+        </p>
+      )}
+    </section>
+  </main>
+
+  {!pagefindUnavailableInDev && (
+    <Fragment slot="body-end">
+      <script>
+        import { PagefindUI } from '@pagefind/default-ui';
+
+        new PagefindUI({ element: '#pagefind-search' });
+      </script>
+    </Fragment>
+  )}
+</BaseLayout>
+
+<style is:global>
+  [data-theme='midnight'] .search-page,
+  [data-theme='light'] .search-page {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-surface-raised);
+  }
+
+  [data-theme='light'] {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-surface-raised);
+  }
+
+  .search-page__form {
+    max-width: var(--content-width);
+    padding-top: var(--space-12);
+  }
+
+  .pagefind-ui {
+    color: var(--color-text);
+  }
+
+  .search-page__notice {
+    margin-top: var(--space-4);
+    color: var(--color-text-muted);
+  }
+</style>

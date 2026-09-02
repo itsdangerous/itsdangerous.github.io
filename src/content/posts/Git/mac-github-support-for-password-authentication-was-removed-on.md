@@ -1,0 +1,64 @@
+---
+title: "[MAC / github] Support for password authentication was removed on ... 오류 해결"
+description: "갑자기 git으로 push하는데 Authentication failed 머시기 오류가 떠서 구글링 해본 결과 여러 해답을 얻을 수 있었다. 근데 분명 나는 토큰을 새로 만든지 얼마 안지났는데 왜 저런 오류가 떴을까... 생각해보다가 키체인 접근에 가보니, 내 토큰이 두개가 있었다. 하나는 예~전에 만들었다가 폐기됐었던 거였다. 근데 21년 8월꺼를 우클릭해서 삭제해려해도 안됐다. 그래서 그냥 새로 토큰을 만들고, access key를 복사하고 위 키체인의 정보를 수정해주었다. 글고 저장하고, 다시 터미널로 가서 git config --global user.name username git config --global user.email useremail 을 입력. username : 본인 github의 닉.."
+pubDate: 2022-12-01T12:39:48.000Z
+category: "Git"
+tags: []
+slug: "mac-github-support-for-password-authentication-was-removed-on"
+sourceUrl: "https://0418.tistory.com/15"
+draft: false
+---
+갑자기 git으로 push하는데 Authentication failed 머시기 오류가 떠서 구글링 해본 결과
+
+여러 해답을 얻을 수 있었다.
+
+근데 분명 나는 토큰을 새로 만든지 얼마 안지났는데 왜 저런 오류가 떴을까... 생각해보다가
+
+키체인 접근에 가보니, 내 토큰이 두개가 있었다.
+
+하나는 예~전에 만들었다가 폐기됐었던 거였다.
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/ca9e0132d87364ba23aa.png)
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/149e032f14c48d5e6a04.png)
+
+근데 21년 8월꺼를 우클릭해서 삭제해려해도 안됐다.
+
+그래서 그냥 새로 토큰을 만들고, access key를 복사하고
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/182e505c156cda0f8674.png)
+
+위 키체인의 정보를 수정해주었다.
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/98f7d6eec42f9269a39b.png)
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/89285a9ce8a8e6b93a28.png)
+
+글고 저장하고,
+
+다시 터미널로 가서
+
+```
+git config --global user.name username
+git config --global user.email useremail
+```
+
+을 입력.
+
+username : 본인 github의 닉네임
+
+usermail : 본인 github의 계정 메일
+
+그 다음
+
+```
+git push -u origin main
+```
+
+을 해주니
+
+![](/images/posts/mac-github-support-for-password-authentication-was-removed-on/57f1f3593e616d1442c6.png)
+
+정상적으로 됐다...
+
+결국 1년 전에 만들어 놓았던 키체인이 삭제가 안되서 그랫던 것 같단 생각이다

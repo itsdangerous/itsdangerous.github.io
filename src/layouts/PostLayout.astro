@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import ArticleMeta from '../components/ArticleMeta.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import GiscusComments from '../components/GiscusComments.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  headings: Heading[];
+}
+
+const { post, headings } = Astro.props;
+const wordCount = post.body.split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 220));
+const sourceLink = post.data.sourceUrl;
+---
+
+<BaseLayout
+  title={`${post.data.title} — itsdangerous`}
+  description={post.data.description}
+  canonicalPath={`/posts/${post.slug}/`}
+>
+  <main class="article-shell">
+    <article class="article" data-pagefind-body>
+      <header class="article__header">
+        <ArticleMeta post={post} readingTime={readingTime} />
+        <h1>{post.data.title}</h1>
+        <p class="article__description">{post.data.description}</p>
+      </header>
+
+      <div class="article__mobile-toc">
+        <TableOfContents headings={headings} />
+      </div>
+
+      <div class="article__content">
+        <slot />
+      </div>
+
+      <footer class="article__footer">
+        {sourceLink && (
+          <a href={sourceLink} target="_blank" rel="noreferrer">티스토리 원문 보기 <span aria-hidden="true">↗</span></a>
+        )}
+      </footer>
+
+      <section class="article__comments" aria-label="댓글">
+        <GiscusComments mapping="pathname" />
+        <slot name="comments" />
+      </section>
+    </article>
+    <aside class="article__desktop-toc">
+      <TableOfContents headings={headings} />
+    </aside>
+  </main>
+</BaseLayout>

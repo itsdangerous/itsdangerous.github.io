@@ -1,0 +1,72 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const navigableHeadings = headings.filter(({ depth, slug, text }) => (
+  depth >= 2 && depth <= 3 && slug.trim().length > 0 && text.trim().length > 0
+));
+---
+
+{navigableHeadings.length > 0 && (
+  <>
+    <nav class="table-of-contents__desktop" aria-label="이 글의 목차">
+      <p>On this page</p>
+      <ol>
+        {navigableHeadings.map((heading) => (
+          <li class:list={[`table-of-contents__item--depth-${heading.depth}`]}>
+            <a data-toc-link href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <details class="table-of-contents__mobile">
+      <summary>이 글의 목차</summary>
+      <ol>
+        {navigableHeadings.map((heading) => (
+          <li class:list={[`table-of-contents__item--depth-${heading.depth}`]}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
+    <script>
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+      const byId = new Map(links.map((link) => [link.hash.slice(1), link]));
+      const headings = [...byId.keys()]
+        .map((id) => document.getElementById(id))
+        .filter((heading): heading is HTMLElement => Boolean(heading));
+
+      const setActiveLink = (id: string) => {
+        links.forEach((link) => {
+          if (link.hash === `#${id}`) {
+            link.setAttribute('aria-current', 'location');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      };
+
+      if (headings.length > 0) {
+        setActiveLink(headings[0].id);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const current = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+            if (current) setActiveLink(current.target.id);
+          },
+          { rootMargin: '-20% 0px -70% 0px' },
+        );
+        headings.forEach((heading) => observer.observe(heading));
+      }
+    </script>
+  </>
+)}
