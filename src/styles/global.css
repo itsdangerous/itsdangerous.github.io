@@ -307,13 +307,24 @@ a {
   stroke-width: 1.8;
 }
 
-.theme-toggle[aria-checked='true'] .theme-toggle__thumb-icon--sun,
-.theme-toggle[aria-checked='false'] .theme-toggle__thumb-icon--moon {
+.theme-toggle__thumb-icon--moon {
   display: block;
 }
 
-.theme-toggle[aria-checked='false'] .theme-toggle__thumb {
+[data-theme='light'] .theme-toggle__thumb-icon--moon {
+  display: none;
+}
+
+[data-theme='light'] .theme-toggle__thumb-icon--sun {
+  display: block;
+}
+
+.theme-toggle__thumb {
   transform: translate(1.72rem, -50%);
+}
+
+[data-theme='light'] .theme-toggle__thumb {
+  transform: translateY(-50%);
 }
 
 .theme-toggle:focus-visible .theme-toggle__track {
