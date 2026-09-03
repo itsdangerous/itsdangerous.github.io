@@ -28,7 +28,7 @@
   z-index: -2;
   pointer-events: none;
   content: '';
-  background: url('/splash-leather-texture.webp') center / cover;
+  background: url('/splash-leather-cover-texture.webp') center / cover;
 }
 
 .book-splash::after {
@@ -46,8 +46,7 @@
 .book-splash__face {
   box-sizing: border-box;
   position: relative;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  display: block;
   min-height: 100svh;
   padding: clamp(2rem, 5vw, 3.9rem) clamp(2rem, 6vw, 5rem) clamp(1.75rem, 4vw, 2.5rem);
 }
@@ -63,41 +62,35 @@
     inset 0 0 0 0.38rem rgb(199 167 90 / 20%);
 }
 
-.book-splash__header,
 .book-splash__center,
 .book-splash__chapters {
   position: relative;
   z-index: 1;
 }
 
-.book-splash__header {
-  display: flex;
-  justify-content: space-between;
-  color: var(--cover-gold-bright);
-  font-family: 'SFMono-Regular', Consolas, monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
-}
-
 .book-splash__center {
+  position: absolute;
+  inset: 0;
   display: grid;
+  min-height: 0;
   place-items: center;
   align-content: center;
-  padding: 2rem 0;
   text-align: center;
 }
 
 .book-splash__crest {
-  position: relative;
+  position: absolute;
+  top: clamp(2rem, 5vw, 3.9rem);
+  left: 50%;
+  z-index: 1;
   display: grid;
   place-items: center;
-  width: clamp(8.5rem, 15vw, 11rem);
-  height: clamp(8.5rem, 15vw, 11rem);
-  margin-bottom: 1.7rem;
+  width: clamp(5rem, 9vw, 7rem);
+  height: clamp(5rem, 9vw, 7rem);
   border: none;
   background: transparent;
   box-shadow: none;
+  transform: translateX(-50%);
 }
 
 .book-splash__crest svg {
@@ -157,18 +150,16 @@
   justify-content: center;
   align-items: center;
   gap: clamp(0.8rem, 2.5vw, 1.8rem);
-  padding-top: 1.2rem;
-  border-top: 1px solid rgb(199 167 90 / 25%);
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 .book-splash__chapters a {
   position: relative;
   display: inline-flex;
   align-items: baseline;
-  gap: 0.45rem;
   color: var(--cover-muted);
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 0.95rem;
+  font-size: clamp(1.05rem, 2.1vw, 1.35rem);
   letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
@@ -186,14 +177,6 @@
   background: var(--cover-gold);
   opacity: 0.68;
   transform: translate(-50%, -50%);
-}
-
-.book-splash__chapter-index {
-  color: var(--cover-gold);
-  font-family: 'SFMono-Regular', Consolas, monospace;
-  font-size: 0.55rem;
-  letter-spacing: 0.05em;
-  opacity: 0.82;
 }
 
 .book-splash__chapters a:hover,
@@ -220,16 +203,14 @@
     inset: 1rem;
   }
 
-  .book-splash__header {
-    font-size: 0.52rem;
-  }
-
-  .book-splash__header span:last-child {
-    display: none;
+  .book-splash__crest {
+    top: 2rem;
+    width: clamp(4rem, 18vw, 5rem);
+    height: clamp(4rem, 18vw, 5rem);
   }
 
   .book-splash__center {
-    padding: 1.3rem 0;
+    min-height: 0;
   }
 
   .book-splash__subtitle {
@@ -238,14 +219,15 @@
 
   .book-splash__chapters {
     display: grid;
+    width: min(100%, 21rem);
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.7rem 1.4rem;
-    padding-inline: 1rem;
+    margin-inline: auto;
   }
 
   .book-splash__chapters a {
     justify-content: center;
-    font-size: 0.82rem;
+    font-size: 1rem;
     letter-spacing: 0.05em;
   }
 

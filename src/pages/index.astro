@@ -8,23 +8,19 @@ import BookCrest from '../domains/main/components/BookCrest.astro';
   <main class="book-splash">
     <section class="book-splash__face" aria-labelledby="splash-title">
       <div class="book-splash__filigree" aria-hidden="true"></div>
-      <header class="book-splash__header">
-        <span>Personal Archive</span>
-        <span>Vol. I · MMXXVI</span>
-      </header>
+      <div class="book-splash__crest" aria-hidden="true">
+        <img
+          src="/images/splash-crest-embroidered.webp"
+          alt=""
+          class="book-splash__crest-img"
+          width="512"
+          height="512"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
 
       <div class="book-splash__center">
-        <div class="book-splash__crest" aria-hidden="true">
-          <img
-            src="/images/splash-crest-embroidered.webp"
-            alt=""
-            class="book-splash__crest-img"
-            width="512"
-            height="512"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
         <h1 class="book-splash__title" id="splash-title">
           <img
             src="/images/splash-title-embroidered.webp"
@@ -37,14 +33,13 @@ import BookCrest from '../domains/main/components/BookCrest.astro';
           />
         </h1>
         <!-- <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p> -->
+        <nav class="book-splash__chapters" aria-label="사이트 공간">
+          <a href="/blog/">Journal</a>
+          <a href="/works/">Works</a>
+          <a href="/playroom/">Playroom</a>
+          <a href="/about/">About</a>
+        </nav>
       </div>
-
-      <nav class="book-splash__chapters" aria-label="사이트 공간">
-        <a href="/blog/"><span class="book-splash__chapter-index">I</span><span>Journal</span></a>
-        <a href="/works/"><span class="book-splash__chapter-index">II</span><span>Works</span></a>
-        <a href="/playroom/"><span class="book-splash__chapter-index">III</span><span>Playroom</span></a>
-        <a href="/about/"><span class="book-splash__chapter-index">IV</span><span>About</span></a>
-      </nav>
     </section>
   </main>
 </SplashLayout>

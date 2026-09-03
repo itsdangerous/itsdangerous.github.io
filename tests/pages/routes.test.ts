@@ -23,9 +23,12 @@ describe('blog routes', () => {
 
   it('gives independent spaces their own layout without the blog sidebar', () => {
     const layout = readFileSync('src/domains/main/layouts/MainSpaceLayout.astro', 'utf8');
+    const styles = readFileSync('src/domains/main/styles/main-space.css', 'utf8');
 
     expect(layout).not.toContain('<Header');
     expect(layout).not.toContain('SiteLayout');
+    expect(layout).toContain('splash-leather-cover-texture.webp');
+    expect(styles).toContain("url('/splash-leather-cover-texture.webp')");
 
     for (const path of [
       'src/domains/main/routes/works.astro',
@@ -42,17 +45,17 @@ describe('blog routes', () => {
   it('keeps splash chapter labels aligned with their independent routes', () => {
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
-    expect(rootPage).toContain('book-splash__chapter-index');
-    expect(rootPage).toContain('I');
-    expect(rootPage).toContain('II');
-    expect(rootPage).toContain('III');
-    expect(rootPage).toContain('IV');
+    expect(rootPage).not.toContain('book-splash__chapter-index');
     expect(rootPage).toContain('<a href="/works/">');
     expect(rootPage).toContain('<a href="/playroom/">');
     expect(rootPage).toContain('<a href="/about/">');
-    expect(rootPage).toContain('<span>Works</span>');
-    expect(rootPage).toContain('<span>Playroom</span>');
-    expect(rootPage).toContain('<span>About</span>');
+    expect(rootPage).toContain('<a href="/works/">Works</a>');
+    expect(rootPage).toContain('<a href="/playroom/">Playroom</a>');
+    expect(rootPage).toContain('<a href="/about/">About</a>');
+    expect(rootPage).not.toContain('Personal Archive');
+    expect(rootPage).not.toContain('Vol. I');
+    expect(rootPage.indexOf('class="book-splash__crest"')).toBeLessThan(rootPage.indexOf('class="book-splash__center"'));
+    expect(rootPage.indexOf('class="book-splash__title"')).toBeLessThan(rootPage.indexOf('class="book-splash__chapters"'));
   });
 
   it('keeps the blog sidebar rooted in the blog domain', () => {
@@ -89,7 +92,9 @@ describe('blog routes', () => {
     const splash = readFileSync('src/domains/main/styles/splash.css', 'utf8');
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
-    expect(splash).toContain("url('/splash-leather-texture.webp')");
+    expect(existsSync('public/splash-leather-cover-texture.webp')).toBe(true);
+    expect(splash).toContain("url('/splash-leather-cover-texture.webp')");
+    expect(splash).not.toContain("url('/splash-leather-texture.webp')");
     expect(rootPage).toContain('book-splash');
     expect(rootPage).not.toContain('Open the volume');
   });
@@ -97,16 +102,18 @@ describe('blog routes', () => {
   it('preloads the splash texture before the first paint', () => {
     const layout = readFileSync('src/domains/main/layouts/SplashLayout.astro', 'utf8');
 
-    expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-texture.webp"');
+    expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-cover-texture.webp"');
   });
 
-  it('uses the approved leather texture for the shared sidebar', () => {
+  it('crops the splash cover texture for the shared sidebar', () => {
     const styles = readFileSync('src/shared/styles/global.css', 'utf8');
     const layout = readFileSync('src/shared/layouts/SiteLayout.astro', 'utf8');
 
-    expect(styles).toContain("url('/splash-leather-texture.webp')");
+    expect(styles).toContain("url('/splash-leather-cover-texture.webp')");
+    expect(styles).toContain('background-position: center, 24% center;');
+    expect(styles).not.toContain("url('/splash-leather-texture.webp')");
     expect(styles).not.toContain("url('/sidebar-texture.webp')");
-    expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-texture.webp"');
+    expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-cover-texture.webp"');
   });
 
   it('keeps the splash crest in one source component', () => {

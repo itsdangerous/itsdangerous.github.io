@@ -131,8 +131,8 @@ a {
   opacity: 0.88;
   background-image:
     linear-gradient(90deg, color-mix(in srgb, var(--color-background) 36%, transparent), transparent 22%),
-    url('/splash-leather-texture.webp');
-  background-position: center, center;
+    url('/splash-leather-cover-texture.webp');
+  background-position: center, 24% center;
   background-size: auto, cover;
   background-blend-mode: multiply, soft-light;
 }
@@ -141,7 +141,7 @@ a {
   opacity: 0.72;
   background-image:
     linear-gradient(90deg, color-mix(in srgb, var(--color-border) 24%, transparent), transparent 24%),
-    url('/splash-leather-texture.webp');
+    url('/splash-leather-cover-texture.webp');
   background-blend-mode: multiply, normal;
   filter: grayscale(1) invert(1) sepia(0.1) brightness(1.08) contrast(0.62);
 }

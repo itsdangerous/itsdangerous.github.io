@@ -29,7 +29,7 @@
 
 .main-space-page::before {
   z-index: -2;
-  background: url('/splash-leather-texture.webp') center / cover;
+  background: url('/splash-leather-cover-texture.webp') center / cover;
 }
 
 .main-space-page::after {

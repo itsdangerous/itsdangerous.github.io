@@ -19,7 +19,7 @@ test('root splash links to each independent site space', async ({ page }) => {
   await expect(page.locator('.book-splash__chapters a[href="/works/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/playroom/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapter-index')).toHaveText(/I|II|III|IV/);
+  await expect(page.locator('.book-splash__chapters')).toContainText('Journal');
 });
 
 test('independent spaces show a standalone coming soon page', async ({ page }) => {
