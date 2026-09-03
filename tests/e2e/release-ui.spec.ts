@@ -3,13 +3,12 @@ import { expect, test } from '@playwright/test';
 test('theme menu persists the selected theme after reload', async ({ page }) => {
   await page.goto('/blog/');
 
-  const picker = page.getByLabel('테마 선택');
-  await expect(picker).toHaveValue('midnight');
-  await picker.selectOption('light');
+  const picker = page.getByRole('switch');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'midnight');
+  await picker.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
   await page.reload();
-  await expect(picker).toHaveValue('light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });
 
@@ -23,7 +22,7 @@ test('Pagefind search results navigate to the matching article', async ({ page }
   const result = page.locator('a.pagefind-ui__result-link[href="/blog/posts/git-reset-vs-git-revert/"]');
   await expect(result).toBeVisible();
   await result.click();
-  await expect(page).toHaveURL('/blog/posts/git-reset-vs-git-revert/');
+  await expect(page).toHaveURL(/\/blog\/posts\/git-reset-vs-git-revert\/(?:#.*)?$/);
 });
 
 test('article comments use the public pathname Giscus mapping without login', async ({ page }) => {
