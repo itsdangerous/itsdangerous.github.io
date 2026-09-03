@@ -20,7 +20,7 @@ describe('blog routes', () => {
   });
 
   it('keeps the root route as a tactile sealed-volume splash', () => {
-    const splash = readFileSync('src/styles/splash.css', 'utf8');
+    const splash = readFileSync('src/domains/main/styles/splash.css', 'utf8');
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
     expect(splash).toContain("url('/splash-leather-texture.webp')");

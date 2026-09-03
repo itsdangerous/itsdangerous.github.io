@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { themes, getTheme } from '../../src/themes/registry';
-import { applyTheme, earlyThemeScript, THEME_STORAGE_KEY } from '../../src/scripts/theme-init';
+import { themes, getTheme } from '../../src/shared/themes/registry';
+import { applyTheme, earlyThemeScript, THEME_STORAGE_KEY } from '../../src/shared/scripts/theme-init';
 
 describe('themes', () => {
   it('contains midnight as the first default theme and resolves IDs', () => {

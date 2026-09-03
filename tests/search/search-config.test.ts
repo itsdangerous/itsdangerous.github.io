@@ -8,8 +8,8 @@ describe('Pagefind', () => {
   });
 
   it('places Pagefind assets in the shared layout slots and explains dev-server availability', () => {
-    const source = readFileSync('src/pages/search.astro', 'utf8');
-    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    const source = readFileSync('src/pages/blog/search.astro', 'utf8');
+    const layout = readFileSync('src/shared/layouts/SiteLayout.astro', 'utf8');
 
     expect(source).toContain('<Fragment slot="head">');
     expect(source).toContain('<Fragment slot="body-end">');

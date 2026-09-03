@@ -31,4 +31,22 @@ describe('domain boundaries', () => {
       expect(existsSync(path)).toBe(true);
     }
   });
+
+  it('keeps main and shared implementation in their owning domains', () => {
+    for (const path of [
+      'src/domains/main/layouts/SplashLayout.astro',
+      'src/domains/main/routes/about.astro',
+      'src/domains/main/styles/splash.css',
+      'src/shared/layouts/SiteLayout.astro',
+      'src/shared/components/Header.astro',
+      'src/shared/themes/registry.ts',
+    ]) {
+      expect(existsSync(path)).toBe(true);
+    }
+  });
+
+  it('keeps main-owned source independent from blog implementation', () => {
+    const source = readFileSync('src/pages/index.astro', 'utf8');
+    expect(source).not.toMatch(/PostCard|PostLayout|CodeShellEnhancer|GiscusComments|Pagefind|astro:content/);
+  });
 });

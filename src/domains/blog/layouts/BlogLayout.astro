@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteLayout from '../../../shared/layouts/SiteLayout.astro';
 import '../styles/blog.css';
 
 interface Props {
@@ -11,8 +11,8 @@ interface Props {
 const { title, description, canonicalPath } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+<SiteLayout title={title} description={description} canonicalPath={canonicalPath}>
   <slot name="head" slot="head" />
   <slot />
   <slot name="body-end" slot="body-end" />
-</BaseLayout>
+</SiteLayout>
