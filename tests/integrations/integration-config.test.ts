@@ -7,8 +7,8 @@ describe('external integrations', () => {
 
     expect(source).toContain('PUBLIC_GISCUS_REPO');
     expect(source).toContain('PUBLIC_GISCUS_REPO_ID');
-    expect(source).toContain('PUBLIC_GISCUS_CATEGORY');
-    expect(source).toContain('PUBLIC_GISCUS_CATEGORY_ID');
+    expect(readFileSync('src/layouts/PostLayout.astro', 'utf8')).toContain('PUBLIC_GISCUS_COMMENTS_CATEGORY');
+    expect(readFileSync('src/layouts/PostLayout.astro', 'utf8')).toContain('PUBLIC_GISCUS_COMMENTS_CATEGORY_ID');
     expect(source).not.toContain('G-123');
   });
 
@@ -16,9 +16,12 @@ describe('external integrations', () => {
     const postLayout = readFileSync('src/layouts/PostLayout.astro', 'utf8');
     const guestbook = readFileSync('src/pages/guestbook.astro', 'utf8');
 
-    expect(postLayout).toContain('<GiscusComments mapping="pathname" />');
+    expect(postLayout).toContain('mapping="pathname"');
+    expect(postLayout).toContain('category={commentsCategory}');
     expect(guestbook).toContain('PUBLIC_GUESTBOOK_DISCUSSION_NUMBER');
-    expect(guestbook).toContain('<GiscusComments mapping="specific" discussionNumber={discussionNumber} />');
+    expect(guestbook).toContain('mapping="specific"');
+    expect(guestbook).toContain('discussionNumber={discussionNumber}');
+    expect(guestbook).toContain('category={guestbookCategory}');
     expect(readFileSync('src/components/GiscusComments.astro', 'utf8')).toContain(
       "const giscusMapping = mapping === 'specific' ? 'number' : mapping;",
     );

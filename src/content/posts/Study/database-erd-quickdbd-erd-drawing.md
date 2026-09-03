@@ -73,10 +73,6 @@ quickDBD라는 것인데. 기존 것들과의 차이점은 텍스트 지향 erd 
 
 **아참! 지금은 트위터 태그나 블로그에 리뷰 게시글 올리면 2개월 또는 1년 짜리 pro 버전을 사용할 수 있다! 그 방법은 다른 블로그를 참조하였다.**
 
-**[참조사이트](https://computer-science-student.tistory.com/380)**
-
-[QuickDBD Review(리뷰)  QuickDBD Pro 버전을 무료로 받기 위해 이 게시물을 작성하고자 한다. QuickDBD의 후기를 쓰기 전에 우선적으로 ERD에 대한 개념에 대해 알아보고 사용 후기를 작성하려고 한다. ERD(Entity Relationship Diagram  computer-science-student.tistory.com](https://computer-science-student.tistory.com/380)
-
 > ****\[트위터를 통해 Pro 버전 free 권한 받기\]** **1. 트위터에 @Quick\_DBD에 대해 트윗한다.** **2. 2개월 Pro 버전 free 권한을 얻는다.** \[블로그를 통해 Pro 버전 free 권한 받기\]**
 > **1. QuickDBD를 사용한 후 블로그에 review를 작성한다. 이때, 블로그 리뷰는 500 단어 이상을 작성해야 한다. 주의해야 할 것이 500자가 아닌 500 단어라는 점을 숙지해야한다!**
 > **2. promo@quickdbd.com 으로 free 권한을 원한다는 이메일을 보낸다. 이때, review 작성한 블로그 링크도 함께 첨부해서 보내야 한다. 이메일 양식은 아래를 참고하면 좋을 것 같다.**

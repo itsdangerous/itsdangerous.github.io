@@ -7,10 +7,6 @@ tags: ["Django","mysql","python"]
 slug: "python-django"
 draft: false
 ---
-[2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용](https://0418.tistory.com/8)
-
-[\[Python | 가상환경\] 파이썬 가상환경 venv 사용  프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에  0418.tistory.com](https://0418.tistory.com/8)
-
 여기서 가상환경 세팅에 대해 다뤘으니
 
 가상환경 위에서 Django 프로젝트를 생성해보도록 하겠습니다.

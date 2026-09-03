@@ -14,17 +14,9 @@ git commit -m '1st cmt'
 git push -u origin main​
 ```
 
-[2022.11.22 - \[Study & 교육\] - \[Python | Django\] 파이썬 장고 설치 (가상환경)](https://0418.tistory.com/9)
-
-[\[Python | Django\] 파이썬 장고 설치 (가상환경)  2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용 \[Python | 가상환경\] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환  0418.tistory.com](https://0418.tistory.com/9)
-
 장고 프로젝트를 생성해주었으니 이제 이걸 github에 올려야겠죠?
 
 올리는 방법은 아래 포스팅에 적어두었습니다.
-
-[2022.11.02 - \[github\] - \[github\] terminal로 레포지토리 생성 및 push 방법](https://0418.tistory.com/4)
-
-[\[github\] terminal로 레포지토리 생성 및 push 방법  맨날 프로젝트 만들고 깃헙에 올리는 코드를 까먹는데 기억할겸 정리 terminal에서 새로운 repository를 만드는 command line code입니다. echo "# server\_dev" \>\> README.md git init git add README.md git commit -m "first commi  0418.tistory.com](https://0418.tistory.com/4)
 
 server\_dev 디렉토리로 가서 다음과 같이 입력하여 깃헙 저장소에 올립니다
 
@@ -142,9 +134,7 @@ sudo apt install python-pip # pip 설치
 pip install --upgrade pip # upgrade pip version
 ```
 
-이 블로그대로 PATH 경로 설정
-
-[\[linux\] zsh에서 pip를 이용한 설치 시 경로(PATH) 에러 해결  문제 - WSL2 기반 Ubuntu에서 제공하는 bash가 아닌, zsh를 이용하고 있습니다. - Ubuntu가 연결되어 있는 VS Code에서 pip3를 이용하여 특정 패키지를 설치하니 다음과 같은 에러가 발생했습니다. WARNING: The  mong9data.tistory.com](https://mong9data.tistory.com/114)
+다음과 같이 PATH 경로 설정
 
 venv 설치
 
@@ -178,9 +168,7 @@ pip freeze > requirements.txt
 
 만약 mysqlclient 설치에 오류가 난다면
 
-아래 링크에 정리된 대로 입력하면 해결 됩니다.
-
-[\[Python | Django\] makemigrations 오류 해결  python manage.py makemigrations를 하니... mysqlclient가 없어서 안된다나 머라나 그래서 pip install mysqlclient를 했더니 설치가 안된다드라 구글링 결과 다음을 하니 해결이 되었다.... sudo apt-get update sudo apt-get  0418.tistory.com](https://0418.tistory.com/13)
+아래 명령어를 입력하면 해결됩니다.
 
 이걸 git에 등록하고 push한 뒤, 서버에서 pull로 받아봅니다.
 

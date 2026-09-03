@@ -174,7 +174,7 @@ test('clicking a heading keeps that heading active until the next heading passes
     .not.toHaveAttribute('aria-current', 'location');
 });
 
-test('article metadata keeps the Tistory date in Asia/Seoul', async ({ page }) => {
+test('article metadata keeps the publication date in Asia/Seoul', async ({ page }) => {
   await page.goto('/posts/macos-xcrun-error-invalied-active-developer-path/');
 
   await expect(page.locator('.article-meta time')).toHaveText('2022년 12월 2일');

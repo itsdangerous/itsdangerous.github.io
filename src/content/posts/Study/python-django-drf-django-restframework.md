@@ -15,11 +15,7 @@ Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하
 
 먼저, 나는 Django에 MySQL을 연동한 상태이며, 가상환경을 사용중이다.
 
-이전 포스트에 자세한 내용이 있다.
-
-[\[Python | 가상환경\] 파이썬 가상환경 venv 사용  프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환경으로는 크게 2가지가 있습니다. 1. virtualenv 2. venv 먼저, virtualenv는 python3에서도 사용할 수 있지만... python2 버전에  0418.tistory.com](https://0418.tistory.com/entry/Python-가상환경-파이썬-가상환경-venv-사용)
-
-[\[Python | Django\] 파이썬 장고 설치 (가상환경)  2022.11.22 - \[Study & 교육\] - \[Python | 가상환경\] 파이썬 가상환경 venv 사용 \[Python | 가상환경\] 파이썬 가상환경 venv 사용 프로젝트 마다 버전을 관리하기 위해서 가상환경을 사용합니다. python의 가상환  0418.tistory.com](https://0418.tistory.com/entry/Python-Django-파이썬-장고-설치-가상환경)
+앞에서 다룬 가상환경 위에서 진행한다.
 
 Django로 app 생성
 
@@ -224,7 +220,7 @@ https://localhost:8000/url1/url2로 된단 말이다.
 
 나는 Postman을 통해서 데이터를 날려보았다.
 
-[Postman의 자세한 사용법](https://testmanager.tistory.com/342)
+Postman으로 요청을 보내 보았다.
 
 잘 들어간 것을 볼 수 있다.
 

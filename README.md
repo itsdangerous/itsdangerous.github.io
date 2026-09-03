@@ -1,6 +1,6 @@
 # itsdangerous.github.io
 
-Astro 정적 기술 블로그입니다. 기본 테마는 어두운 `midnight`이며, 게시물은 `src/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
+개인의 글과 시선을 담는 서구적 에디토리얼 매거진입니다. Astro로 정적 사이트를 생성하며, 게시물은 `src/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
 
 ## 로컬 개발
 
@@ -23,16 +23,6 @@ npm run build
 npm test -- --run
 npm run test:e2e
 ```
-
-## Tistory 마이그레이션 확인
-
-원본 URL, Markdown 경로, 로컬 이미지 경로의 현황은 `src/content/tistory-migration-manifest.json`에 관리합니다. 현재 원본 URL 30건 중 검증된 공개 글 29건을 게시하며, 보호 글 `https://0418.tistory.com/14`는 소유자가 공개로 전환할 때까지 제외합니다. 이미지 경로와 누락 파일을 확인하려면 아래 보고서를 실행합니다.
-
-```bash
-node scripts/migration-report.mjs
-```
-
-출력의 `missingAssets`, `duplicateSlugs`, `duplicateSourceUrls`, `unmigratedSources`가 의도한 상태인지 검토한 후 게시합니다.
 
 ## Giscus와 GA4 설정
 

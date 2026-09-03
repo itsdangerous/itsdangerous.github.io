@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -28,19 +27,13 @@ afterAll(async () => {
 });
 
 describe('post content', () => {
-  it('loads every migrated entry through Astro with unique slugs', async () => {
-    const manifest = JSON.parse(await readFile(join(process.cwd(), 'src/content/tistory-migration-manifest.json'), 'utf8'));
+  it('loads every post through Astro with unique slugs', async () => {
     const { getCollection } = await container.viteServer.ssrLoadModule('astro:content');
     const posts = await getCollection('posts');
 
-    expect(posts).toHaveLength(manifest.entries.length);
+    expect(posts.length).toBeGreaterThan(0);
     expect(posts.every((post: { data: { pubDate: unknown } }) => post.data.pubDate instanceof Date)).toBe(true);
     expect(new Set(posts.map((post: { slug: string }) => post.slug)).size).toBe(posts.length);
     expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z]+)*$/.test(post.slug))).toBe(true);
-    await Promise.all(manifest.entries.map(async (entry: { category: string; markdownPath: string; slug: string }) => {
-      const frontmatter = await readFile(join(process.cwd(), entry.markdownPath), 'utf8');
-      expect(entry.markdownPath).toBe(`src/content/posts/${entry.category}/${entry.slug}.md`);
-      expect(frontmatter).toContain(`slug: "${entry.slug}"`);
-    }));
   });
 });

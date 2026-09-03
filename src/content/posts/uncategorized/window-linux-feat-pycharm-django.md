@@ -21,8 +21,6 @@ draft: false
 
 는 이전 포스팅에 ec2서버에 python 및 가상환경 설치하는 것을 그대로 적용해줬다.
 
-[\[Python | Django\] 로컬 파이썬 장고 프로젝트를 AWS EC2 서버에 올리기(github)  git add . git remote add origin https://github.com/itsdangerous/server\_dev.git git commit -m '1st cmt' git push -u origin main​ 2022.11.22 - \[Study & 교육\] - \[Python | Django\] 파이썬 장고 설치 (가상환경) \[Python | Django\] 파이썬 장고  0418.tistory.com](https://0418.tistory.com/10)
-
 cmd에서 확인한 python 버전과
 
 ubuntu에서 확인한 python 버전은 달랐다.
