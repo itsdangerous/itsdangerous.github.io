@@ -1,11 +1,5 @@
 ---
 import BlogLayout from '../../domains/blog/layouts/BlogLayout.astro';
-import { getCollection } from 'astro:content';
-import PostCard from '../../domains/blog/components/PostCard.astro';
-
-const posts = (await getCollection('posts', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
 ---
 
 <BlogLayout
@@ -13,19 +7,76 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
   description="기록하고, 더 나은 답을 찾습니다."
   canonicalPath="/blog/"
 >
-  <main class="shell">
+  <main class="shell shell--home">
     <section class="intro intro--home" aria-labelledby="site-title">
-      <h1 id="site-title">기록하고, 더 나은 답을 찾습니다.</h1>
+      <h1 id="site-title">
+        <span class="intro--home__line" aria-hidden="true">읽고, 쓰고, 남겨둔 것들.</span>
+        <span class="intro--home__line intro--home__line--typing" aria-hidden="true"><span class="intro--home__typing" data-home-typing>언젠가 답이 됩니다.</span><span class="intro--home__cursor"></span></span>
+        <span class="sr-only">읽고, 쓰고, 남겨둔 것들. 언젠가 답이 됩니다.</span>
+      </h1>
     </section>
 
-    <section class="recent" aria-labelledby="recent-title">
-      <div class="section-heading">
-        <h2 id="recent-title">Recent Posts</h2>
-      </div>
-      <ol class="post-list">
-        {posts.map((post) => <PostCard post={post} />)}
-      </ol>
-      <a class="archive-link" href="/blog/posts/">모든 글 보기 <span aria-hidden="true">→</span></a>
+    <section class="home-search" aria-labelledby="home-search-title">
+      <p class="home-search__eyebrow">Explore the archive</p>
+      <h2 id="home-search-title">무엇을 함께 찾아볼까요?</h2>
+      <form class="home-search__control" data-home-search-form>
+        <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.75" cy="10.75" r="6.25"></circle><path d="m16 16 4 4"></path></svg>
+        <label class="sr-only" for="home-search-input">블로그 검색</label>
+        <input id="home-search-input" type="search" placeholder="기록에서 답을 찾아보세요" autocomplete="off" data-home-search-input />
+        <kbd><span class="home-search__shortcut-key">⌘</span> K</kbd>
+      </form>
+      <div id="pagefind-search-home" class="pagefind-ui home-search__results" data-home-search-results hidden></div>
     </section>
   </main>
 </BlogLayout>
+
+<script is:inline slot="body-end">
+  (() => {
+    const phrases = [
+      '언젠가 답이 됩니다.',
+      '다시 꺼내볼 만합니다.',
+      '다음 생각으로 이어집니다.',
+      '아직 끝나지 않았습니다.',
+    ];
+
+    const startTyping = () => {
+      const target = document.querySelector('[data-home-typing]');
+      if (!target || target.dataset.typingBound) return;
+      target.dataset.typingBound = 'true';
+
+      let phraseIndex = 0;
+      let characterIndex = Array.from(phrases[phraseIndex]).length;
+
+      const typeNextPhrase = () => {
+        const currentPhrase = Array.from(phrases[phraseIndex]);
+        characterIndex -= 1;
+        target.textContent = currentPhrase.slice(0, characterIndex).join('');
+
+        if (characterIndex > 0) {
+          window.setTimeout(typeNextPhrase, 48);
+          return;
+        }
+
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        const nextPhrase = Array.from(phrases[phraseIndex]);
+        const typeCharacter = () => {
+          characterIndex += 1;
+          target.textContent = nextPhrase.slice(0, characterIndex).join('');
+
+          if (characterIndex < nextPhrase.length) {
+            window.setTimeout(typeCharacter, 82);
+            return;
+          }
+          window.setTimeout(typeNextPhrase, 1800);
+        };
+
+        window.setTimeout(typeCharacter, 420);
+      };
+
+      window.setTimeout(typeNextPhrase, 1800);
+    };
+
+    startTyping();
+    document.addEventListener('astro:page-load', startTyping);
+  })();
+</script>

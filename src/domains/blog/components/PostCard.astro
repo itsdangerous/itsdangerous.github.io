@@ -4,18 +4,16 @@ import { getPostSlug } from '../content/post-slug';
 
 interface Props {
   post: CollectionEntry<'posts'>;
-  index?: number;
 }
 
-const { post, index } = Astro.props;
+const { post } = Astro.props;
 const slug = getPostSlug(post);
 const { category, description, pubDate, title } = post.data;
 const date = [pubDate.getFullYear(), String(pubDate.getMonth() + 1).padStart(2, '0'), String(pubDate.getDate()).padStart(2, '0')].join('.');
 const categoryHref = `/blog/categories/${encodeURIComponent(category)}/`;
 ---
 
-<li class:list={['post-card', { 'post-card--plain': index === undefined }]}>
-  {index !== undefined && <span class="post-card__number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>}
+<li class="post-card">
   <article>
     <div class="post-card__meta">
       <a href={categoryHref}>{category}</a>

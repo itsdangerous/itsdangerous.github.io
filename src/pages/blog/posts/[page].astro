@@ -26,7 +26,6 @@ export async function getStaticPaths() {
 }
 
 const { currentPage, posts, totalPages: pageCount } = Astro.props;
-const startIndex = (currentPage - 1) * pageSize;
 ---
 
 <BlogLayout title={`글 목록 ${currentPage} — itsdangerous`} description="itsdangerous의 모든 기록" canonicalPath={`/blog/posts/${currentPage}/`}>
@@ -37,7 +36,7 @@ const startIndex = (currentPage - 1) * pageSize;
       <p>{currentPage} / {pageCount} 페이지 · 시간순 기록</p>
     </header>
     <ol class="post-list">
-      {posts.map((post, index) => <PostCard post={post} index={startIndex + index} />)}
+      {posts.map((post) => <PostCard post={post} />)}
     </ol>
     <Pagination currentPage={currentPage} totalPages={pageCount} basePath="/blog/posts" />
   </main>

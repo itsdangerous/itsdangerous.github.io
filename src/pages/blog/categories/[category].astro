@@ -27,7 +27,7 @@ const totalPages = Math.ceil(sortedPosts.length / pageSize);
       <p>{sortedPosts.length}개의 기록</p>
     </header>
     <ol class="post-list">
-      {sortedPosts.slice(0, pageSize).map((post, index) => <PostCard post={post} index={index} />)}
+      {sortedPosts.slice(0, pageSize).map((post) => <PostCard post={post} />)}
     </ol>
     <Pagination currentPage={1} totalPages={totalPages} basePath={`/blog/categories/${encodeURIComponent(category)}`} />
   </main>

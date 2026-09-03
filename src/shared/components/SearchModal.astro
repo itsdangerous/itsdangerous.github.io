@@ -19,7 +19,48 @@
   const modal = document.querySelector<HTMLElement>('[data-search-modal]');
   const openButtons = document.querySelectorAll<HTMLElement>('[data-search-open]');
   const closeButtons = document.querySelectorAll<HTMLElement>('[data-search-close]');
+  const homeSearchResults = document.querySelector<HTMLElement>('[data-home-search-results]');
+  const homeSearchInput = document.querySelector<HTMLInputElement>('[data-home-search-input]');
+  const homeSearchForm = document.querySelector<HTMLFormElement>('[data-home-search-form]');
   let initialized = false;
+  let homeInitialized = false;
+  let homePagefind: { triggerSearch: (term: string) => void } | undefined;
+
+  const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+  document.querySelectorAll<HTMLElement>('.home-search__shortcut-key').forEach((key) => {
+    key.textContent = macPlatform ? '⌘' : 'Ctrl';
+  });
+
+  const initializeHomeSearch = async () => {
+    if (!homeSearchResults || homeInitialized) return;
+    homeInitialized = true;
+    try {
+      const { PagefindUI } = await import('@pagefind/default-ui');
+      homePagefind = new PagefindUI({
+        element: '#pagefind-search-home',
+        showImages: false,
+      });
+    } catch {
+      homeSearchResults.textContent = '검색 색인은 배포 후 사용할 수 있습니다.';
+    }
+  };
+
+  const searchFromHome = async () => {
+    const term = homeSearchInput?.value.trim() ?? '';
+    if (!homeSearchResults) return;
+    homeSearchResults.hidden = !term;
+    if (!term) return;
+    await initializeHomeSearch();
+    const latestTerm = homeSearchInput?.value.trim() ?? '';
+    homeSearchResults.hidden = !latestTerm;
+    if (latestTerm) homePagefind?.triggerSearch(latestTerm);
+  };
+
+  homeSearchInput?.addEventListener('input', () => { void searchFromHome(); });
+  homeSearchForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    void searchFromHome();
+  });
 
   const openSearch = async () => {
     if (!modal) return;
@@ -60,14 +101,14 @@
 <style is:global>
   body.search-modal-open { overflow: hidden; }
   .search-modal[hidden] { display: none; }
-  .search-modal { --pagefind-ui-scale: 1; --pagefind-ui-primary: var(--color-accent); --pagefind-ui-text: var(--color-text); --pagefind-ui-background: var(--color-surface); --pagefind-ui-border: var(--color-border); --pagefind-ui-tag: var(--color-surface-raised); position: fixed; inset: 0; z-index: 100; display: grid; place-items: start center; padding: clamp(5rem, 16vh, 9rem) 1rem 2rem; }
+  .search-modal { --pagefind-ui-scale: 1; --pagefind-ui-primary: var(--color-accent); --pagefind-ui-text: var(--color-text); --pagefind-ui-background: var(--color-surface); --pagefind-ui-border: var(--color-border); --pagefind-ui-tag: var(--color-surface-raised); --search-modal-top-padding: clamp(5rem, 16vh, 9rem); position: fixed; inset: 0; z-index: 100; display: grid; place-items: start center; padding: var(--search-modal-top-padding) 1rem 2rem; }
   .search-modal__backdrop { position: absolute; inset: 0; border: 0; background: color-mix(in srgb, var(--color-background) 78%, transparent); backdrop-filter: blur(12px); cursor: default; }
-  .search-modal__dialog { position: relative; width: min(680px, 100%); overflow: hidden; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface); box-shadow: 0 24px 80px rgb(0 0 0 / 35%); }
+  .search-modal__dialog { position: relative; display: flex; width: min(680px, 100%); max-height: calc(100dvh - var(--search-modal-top-padding) - 2rem); min-height: 0; flex-direction: column; overflow: hidden; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface); box-shadow: 0 24px 80px rgb(0 0 0 / 35%); }
   .search-modal__header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.35rem 1rem; border-bottom: 1px solid var(--color-border); }
   .search-modal__header .eyebrow { margin: 0 0 .3rem; }
   .search-modal__header h2 { margin: 0; font-size: 1.15rem; }
   .search-modal__close { border: 1px solid var(--color-border); border-radius: 7px; padding: .25rem .5rem; color: var(--color-text-muted); background: var(--color-surface-raised); font: inherit; font-size: .75rem; cursor: pointer; }
-  .search-modal__body { padding: 1rem 1.35rem 1.2rem; }
+  .search-modal__body { min-height: 0; padding: 1rem 1.35rem 1.2rem; overflow-y: auto; overscroll-behavior: contain; }
   .search-modal__hint { margin: .75rem 0 0; color: var(--color-text-muted); font-size: .78rem; }
   .search-modal .pagefind-ui { color: var(--color-text); }
 </style>

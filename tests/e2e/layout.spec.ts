@@ -129,7 +129,7 @@ test('short pages fill at least the viewport height', async ({ page }) => {
   }
 });
 
-test('feature bundle controls stay compact and left-aligned without styling wrapper classes', async ({ page }) => {
+test('sidebar search matches the primary navigation while feature controls stay compact', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/blog/');
 
@@ -138,34 +138,32 @@ test('feature bundle controls stay compact and left-aligned without styling wrap
   await expect(page.locator('[data-feature-panel]')).toBeVisible();
   await expect(page.locator('[data-feature-toggle]')).toHaveAttribute('aria-expanded', 'true');
   const themeToggle = controls.locator('[data-theme-toggle]');
-  const searchButton = page.locator('.site-header__search [data-search-open]');
-  const [themeBox, searchBox] = await Promise.all([
-    themeToggle.boundingBox(),
-    searchButton.boundingBox(),
-  ]);
+  const searchButton = page.locator('.site-header nav [data-search-open]');
+  const [themeBox, searchBox] = await Promise.all([themeToggle.boundingBox(), searchButton.boundingBox()]);
 
   expect(themeBox).not.toBeNull();
   expect(searchBox).not.toBeNull();
-  expect(searchBox!.x - (themeBox!.x + themeBox!.width)).toBeLessThanOrEqual(12);
+  expect(searchBox!.width).toBeGreaterThan(80);
   await expect(controls).toHaveCSS('display', 'flex');
   await expect(controls).toHaveCSS('justify-content', 'flex-start');
   await expect(themeToggle).not.toHaveAttribute('class');
   await expect(searchButton).not.toHaveAttribute('class');
   await expect(themeToggle.locator('img[data-theme-icon="sun"]')).toHaveAttribute('src', '/images/theme-sun.png');
   await expect(themeToggle.locator('img[data-theme-icon="moon"]')).toHaveAttribute('src', '/images/theme-moon-dark.png');
-  await expect(searchButton.locator('img[data-search-icon="dark"]')).toHaveAttribute('src', '/images/search-eye-dark-embroidered.png');
-  await expect(searchButton.locator('img[data-search-icon="light"]')).toHaveAttribute('src', '/images/search-eye-light-embroidered.png');
   expect(await themeToggle.locator('img[data-theme-icon="moon"]').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
-  expect(await searchButton.locator('img[data-search-icon="dark"]').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeVisible();
   await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeHidden();
-  await expect(searchButton.locator('[data-search-icon="dark"]')).toBeVisible();
-  await expect(searchButton.locator('[data-search-icon="light"]')).toBeHidden();
-  await expect(page.locator('.site-header__search-label')).toHaveText('Search');
-  await expect(searchButton.locator('[data-search-shortcut]')).toBeHidden();
+  await expect(searchButton.locator('span')).toHaveText('Search');
+  await expect(searchButton.locator('svg')).toHaveCount(0);
+  await expect(searchButton).toHaveCSS('font-family', /Cormorant/);
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toHaveCSS('width', '28px');
   await expect(searchButton).toHaveCSS('border-top-width', '0px');
   await expect(searchButton).toHaveCSS('background-image', 'none');
+
+  await searchButton.click();
+  await expect(page.locator('[data-search-modal]')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-search-modal]')).toBeHidden();
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'midnight');
   await themeToggle.click();
@@ -173,9 +171,7 @@ test('feature bundle controls stay compact and left-aligned without styling wrap
   await expect(themeToggle).toHaveAttribute('aria-checked', 'true');
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeHidden();
   await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
-  await expect(searchButton.locator('[data-search-icon="dark"]')).toBeHidden();
-  await expect(searchButton.locator('[data-search-icon="light"]')).toBeVisible();
-  await expect(searchButton.locator('[data-search-shortcut]')).toHaveCSS('color', 'rgb(123, 93, 52)');
+  await expect(searchButton.locator('span')).toBeVisible();
 });
 
 test('article shows a wide mobile TOC below the header', async ({ page }) => {
@@ -284,7 +280,7 @@ test('desktop TOC starts as a rail and expands on hover', async ({ page }) => {
     );
     await expect(tocList).toBeHidden();
 
-    await toc.hover();
+    await toc.locator('.table-of-contents__desktop').hover();
     await expect(tocList).toBeVisible();
     await expect.poll(async () => (await article.boundingBox())!.width).toBe(collapsedWidth);
     await expect.poll(async () => (await toc.boundingBox())!.width).toBeGreaterThan(40);
@@ -303,6 +299,7 @@ test('the 900px breakpoint uses the wide mobile TOC', async ({ page }) => {
     await expect(page.locator('.site-frame')).toHaveCSS('display', 'block');
     expect((await page.locator('.site-header').boundingBox())!.height).toBeLessThan(200);
     await expect(page.locator('.site-header nav')).toHaveCSS('flex-direction', 'row');
+    await expect(page.locator('.site-header nav')).toHaveCSS('justify-content', 'space-between');
     await expect(page.locator('.article__desktop-toc')).toBeHidden();
     await expect(page.locator('.article__mobile-toc .table-of-contents__mobile')).toBeVisible();
     await expect(page.locator('[data-toc-top-toggle]')).toBeHidden();

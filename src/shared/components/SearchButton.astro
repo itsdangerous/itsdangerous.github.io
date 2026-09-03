@@ -1,8 +1,24 @@
-<button type="button" data-search-open aria-label="검색 열기">
-  <img data-search-icon="dark" src="/images/search-eye-dark-embroidered.png" alt="" width="28" height="28" />
-  <img data-search-icon="light" src="/images/search-eye-light-embroidered.png" alt="" width="28" height="28" />
-  <kbd data-search-shortcut>⌘ K</kbd>
-</button>
+---
+interface Props {
+  variant?: 'control' | 'navigation';
+}
+
+const { variant = 'control' } = Astro.props;
+---
+
+{
+  variant === 'navigation' ? (
+    <button class="site-header__nav-search" type="button" data-search-open aria-label="검색 열기">
+      <span>Search</span>
+    </button>
+  ) : (
+    <button type="button" data-search-open aria-label="검색 열기">
+      <img data-search-icon="dark" src="/images/search-eye-dark-embroidered.png" alt="" width="28" height="28" />
+      <img data-search-icon="light" src="/images/search-eye-light-embroidered.png" alt="" width="28" height="28" />
+      <kbd data-search-shortcut>⌘ K</kbd>
+    </button>
+  )
+}
 
 <script>
   const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);

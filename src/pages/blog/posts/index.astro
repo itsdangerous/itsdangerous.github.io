@@ -19,7 +19,7 @@ const totalPages = Math.ceil(allPosts.length / pageSize);
       <p>{posts.length}개의 기록을 시간순으로 모았습니다.</p>
     </header>
     <ol class="post-list">
-      {posts.map((post, index) => <PostCard post={post} index={index} />)}
+      {posts.map((post) => <PostCard post={post} />)}
     </ol>
     <Pagination currentPage={1} totalPages={totalPages} basePath="/blog/posts" />
   </main>

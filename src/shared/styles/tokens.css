@@ -1,7 +1,9 @@
 :root {
-  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-ui: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-prose: "Noto Serif KR", "Nanum Myeongjo", "Song Myung", Georgia, serif;
+  --font-sans: var(--font-ui);
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  --font-display: "Noto Serif KR", "Nanum Myeongjo", "Song Myung", Georgia, serif;
+  --font-display: var(--font-prose);
   --font-western: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
   --font-size-body: 1rem;
   --line-height-body: 1.75;

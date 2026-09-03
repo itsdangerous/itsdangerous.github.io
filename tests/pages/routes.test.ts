@@ -68,10 +68,21 @@ describe('blog routes', () => {
     expect(header).toContain("pathname === '/blog/'");
   });
 
-  it('limits the blog home to five recent posts', () => {
+  it('makes the blog home a search-first landing page', () => {
     const blogHome = readFileSync('src/pages/blog/index.astro', 'utf8');
 
-    expect(blogHome).toContain('.slice(0, 5)');
+    expect(blogHome).toContain('class="home-search"');
+    expect(blogHome).not.toContain('Recent Posts');
+    expect(blogHome).not.toContain('<PostCard');
+    expect(blogHome).toContain('id="pagefind-search-home"');
+    expect(blogHome).toContain('data-home-typing');
+    expect(blogHome).toContain('읽고, 쓰고, 남겨둔 것들.');
+    expect(blogHome).toContain("'언젠가 답이 됩니다.'");
+    expect(blogHome).toContain("'아직 끝나지 않았습니다.'");
+    expect(blogHome).toContain('무엇을 함께 찾아볼까요?');
+    expect(readFileSync('src/shared/styles/global.css', 'utf8')).toContain('white-space: nowrap;');
+    expect(readFileSync('src/shared/styles/global.css', 'utf8')).toContain('color: var(--color-signature-blue);');
+    expect(readFileSync('src/shared/styles/global.css', 'utf8')).toContain('color: var(--color-signature-yellow);');
   });
 
   it('keeps the root route as a tactile sealed-volume splash', () => {
@@ -116,12 +127,78 @@ describe('blog routes', () => {
   it('gives sidebar navigation the same editorial glow as the splash index', () => {
     const styles = readFileSync('src/shared/styles/global.css', 'utf8');
 
-    expect(styles).toContain('.site-header nav a:hover span');
+    expect(styles).toContain('.site-header nav :is(a, .site-header__nav-search):hover span');
     expect(styles).toContain('text-shadow: 0 0 0.5rem');
     expect(styles).toContain('transition: color 160ms ease, text-shadow 160ms ease');
-    expect(styles).toContain('.site-header nav a:hover span');
+    expect(styles).toContain('.site-header nav :is(a, .site-header__nav-search):hover span');
     expect(styles).toContain('transform: translateY(-1px);');
     expect(styles).toContain('align-items: center;');
+  });
+
+  it('scopes the serif typeface to blog prose without changing the UI font', () => {
+    const tokens = readFileSync('src/shared/styles/tokens.css', 'utf8');
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(tokens).toContain('--font-ui:');
+    expect(tokens).toContain('--font-prose:');
+    expect(tokens).toContain('--font-sans: var(--font-ui);');
+    expect(tokens).toContain('--font-display: var(--font-prose);');
+    expect(blogStyles).toContain('font-family: var(--font-prose);');
+  });
+
+  it('layers the manuscript-paper texture into the site background without changing theme colors', () => {
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+    const globalStyles = readFileSync('src/shared/styles/global.css', 'utf8');
+
+    expect(existsSync('public/article-manuscript-paper-texture.webp')).toBe(true);
+    expect(blogStyles).not.toContain('article-manuscript-paper-texture');
+    expect(globalStyles).toContain('html::before');
+    expect(globalStyles).toContain("background: url('/article-manuscript-paper-texture.webp') center / 40rem repeat;");
+    expect(globalStyles).toContain('mix-blend-mode: soft-light;');
+    expect(globalStyles).toContain('filter: brightness(0.6) contrast(3);');
+  });
+
+  it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(blogStyles).toContain('.article-shell > .article__desktop-toc:has(.table-of-contents__desktop:hover),');
+    expect(blogStyles).toContain('width: 15rem;');
+    expect(blogStyles).not.toContain('transition: width 220ms ease;');
+  });
+
+  it('limits the desktop TOC trigger to the rail and keeps it open over the floating panel', () => {
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(blogStyles).toContain('width: calc(var(--toc-column-width) + 0.5rem);');
+    expect(blogStyles).toContain(':has(.table-of-contents__desktop:hover)');
+    expect(blogStyles).toContain('width: 15rem;');
+  });
+
+  it('gives TOC heading links consistent interactive rows', () => {
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(blogStyles).toContain('min-height: 2.6rem;');
+    expect(blogStyles).toContain('.table-of-contents__desktop a:hover,');
+    expect(blogStyles).toContain('background: color-mix(in srgb, var(--color-accent) 12%, transparent);');
+  });
+
+  it('uses clean unnumbered cards in every blog archive', () => {
+    const card = readFileSync('src/domains/blog/components/PostCard.astro', 'utf8');
+
+    expect(card).toContain('<li class="post-card">');
+    expect(card).not.toContain('post-card__number');
+    expect(card).not.toContain('index?: number');
+
+    for (const path of [
+      'src/pages/blog/posts/index.astro',
+      'src/pages/blog/posts/[page].astro',
+      'src/pages/blog/categories/[category].astro',
+      'src/pages/blog/categories/[category]/[page].astro',
+      'src/pages/blog/tags/[tag].astro',
+      'src/pages/blog/tags/[tag]/[page].astro',
+    ]) {
+      expect(readFileSync(path, 'utf8')).not.toContain('index={');
+    }
   });
 
   it('uses the guarded loading transition across every page layout', () => {

@@ -37,7 +37,7 @@ const basePath = `/blog/categories/${encodeURIComponent(category)}`;
       <p>{currentPage} / {totalPages} 페이지 · {posts.length}개의 기록</p>
     </header>
     <ol class="post-list">
-      {posts.slice(startIndex, startIndex + pageSize).map((post, index) => <PostCard post={post} index={startIndex + index} />)}
+      {posts.slice(startIndex, startIndex + pageSize).map((post) => <PostCard post={post} />)}
     </ol>
     <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} />
   </main>
