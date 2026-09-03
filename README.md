@@ -1,6 +1,19 @@
 # itsdangerous.github.io
 
-개인의 글과 시선을 한 권의 책처럼 탐험하는 개인 사이트입니다. Astro로 정적 사이트를 생성하며, 게시물은 `src/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
+개인의 글과 시선을 한 권의 책처럼 탐험하는 개인 사이트입니다. Astro로 정적 사이트를 생성하며, 게시물은 `src/domains/blog/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
+
+## 도메인 구조
+
+사이트는 블로그를 최상위로 두지 않고, 서로 독립적인 공간으로 구성합니다.
+
+| 도메인 | 진입 경로 | 역할 |
+| --- | --- | --- |
+| `main` | `/`, `/about/` | 책 표지형 스플래시와 사이트 소개 |
+| `blog` | `/blog/` | 글, 카테고리, 태그, 검색, 댓글 |
+| `portfolio` | `/portfolio/` | 작업과 프로젝트 |
+| `games` | `/games/` | 게임과 인터랙티브한 실험 |
+
+도메인별 구현은 `src/domains/` 아래에 두며, 도메인 중립적인 문서·테마·UI만 `src/shared/`에 둡니다. Astro의 파일 기반 라우팅을 위해 `src/pages/`에는 각 도메인을 연결하는 얇은 라우트 어댑터만 둡니다.
 
 ## 디자인 헤리티지
 

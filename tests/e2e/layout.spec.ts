@@ -11,12 +11,22 @@ test('sealed-volume splash keeps its chapter navigation inside the mobile viewpo
   ))).toBe(true);
 });
 
+test('root splash links to each independent site space', async ({ page }) => {
+  await page.goto('/');
+
+  await expect(page.locator('.book-splash__chapters a')).toHaveCount(4);
+  await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters a[href="/portfolio/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters a[href="/games/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
+});
+
 test('blog lists recent posts with stable article links', async ({ page }) => {
   await page.goto('/blog/');
 
   const firstPost = page.locator('.post-card').first();
   await expect(firstPost).toBeVisible();
-  await expect(firstPost.locator('h3 a')).toHaveAttribute('href', /^\/posts\/[a-z]+(?:-[a-z]+)*\/$/);
+  await expect(firstPost.locator('h3 a')).toHaveAttribute('href', /^\/blog\/posts\/[a-z]+(?:-[a-z]+)*\/$/);
 });
 
 test('all posts are paginated in groups of ten', async ({ page }) => {
