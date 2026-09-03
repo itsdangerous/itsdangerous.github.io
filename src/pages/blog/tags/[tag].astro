@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import Pagination from '../../components/Pagination.astro';
+import BlogLayout from '../../../domains/blog/layouts/BlogLayout.astro';
+import PostCard from '../../../domains/blog/components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -19,7 +19,7 @@ const pageSize = 10;
 const totalPages = Math.ceil(sortedPosts.length / pageSize);
 ---
 
-<BaseLayout title={`#${tag} 글 — itsdangerous`} description={`${tag} 태그의 글`} canonicalPath={`/tags/${encodeURIComponent(tag)}/`}>
+<BlogLayout title={`#${tag} 글 — itsdangerous`} description={`${tag} 태그의 글`} canonicalPath={`/blog/tags/${encodeURIComponent(tag)}/`}>
   <main class="shell archive-page">
     <header class="archive-page__header">
       <p class="eyebrow">Tag</p>
@@ -29,6 +29,6 @@ const totalPages = Math.ceil(sortedPosts.length / pageSize);
     <ol class="post-list">
       {sortedPosts.slice(0, pageSize).map((post, index) => <PostCard post={post} index={index} />)}
     </ol>
-    <Pagination currentPage={1} totalPages={totalPages} basePath={`/tags/${encodeURIComponent(tag)}`} />
+    <Pagination currentPage={1} totalPages={totalPages} basePath={`/blog/tags/${encodeURIComponent(tag)}`} />
   </main>
-</BaseLayout>
+</BlogLayout>

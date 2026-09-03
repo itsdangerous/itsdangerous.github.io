@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import Pagination from '../../components/Pagination.astro';
+import BlogLayout from '../../../domains/blog/layouts/BlogLayout.astro';
+import PostCard from '../../../domains/blog/components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
 
 const allPosts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -11,7 +11,7 @@ const posts = allPosts.slice(0, pageSize);
 const totalPages = Math.ceil(allPosts.length / pageSize);
 ---
 
-<BaseLayout title="글 목록 — itsdangerous" description="itsdangerous의 모든 기록" canonicalPath="/posts/">
+<BlogLayout title="글 목록 — itsdangerous" description="itsdangerous의 모든 기록" canonicalPath="/blog/posts/">
   <main class="shell archive-page">
     <header class="archive-page__header">
       <p class="eyebrow">Archive</p>
@@ -21,6 +21,6 @@ const totalPages = Math.ceil(allPosts.length / pageSize);
     <ol class="post-list">
       {posts.map((post, index) => <PostCard post={post} index={index} />)}
     </ol>
-    <Pagination currentPage={1} totalPages={totalPages} basePath="/posts" />
+    <Pagination currentPage={1} totalPages={totalPages} basePath="/blog/posts" />
   </main>
-</BaseLayout>
+</BlogLayout>

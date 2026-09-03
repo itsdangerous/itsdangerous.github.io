@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogLayout from '../../../domains/blog/layouts/BlogLayout.astro';
 
 const posts = await getCollection('posts', ({ data }) => !data.draft);
 const categories = [...new Set(posts.map((post) => post.data.category))]
@@ -8,7 +8,7 @@ const categories = [...new Set(posts.map((post) => post.data.category))]
   .sort((a, b) => a.name.localeCompare(b.name));
 ---
 
-<BaseLayout title="카테고리 — itsdangerous" description="주제별로 모아 본 기록" canonicalPath="/categories/">
+<BlogLayout title="카테고리 — itsdangerous" description="주제별로 모아 본 기록" canonicalPath="/blog/categories/">
   <main class="shell archive-page">
     <header class="archive-page__header">
       <p class="eyebrow">Categories</p>
@@ -18,11 +18,11 @@ const categories = [...new Set(posts.map((post) => post.data.category))]
     <ul class="category-list">
       {categories.map(({ name, count }) => (
         <li>
-          <a href={`/categories/${encodeURIComponent(name)}/`}>
+          <a href={`/blog/categories/${encodeURIComponent(name)}/`}>
             <span>{name}</span><small>{String(count).padStart(2, '0')}</small>
           </a>
         </li>
       ))}
     </ul>
   </main>
-</BaseLayout>
+</BlogLayout>

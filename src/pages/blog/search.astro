@@ -1,13 +1,13 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogLayout from '../../domains/blog/layouts/BlogLayout.astro';
 
 const pagefindUnavailableInDev = import.meta.env.DEV;
 ---
 
-<BaseLayout
+<BlogLayout
   title="검색 — itsdangerous"
   description="기술 블로그의 글을 검색합니다."
-  canonicalPath="/search/"
+  canonicalPath="/blog/search/"
 >
   <Fragment slot="head">
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
@@ -38,7 +38,7 @@ const pagefindUnavailableInDev = import.meta.env.DEV;
       </script>
     </Fragment>
   )}
-</BaseLayout>
+</BlogLayout>
 
 <style is:global>
   [data-theme='midnight'] .search-page,

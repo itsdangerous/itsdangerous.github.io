@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('theme menu persists the selected theme after reload', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/blog/');
 
   const picker = page.getByLabel('테마 선택');
   await expect(picker).toHaveValue('midnight');
@@ -14,21 +14,21 @@ test('theme menu persists the selected theme after reload', async ({ page }) => 
 });
 
 test('Pagefind search results navigate to the matching article', async ({ page }) => {
-  await page.goto('/search/');
+  await page.goto('/blog/search/');
 
   const search = page.locator('#pagefind-search input').first();
   await expect(search).toBeVisible();
   await search.fill('git reset');
 
-  const result = page.locator('a.pagefind-ui__result-link[href="/posts/git-reset-vs-git-revert/"]');
+  const result = page.locator('a.pagefind-ui__result-link[href="/blog/posts/git-reset-vs-git-revert/"]');
   await expect(result).toBeVisible();
   await result.click();
-  await expect(page).toHaveURL('/posts/git-reset-vs-git-revert/');
+  await expect(page).toHaveURL('/blog/posts/git-reset-vs-git-revert/');
 });
 
 test('article comments use the public pathname Giscus mapping without login', async ({ page }) => {
   await page.route('https://giscus.app/**', (route) => route.abort());
-  await page.goto('/posts/git-reset-vs-git-revert/');
+  await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const giscus = page.locator('[data-giscus-root]');
   await expect(giscus).toHaveAttribute('data-repo', 'itsdangerous/test-discussions');

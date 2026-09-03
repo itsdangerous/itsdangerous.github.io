@@ -1,0 +1,31 @@
+---
+import BlogLayout from '../../domains/blog/layouts/BlogLayout.astro';
+import { getCollection } from 'astro:content';
+import PostCard from '../../domains/blog/components/PostCard.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
+---
+
+<BlogLayout
+  title="Blog — itsdangerous"
+  description="기록하고, 더 나은 답을 찾습니다."
+  canonicalPath="/blog/"
+>
+  <main class="shell">
+    <section class="intro intro--home" aria-labelledby="site-title">
+      <h1 id="site-title">기록하고, 더 나은 답을 찾습니다.</h1>
+    </section>
+
+    <section class="recent" aria-labelledby="recent-title">
+      <div class="section-heading">
+        <h2 id="recent-title">Recent Posts</h2>
+      </div>
+      <ol class="post-list">
+        {posts.map((post) => <PostCard post={post} />)}
+      </ol>
+      <a class="archive-link" href="/blog/posts/">모든 글 보기 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+</BlogLayout>

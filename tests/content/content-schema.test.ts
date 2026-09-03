@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { getPostSlug } from '../../src/domains/blog/content/post-slug';
 
 const require = createRequire(import.meta.url);
 const astroDist = resolve(dirname(require.resolve('astro/package.json')), 'dist');
@@ -33,7 +34,8 @@ describe('post content', () => {
 
     expect(posts.length).toBeGreaterThan(0);
     expect(posts.every((post: { data: { pubDate: unknown } }) => post.data.pubDate instanceof Date)).toBe(true);
-    expect(new Set(posts.map((post: { slug: string }) => post.slug)).size).toBe(posts.length);
-    expect(posts.every((post: { slug: string }) => /^[a-z]+(?:-[a-z]+)*$/.test(post.slug))).toBe(true);
+    const slugs = posts.map((post: { id: string }) => getPostSlug(post));
+    expect(new Set(slugs).size).toBe(posts.length);
+    expect(slugs.every((slug) => /^[a-z]+(?:-[a-z]+)*$/.test(slug))).toBe(true);
   });
 });

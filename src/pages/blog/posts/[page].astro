@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import Pagination from '../../components/Pagination.astro';
+import BlogLayout from '../../../domains/blog/layouts/BlogLayout.astro';
+import PostCard from '../../../domains/blog/components/PostCard.astro';
+import Pagination from '../../../components/Pagination.astro';
 
 const pageSize = 10;
 
@@ -29,7 +29,7 @@ const { currentPage, posts, totalPages: pageCount } = Astro.props;
 const startIndex = (currentPage - 1) * pageSize;
 ---
 
-<BaseLayout title={`글 목록 ${currentPage} — itsdangerous`} description="itsdangerous의 모든 기록" canonicalPath={`/posts/${currentPage}/`}>
+<BlogLayout title={`글 목록 ${currentPage} — itsdangerous`} description="itsdangerous의 모든 기록" canonicalPath={`/blog/posts/${currentPage}/`}>
   <main class="shell archive-page">
     <header class="archive-page__header">
       <p class="eyebrow">Posts</p>
@@ -39,6 +39,6 @@ const startIndex = (currentPage - 1) * pageSize;
     <ol class="post-list">
       {posts.map((post, index) => <PostCard post={post} index={startIndex + index} />)}
     </ol>
-    <Pagination currentPage={currentPage} totalPages={pageCount} basePath="/posts" />
+    <Pagination currentPage={currentPage} totalPages={pageCount} basePath="/blog/posts" />
   </main>
-</BaseLayout>
+</BlogLayout>

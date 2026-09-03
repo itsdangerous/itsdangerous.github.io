@@ -17,4 +17,18 @@ describe('domain boundaries', () => {
   it('keeps the root entry independent from blog ownership', () => {
     expect(readFileSync('src/pages/index.astro', 'utf8')).not.toContain('domains/blog');
   });
+
+  it('keeps blog implementation under the blog domain', () => {
+    for (const path of [
+      'src/domains/blog/content/config.ts',
+      'src/domains/blog/content/posts',
+      'src/domains/blog/components/PostCard.astro',
+      'src/domains/blog/components/CodeShellEnhancer.astro',
+      'src/domains/blog/layouts/BlogLayout.astro',
+      'src/domains/blog/layouts/PostLayout.astro',
+      'src/domains/blog/styles/blog.css',
+    ]) {
+      expect(existsSync(path)).toBe(true);
+    }
+  });
 });

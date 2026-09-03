@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getPostSlug } from '../content/post-slug';
 
 interface Props {
   post: CollectionEntry<'posts'>;
@@ -7,9 +8,10 @@ interface Props {
 }
 
 const { post, index } = Astro.props;
+const slug = getPostSlug(post);
 const { category, description, pubDate, title } = post.data;
 const date = [pubDate.getFullYear(), String(pubDate.getMonth() + 1).padStart(2, '0'), String(pubDate.getDate()).padStart(2, '0')].join('.');
-const categoryHref = `/categories/${encodeURIComponent(category)}/`;
+const categoryHref = `/blog/categories/${encodeURIComponent(category)}/`;
 ---
 
 <li class:list={['post-card', { 'post-card--plain': index === undefined }]}>
@@ -21,7 +23,7 @@ const categoryHref = `/categories/${encodeURIComponent(category)}/`;
       <time datetime={pubDate.toISOString()}>{date}</time>
     </div>
     <div class="post-card__copy">
-      <h3><a href={`/posts/${post.slug}/`}>{title}</a></h3>
+      <h3><a href={`/blog/posts/${slug}/`}>{title}</a></h3>
       <p>{description}</p>
     </div>
   </article>

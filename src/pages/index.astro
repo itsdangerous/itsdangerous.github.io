@@ -1,31 +1,44 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-import PostCard from '../components/PostCard.astro';
-
-const posts = (await getCollection('posts', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 10);
+import SplashLayout from '../layouts/SplashLayout.astro';
+import '../styles/splash.css';
 ---
 
-<BaseLayout
-  title="itsdangerous — 기록하고, 더 나은 답을 찾습니다."
-  description="기록하고, 더 나은 답을 찾습니다."
-  canonicalPath="/"
->
-  <main class="shell">
-    <section class="intro intro--home" aria-labelledby="site-title">
-      <h1 id="site-title">기록하고, 더 나은 답을 찾습니다.</h1>
-    </section>
+<SplashLayout title="itsdangerous" description="기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서">
+  <main class="book-splash">
+    <aside class="book-splash__spine" aria-hidden="true">
+      <span class="book-splash__spine-rib"></span>
+      <span class="book-splash__spine-rib"></span>
+      <span class="book-splash__spine-rib"></span>
+      <span class="book-splash__spine-rib"></span>
+    </aside>
 
-    <section class="recent" aria-labelledby="recent-title">
-      <div class="section-heading">
-        <h2 id="recent-title">Recent Posts</h2>
+    <section class="book-splash__face" aria-labelledby="splash-title">
+      <div class="book-splash__filigree" aria-hidden="true"></div>
+      <header class="book-splash__header">
+        <span>Personal Archive</span>
+        <span>Vol. I · MMXXVI</span>
+      </header>
+
+      <div class="book-splash__center">
+        <div class="book-splash__crest" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="42" stroke="currentColor" opacity="0.52" />
+            <path d="M29 39c8-11 15-15 21-15s13 4 21 15l-7 1c5 6 7 12 7 19 0 14-9 23-21 23s-21-9-21-23c0-7 2-13 7-19l-7-1Z" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="41" cy="51" r="6" stroke="currentColor" /><circle cx="59" cy="51" r="6" stroke="currentColor" />
+            <circle cx="41" cy="51" r="2" fill="currentColor" /><circle cx="59" cy="51" r="2" fill="currentColor" />
+            <path d="m50 55-5 6h10l-5-6ZM36 70l14-8 14 8M50 24v-8M27 27l-6-6M73 27l6-6" stroke="currentColor" />
+          </svg>
+        </div>
+        <h1 class="book-splash__title" id="splash-title">itsdangerous</h1>
+        <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p>
       </div>
-      <ol class="post-list">
-        {posts.map((post) => <PostCard post={post} />)}
-      </ol>
-      <a class="archive-link" href="/posts/">모든 글 보기 <span aria-hidden="true">→</span></a>
+
+      <nav class="book-splash__chapters" aria-label="사이트 공간">
+        <a href="/blog/">Blog</a>
+        <a href="/portfolio/">Portfolio</a>
+        <a href="/games/">Games</a>
+        <a href="/about/">About</a>
+      </nav>
     </section>
   </main>
-</BaseLayout>
+</SplashLayout>

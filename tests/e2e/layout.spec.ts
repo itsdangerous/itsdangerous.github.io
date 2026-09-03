@@ -1,7 +1,18 @@
 import { expect, test } from '@playwright/test';
 
-test('home lists recent posts with stable article links', async ({ page }) => {
+test('sealed-volume splash keeps its chapter navigation inside the mobile viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+
+  const chapters = page.locator('.book-splash__chapters');
+  await expect(chapters).toBeVisible();
+  expect(await chapters.evaluate((element) => (
+    element.getBoundingClientRect().bottom <= window.innerHeight
+  ))).toBe(true);
+});
+
+test('blog lists recent posts with stable article links', async ({ page }) => {
+  await page.goto('/blog/');
 
   const firstPost = page.locator('.post-card').first();
   await expect(firstPost).toBeVisible();
@@ -9,49 +20,49 @@ test('home lists recent posts with stable article links', async ({ page }) => {
 });
 
 test('all posts are paginated in groups of ten', async ({ page }) => {
-  await page.goto('/posts/');
+  await page.goto('/blog/posts/');
   await expect(page.locator('.post-card')).toHaveCount(10);
   await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('1');
   await expect(page.locator('[data-pagination]')).toHaveCSS('justify-content', 'center');
   await expect(page.locator('[data-pagination] [data-pagination-first]')).toHaveCount(0);
   await expect(page.locator('[data-pagination] [data-pagination-prev]')).toHaveCount(0);
-  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/posts/2/');
-  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/posts/3/');
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/blog/posts/2/');
+  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/blog/posts/3/');
 
-  await page.goto('/posts/2/');
+  await page.goto('/blog/posts/2/');
   await expect(page.locator('.post-card')).toHaveCount(10);
   await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('2');
-  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/blog/posts/');
   await expect(page.locator('[data-pagination] a[data-pagination-first] svg')).toHaveCount(1);
-  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/blog/posts/');
   await expect(page.locator('[data-pagination] a[data-pagination-prev] svg')).toHaveCount(1);
-  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/posts/3/');
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/blog/posts/3/');
   await expect(page.locator('[data-pagination] a[data-pagination-next] svg')).toHaveCount(1);
-  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/posts/3/');
+  await expect(page.locator('[data-pagination] a[data-pagination-last]')).toHaveAttribute('href', '/blog/posts/3/');
   await expect(page.locator('[data-pagination] a[data-pagination-last] svg')).toHaveCount(1);
 
-  await page.goto('/posts/3/');
+  await page.goto('/blog/posts/3/');
   await expect(page.locator('.post-card')).toHaveCount(9);
   await expect(page.locator('[data-pagination] [aria-current="page"]')).toHaveText('3');
-  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/posts/2/');
-  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/posts/');
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/blog/posts/2/');
+  await expect(page.locator('[data-pagination] a[data-pagination-first]')).toHaveAttribute('href', '/blog/posts/');
   await expect(page.locator('[data-pagination] [data-pagination-next]')).toHaveCount(0);
   await expect(page.locator('[data-pagination] [data-pagination-last]')).toHaveCount(0);
 });
 
 test('category lists over ten posts are paginated too', async ({ page }) => {
-  await page.goto('/categories/Study/');
+  await page.goto('/blog/categories/Study/');
   await expect(page.locator('.post-card')).toHaveCount(10);
-  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/categories/Study/2/');
+  await expect(page.locator('[data-pagination] a[rel="next"]')).toHaveAttribute('href', '/blog/categories/Study/2/');
 
-  await page.goto('/categories/Study/2/');
+  await page.goto('/blog/categories/Study/2/');
   await expect(page.locator('.post-card')).toHaveCount(2);
-  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/categories/Study/');
+  await expect(page.locator('[data-pagination] a[rel="prev"]')).toHaveAttribute('href', '/blog/categories/Study/');
   await expect(page.locator('[data-pagination]')).toHaveCSS('justify-content', 'center');
 });
 
 test('short pages fill at least the viewport height', async ({ page }) => {
-  for (const route of ['/about/', '/categories/', '/guestbook/', '/posts/3/']) {
+  for (const route of ['/about/', '/blog/categories/', '/guestbook/', '/blog/posts/3/']) {
     await page.goto(route);
     expect(await page.locator('.site-content').evaluate((element) => (
       element.getBoundingClientRect().height >= window.innerHeight
@@ -61,7 +72,7 @@ test('short pages fill at least the viewport height', async ({ page }) => {
 
 test('sidebar controls stay compact and left-aligned without styling wrapper classes', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/blog/');
 
   const controls = page.locator('.site-header__controls');
   const themeToggle = controls.locator('[data-theme-toggle]');
@@ -105,7 +116,7 @@ test('sidebar controls stay compact and left-aligned without styling wrapper cla
 });
 
 test('article shows a sticky desktop TOC and a mobile disclosure', async ({ page }) => {
-  await page.goto('/posts/git-reset-vs-git-revert/');
+  await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const desktopToc = page.locator('.article__desktop-toc .table-of-contents__desktop');
   await expect(desktopToc).toBeVisible();
@@ -119,7 +130,7 @@ test('article shows a sticky desktop TOC and a mobile disclosure', async ({ page
 
 test('long desktop TOC scrolls independently within the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 700 });
-  await page.goto('/posts/macos-space/');
+  await page.goto('/blog/posts/macos-space/');
 
   const toc = page.locator('.article__desktop-toc .table-of-contents__desktop');
   await expect(toc).toHaveCSS('overflow-y', 'auto');
@@ -134,7 +145,7 @@ test('long desktop TOC scrolls independently within the viewport', async ({ page
 
 test('desktop TOC aligns to the right edge of the content viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/posts/macos-space/');
+  await page.goto('/blog/posts/macos-space/');
 
   const toc = await page.locator('.article__desktop-toc').boundingBox();
   const content = await page.locator('.site-content').boundingBox();
@@ -145,7 +156,7 @@ test('desktop TOC aligns to the right edge of the content viewport', async ({ pa
 
 test('desktop TOC updates its active color and URL hash as headings pass', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/posts/git-reset-vs-git-revert/');
+  await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   await page.locator('#특징').evaluate((heading) => {
     const top = heading.getBoundingClientRect().top + window.scrollY - 40;
@@ -164,7 +175,7 @@ test('desktop TOC updates its active color and URL hash as headings pass', async
 
 test('clicking a heading keeps that heading active until the next heading passes', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/posts/macos-space/');
+  await page.goto('/blog/posts/macos-space/');
 
   await page.locator('.article__desktop-toc nav a[href="#5-recovery-mode에서-sip-부분-해제하기"]').click();
 
@@ -175,7 +186,7 @@ test('clicking a heading keeps that heading active until the next heading passes
 });
 
 test('article metadata keeps the publication date in Asia/Seoul', async ({ page }) => {
-  await page.goto('/posts/macos-xcrun-error-invalied-active-developer-path/');
+  await page.goto('/blog/posts/macos-xcrun-error-invalied-active-developer-path/');
 
   await expect(page.locator('.article-meta time')).toHaveText('2022년 12월 2일');
 });
@@ -188,7 +199,7 @@ test('narrow articles do not create document-level horizontal scrolling', async 
     'macos-xcrun-error-invalied-active-developer-path',
     'python-django-aws-ec-github',
   ]) {
-    await page.goto(`/posts/${slug}/`);
+    await page.goto(`/blog/posts/${slug}/`);
     expect(await page.locator('html').evaluate(
       (element) => element.scrollWidth === element.clientWidth,
     )).toBe(true);
@@ -201,7 +212,7 @@ test('narrow articles do not create document-level horizontal scrolling', async 
 
 test('short markdown tables fit their content instead of stretching to the article width', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 800 });
-  await page.goto('/posts/telegram-bot/');
+  await page.goto('/blog/posts/telegram-bot/');
 
   const content = await page.locator('.article__content').boundingBox();
   const table = page.locator('.article__content table').first();
@@ -213,7 +224,7 @@ test('short markdown tables fit their content instead of stretching to the artic
 });
 
 test('markdown code blocks show a shell marker and individually dismissible copy confirmations', async ({ page }) => {
-  await page.goto('/posts/telegram-bot/');
+  await page.goto('/blog/posts/telegram-bot/');
 
   const shell = page.locator('.code-shell').first();
   await expect(shell.locator('.code-shell__marker')).toHaveText('>_');
@@ -232,7 +243,7 @@ test('markdown code blocks show a shell marker and individually dismissible copy
 });
 
 test('code shells use theme-specific textured surfaces', async ({ page }) => {
-  await page.goto('/posts/telegram-bot/');
+  await page.goto('/blog/posts/telegram-bot/');
 
   const shell = page.locator('.code-shell').first();
   const codePanel = shell.locator('pre');
@@ -267,7 +278,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
 });
 
 test('TOC omits headings without a target or label', async ({ page }) => {
-  await page.goto('/posts/algorithm-java-swea/');
+  await page.goto('/blog/posts/algorithm-java-swea/');
 
   await expect(page.locator('.table-of-contents__desktop a[href="#"]')).toHaveCount(0);
   const labels = await page.locator('.table-of-contents__desktop a').allTextContents();

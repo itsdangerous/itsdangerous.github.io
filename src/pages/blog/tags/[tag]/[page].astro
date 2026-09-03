@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import PostCard from '../../../components/PostCard.astro';
-import Pagination from '../../../components/Pagination.astro';
+import BlogLayout from '../../../../domains/blog/layouts/BlogLayout.astro';
+import PostCard from '../../../../domains/blog/components/PostCard.astro';
+import Pagination from '../../../../components/Pagination.astro';
 
 export async function getStaticPaths() {
   const pageSize = 10;
@@ -26,10 +26,10 @@ export async function getStaticPaths() {
 const pageSize = 10;
 const { tag, posts, currentPage, totalPages } = Astro.props;
 const startIndex = (currentPage - 1) * pageSize;
-const basePath = `/tags/${encodeURIComponent(tag)}`;
+const basePath = `/blog/tags/${encodeURIComponent(tag)}`;
 ---
 
-<BaseLayout title={`#${tag} 글 ${currentPage} — itsdangerous`} description={`${tag} 태그의 글`} canonicalPath={`${basePath}/${currentPage}/`}>
+<BlogLayout title={`#${tag} 글 ${currentPage} — itsdangerous`} description={`${tag} 태그의 글`} canonicalPath={`${basePath}/${currentPage}/`}>
   <main class="shell archive-page">
     <header class="archive-page__header">
       <p class="eyebrow">Tag</p>
@@ -41,4 +41,4 @@ const basePath = `/tags/${encodeURIComponent(tag)}`;
     </ol>
     <Pagination currentPage={currentPage} totalPages={totalPages} basePath={basePath} />
   </main>
-</BaseLayout>
+</BlogLayout>

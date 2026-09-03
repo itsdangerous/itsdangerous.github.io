@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GiscusComments from '../components/GiscusComments.astro';
+import GiscusComments from '../shared/components/GiscusComments.astro';
 
 const configuredDiscussionNumber = Number(import.meta.env.PUBLIC_GUESTBOOK_DISCUSSION_NUMBER?.trim());
 const discussionNumber = Number.isSafeInteger(configuredDiscussionNumber) && configuredDiscussionNumber > 0
