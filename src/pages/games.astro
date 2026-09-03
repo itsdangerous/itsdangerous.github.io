@@ -1,13 +1,5 @@
 ---
-import SiteLayout from '../shared/layouts/SiteLayout.astro';
+import GamesPage from '../domains/games/routes/index.astro';
 ---
 
-<SiteLayout title="Games — itsdangerous" description="itsdangerous의 작은 놀이 공간" canonicalPath="/games/">
-  <main class="shell">
-    <section class="intro" aria-labelledby="games-title">
-      <p class="eyebrow">Games</p>
-      <h1 id="games-title">작은 놀이를 준비하고 있습니다.</h1>
-      <p class="intro__description">규칙을 만들고 직접 플레이해보는 공간입니다.</p>
-    </section>
-  </main>
-</SiteLayout>
+<GamesPage />

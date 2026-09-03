@@ -49,4 +49,25 @@ describe('domain boundaries', () => {
     const source = readFileSync('src/pages/index.astro', 'utf8');
     expect(source).not.toMatch(/PostCard|PostLayout|CodeShellEnhancer|GiscusComments|Pagefind|astro:content/);
   });
+
+  it('keeps portfolio and games in independent domain modules', () => {
+    for (const path of [
+      'src/domains/portfolio/layouts/PortfolioLayout.astro',
+      'src/domains/portfolio/routes/index.astro',
+      'src/domains/games/layouts/GamesLayout.astro',
+      'src/domains/games/routes/index.astro',
+    ]) {
+      expect(existsSync(path)).toBe(true);
+    }
+  });
+
+  it('does not leak blog-only implementation into independent spaces', () => {
+    for (const path of [
+      'src/domains/portfolio',
+      'src/domains/games',
+    ]) {
+      const source = readFileSync(`${path}/routes/index.astro`, 'utf8');
+      expect(source).not.toMatch(/PostCard|PostLayout|CodeShellEnhancer|GiscusComments|Pagefind|astro:content/);
+    }
+  });
 });
