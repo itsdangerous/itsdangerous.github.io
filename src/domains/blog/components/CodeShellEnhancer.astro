@@ -25,6 +25,7 @@
 
     toast.append(message, dismiss);
     container.prepend(toast);
+    window.setTimeout(() => toast.remove(), 3000);
   }
 
   async function copyCode(text: string) {

@@ -129,13 +129,16 @@ test('short pages fill at least the viewport height', async ({ page }) => {
   }
 });
 
-test('sidebar controls stay compact and left-aligned without styling wrapper classes', async ({ page }) => {
+test('feature bundle controls stay compact and left-aligned without styling wrapper classes', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/blog/');
 
-  const controls = page.locator('.site-header__controls');
+  const controls = page.locator('.feature-bundle__controls');
+  await page.locator('[data-feature-toggle]').click();
+  await expect(page.locator('[data-feature-panel]')).toBeVisible();
+  await expect(page.locator('[data-feature-toggle]')).toHaveAttribute('aria-expanded', 'true');
   const themeToggle = controls.locator('[data-theme-toggle]');
-  const searchButton = controls.locator('[data-search-open]');
+  const searchButton = page.locator('.site-header__search [data-search-open]');
   const [themeBox, searchBox] = await Promise.all([
     themeToggle.boundingBox(),
     searchButton.boundingBox(),
@@ -150,15 +153,16 @@ test('sidebar controls stay compact and left-aligned without styling wrapper cla
   await expect(searchButton).not.toHaveAttribute('class');
   await expect(themeToggle.locator('img[data-theme-icon="sun"]')).toHaveAttribute('src', '/images/theme-sun.png');
   await expect(themeToggle.locator('img[data-theme-icon="moon"]')).toHaveAttribute('src', '/images/theme-moon-dark.png');
-  await expect(searchButton.locator('img[data-search-icon="dark"]')).toHaveAttribute('src', '/images/search-eye-dark.png');
-  await expect(searchButton.locator('img[data-search-icon="light"]')).toHaveAttribute('src', '/images/search-eye-light.png');
+  await expect(searchButton.locator('img[data-search-icon="dark"]')).toHaveAttribute('src', '/images/search-eye-dark-embroidered.png');
+  await expect(searchButton.locator('img[data-search-icon="light"]')).toHaveAttribute('src', '/images/search-eye-light-embroidered.png');
   expect(await themeToggle.locator('img[data-theme-icon="moon"]').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
   expect(await searchButton.locator('img[data-search-icon="dark"]').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeVisible();
   await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeHidden();
   await expect(searchButton.locator('[data-search-icon="dark"]')).toBeVisible();
   await expect(searchButton.locator('[data-search-icon="light"]')).toBeHidden();
-  await expect(searchButton.locator('[data-search-shortcut]')).toHaveCSS('color', 'rgb(195, 154, 88)');
+  await expect(page.locator('.site-header__search-label')).toHaveText('Search');
+  await expect(searchButton.locator('[data-search-shortcut]')).toBeHidden();
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toHaveCSS('width', '28px');
   await expect(searchButton).toHaveCSS('border-top-width', '0px');
   await expect(searchButton).toHaveCSS('background-image', 'none');
@@ -171,10 +175,10 @@ test('sidebar controls stay compact and left-aligned without styling wrapper cla
   await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
   await expect(searchButton.locator('[data-search-icon="dark"]')).toBeHidden();
   await expect(searchButton.locator('[data-search-icon="light"]')).toBeVisible();
-  await expect(searchButton.locator('[data-search-shortcut]')).toHaveCSS('color', 'rgb(139, 106, 67)');
+  await expect(searchButton.locator('[data-search-shortcut]')).toHaveCSS('color', 'rgb(123, 93, 52)');
 });
 
-test('article shows a sticky desktop TOC and a narrow right rail', async ({ page }) => {
+test('article shows a wide mobile TOC below the header', async ({ page }) => {
   await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const desktopToc = page.locator('.article__desktop-toc .table-of-contents__desktop');
@@ -183,8 +187,9 @@ test('article shows a sticky desktop TOC and a narrow right rail', async ({ page
   await expect(page.locator('.article__desktop-toc details.table-of-contents__mobile')).toBeHidden();
 
   await page.setViewportSize({ width: 360, height: 800 });
-  await expect(desktopToc).toBeVisible();
-  await expect(page.locator('.article__mobile-toc details.table-of-contents__mobile')).toBeHidden();
+  await expect(desktopToc).toBeHidden();
+  await expect(page.locator('.article__mobile-toc .table-of-contents__desktop')).toBeHidden();
+  await expect(page.locator('.article__mobile-toc details.table-of-contents__mobile')).toBeVisible();
 });
 
 test('article initial load does not inject a TOC hash or jump the scroll position', async ({ page }) => {
@@ -290,24 +295,22 @@ test('desktop TOC starts as a rail and expands on hover', async ({ page }) => {
   }
 });
 
-test('narrow article widths keep the TOC as a right rail', async ({ page }) => {
+test('the 900px breakpoint uses the wide mobile TOC', async ({ page }) => {
   for (const width of [390, 900]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/blog/posts/macos-space/');
 
-    const toc = page.locator('.article__desktop-toc');
     await expect(page.locator('.site-frame')).toHaveCSS('display', 'block');
     expect((await page.locator('.site-header').boundingBox())!.height).toBeLessThan(200);
     await expect(page.locator('.site-header nav')).toHaveCSS('flex-direction', 'row');
-    await expect(toc).toBeVisible();
-    await expect(toc.locator('.table-of-contents__collapsed-preview')).toBeVisible();
-    await expect(page.locator('.article__mobile-toc .table-of-contents__mobile')).toBeHidden();
+    await expect(page.locator('.article__desktop-toc')).toBeHidden();
+    await expect(page.locator('.article__mobile-toc .table-of-contents__mobile')).toBeVisible();
     await expect(page.locator('[data-toc-top-toggle]')).toBeHidden();
   }
 });
 
 test('blog navigation hides on downward scroll and returns on upward scroll', async ({ page }) => {
-  await page.setViewportSize({ width: 960, height: 900 });
+  await page.setViewportSize({ width: 900, height: 900 });
   await page.goto('/blog/posts/macos-space/');
 
   const header = page.locator('.site-header');
@@ -316,6 +319,20 @@ test('blog navigation hides on downward scroll and returns on upward scroll', as
 
   await page.evaluate(() => window.scrollTo(0, 200));
   await expect(header).not.toHaveAttribute('data-scroll-hidden');
+});
+
+test('sidebar mode keeps the left sidebar fixed while scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
+  const sidebar = page.locator('.site-header');
+  const initial = await sidebar.boundingBox();
+  await page.evaluate(() => window.scrollTo(0, 500));
+
+  await expect(sidebar).not.toHaveAttribute('data-scroll-hidden');
+  const scrolled = await sidebar.boundingBox();
+  expect(scrolled).not.toBeNull();
+  expect(scrolled!.y).toBe(initial!.y);
 });
 
 test('desktop TOC updates its active color and URL hash as headings pass', async ({ page }) => {
@@ -448,6 +465,7 @@ test('markdown code blocks show a shell marker and individually dismissible copy
 
   await toasts.first().getByRole('button', { name: 'Dismiss copy confirmation' }).click();
   await expect(toasts).toHaveCount(1);
+  await expect(toasts).toHaveCount(0, { timeout: 3500 });
 });
 
 test('code shells use theme-specific textured surfaces', async ({ page }) => {

@@ -1,0 +1,47 @@
+---
+import ThemePicker from './ThemePicker.astro';
+---
+
+<div class="feature-bundle" data-feature-bundle>
+  <button
+    class="feature-bundle__toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="feature-bundle-panel"
+    aria-label="기능 꾸러미 열기"
+    data-feature-toggle
+  >
+    <span aria-hidden="true">✦</span>
+  </button>
+  <div class="feature-bundle__panel" id="feature-bundle-panel" data-feature-panel hidden>
+    <p>Tools</p>
+    <div class="feature-bundle__controls">
+      <ThemePicker />
+    </div>
+  </div>
+</div>
+
+<script>
+  const bundle = document.querySelector<HTMLElement>('[data-feature-bundle]');
+  const toggle = bundle?.querySelector<HTMLButtonElement>('[data-feature-toggle]');
+  const panel = bundle?.querySelector<HTMLElement>('[data-feature-panel]');
+
+  if (bundle && toggle && panel && !toggle.dataset.bound) {
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      bundle.toggleAttribute('data-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? '기능 꾸러미 닫기' : '기능 꾸러미 열기');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(panel.hidden);
+    });
+    document.addEventListener('click', (event) => {
+      if (!bundle.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    });
+    toggle.dataset.bound = 'true';
+  }
+</script>

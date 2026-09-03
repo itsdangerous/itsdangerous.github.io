@@ -1,5 +1,4 @@
 ---
-import ThemePicker from './ThemePicker.astro';
 import SearchButton from './SearchButton.astro';
 
 const pathname = Astro.url.pathname;
@@ -30,8 +29,8 @@ const isCurrent = (href: string) => href === '/blog/'
       <a href="/guestbook/" class:list={{ 'is-current': isCurrent('/guestbook/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M7 10h10M7 14h6"/></svg><span>Guestbook</span></a>
     </nav>
     <p class="site-header__stats">29 posts · 7 categories</p>
-    <div class="site-header__controls">
-      <ThemePicker />
+    <div class="site-header__search">
+      <span class="site-header__search-label" aria-hidden="true">Search</span>
       <SearchButton />
     </div>
   </div>
@@ -43,8 +42,20 @@ const isCurrent = (href: string) => href === '/blog/'
     if (!header || header.dataset.scrollBound) return;
 
     let previousY = window.scrollY;
+    const navbarMode = window.matchMedia('(max-width: 900px)');
+    const syncHeaderMode = () => {
+      if (!navbarMode.matches) header.removeAttribute('data-scroll-hidden');
+    };
+
+    syncHeaderMode();
+    navbarMode.addEventListener('change', syncHeaderMode);
     window.addEventListener('scroll', () => {
       const currentY = window.scrollY;
+      if (!navbarMode.matches) {
+        header.removeAttribute('data-scroll-hidden');
+        previousY = currentY;
+        return;
+      }
       const delta = currentY - previousY;
       if (currentY <= 12) header.removeAttribute('data-scroll-hidden');
       else if (delta > 6) header.setAttribute('data-scroll-hidden', 'true');

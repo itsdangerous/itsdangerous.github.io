@@ -4,6 +4,7 @@ import '../styles/global.css';
 import '../themes/midnight.css';
 import '../themes/light.css';
 import Header from '../components/Header.astro';
+import FeatureBundle from '../components/FeatureBundle.astro';
 import PageLoader from '../components/PageLoader.astro';
 import ScrollProgress from '../components/ScrollProgress.astro';
 import SearchModal from '../components/SearchModal.astro';
@@ -56,6 +57,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site ?? 'https://itsdangerous.
       </div>
     </div>
     <SearchModal />
+    <FeatureBundle />
     <slot name="body-end" />
   </body>
 </html>
