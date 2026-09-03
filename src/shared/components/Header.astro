@@ -3,18 +3,29 @@ import ThemePicker from './ThemePicker.astro';
 import SearchButton from './SearchButton.astro';
 
 const pathname = Astro.url.pathname;
-const isCurrent = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
+const isCurrent = (href: string) => href === '/blog/'
+  ? pathname === '/blog/'
+  : href === '/blog/posts/'
+    ? pathname === '/blog/posts/' || pathname.startsWith('/blog/posts/')
+    : pathname === href || pathname.startsWith(href);
 ---
 
 <header class="site-header">
   <div class="site-header__inner">
-    <div class="site-header__profile">
-      <img src="/profile1.png" alt="itsdangerous 프로필" width="128" height="128" />
-    </div>
-    <a class="site-header__brand" href="/" aria-label="itsdangerous 홈">itsdangerous</a>
+    <a class="site-header__brand" href="/" aria-label="itsdangerous 홈">
+      <img
+        src="/images/splash-title-embroidered.webp"
+        alt="itsdangerous"
+        class="site-header__brand-image"
+        width="1095"
+        height="250"
+        loading="eager"
+        decoding="async"
+      />
+    </a>
     <nav aria-label="주요 메뉴">
-      <a href="/" class:list={{ 'is-current': isCurrent('/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg><span>Home</span></a>
-      <a href="/blog/" class:list={{ 'is-current': isCurrent('/blog/') || pathname.startsWith('/blog/posts/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 0 5 22z"/><path d="M5 4.5v15A2.5 2.5 0 0 1 7.5 17H19"/></svg><span>Blog</span></a>
+      <a href="/blog/" class:list={{ 'is-current': isCurrent('/blog/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 20v-6h6v6"/></svg><span>Home</span></a>
+      <a href="/blog/posts/" class:list={{ 'is-current': isCurrent('/blog/posts/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v18H7.5A2.5 2.5 0 0 0 5 22z"/><path d="M5 4.5v15A2.5 2.5 0 0 1 7.5 17H19"/></svg><span>Posts</span></a>
       <a href="/blog/categories/" class:list={{ 'is-current': isCurrent('/blog/categories/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4z"/><path d="M4 9h16"/></svg><span>Categories</span></a>
       <a href="/guestbook/" class:list={{ 'is-current': isCurrent('/guestbook/') }}><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M7 10h10M7 14h6"/></svg><span>Guestbook</span></a>
     </nav>
@@ -25,3 +36,24 @@ const isCurrent = (href: string) => href === '/' ? pathname === '/' : pathname.s
     </div>
   </div>
 </header>
+
+<script>
+  const initializeHeaderVisibility = () => {
+    const header = document.querySelector<HTMLElement>('.site-header');
+    if (!header || header.dataset.scrollBound) return;
+
+    let previousY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const currentY = window.scrollY;
+      const delta = currentY - previousY;
+      if (currentY <= 12) header.removeAttribute('data-scroll-hidden');
+      else if (delta > 6) header.setAttribute('data-scroll-hidden', 'true');
+      else if (delta < -6) header.removeAttribute('data-scroll-hidden');
+      previousY = currentY;
+    }, { passive: true });
+    header.dataset.scrollBound = 'true';
+  };
+
+  initializeHeaderVisibility();
+  document.addEventListener('astro:page-load', initializeHeaderVisibility);
+</script>

@@ -1,10 +1,10 @@
 :root,
 [data-theme='midnight'] {
-  --color-background: #0d1117;
+  --color-background: #030d1d;
   --color-surface: #161b22;
   --color-surface-raised: #21262d;
   --color-border: #30363d;
-  --color-text: #e6edf3;
+  --color-text: #dddbdc;
   --color-text-muted: #8b949e;
   --color-accent: #79c0ff;
   --color-accent-strong: #a5d6ff;

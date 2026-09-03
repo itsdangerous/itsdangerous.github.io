@@ -1,0 +1,46 @@
+---
+import '../styles/main-space.css';
+import '../../../shared/styles/tokens.css';
+import '../../../shared/themes/midnight.css';
+import '../../../shared/themes/light.css';
+import { earlyThemeScript } from '../../../shared/scripts/theme-init';
+import PageLoader from '../../../shared/components/PageLoader.astro';
+import ScrollProgress from '../../../shared/components/ScrollProgress.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description = 'itsdangerous의 다음 공간을 준비하고 있습니다.',
+  canonicalPath = '/',
+} = Astro.props;
+
+const canonicalUrl = new URL(canonicalPath, Astro.site ?? 'https://itsdangerous.github.io');
+---
+
+<!doctype html>
+<html lang="ko" data-theme="midnight">
+  <head>
+    <script is:inline set:html={earlyThemeScript}></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="preload" as="image" href="/splash-leather-texture.webp" fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <title>{title}</title>
+  </head>
+  <body class="main-space-layout">
+    <PageLoader />
+    <ScrollProgress />
+    <slot />
+  </body>
+</html>

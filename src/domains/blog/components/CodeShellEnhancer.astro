@@ -75,7 +75,131 @@
     return button;
   }
 
-  document.querySelectorAll<HTMLPreElement>('.article__content pre').forEach((pre) => {
+  function createHorizontalScrollbar(pre: HTMLPreElement, index: number) {
+    if (!pre.id) pre.id = `code-shell-panel-${index + 1}`;
+
+    const scrollbar = document.createElement('div');
+    scrollbar.className = 'code-shell__scrollbar';
+    scrollbar.hidden = true;
+
+    const track = document.createElement('div');
+    track.className = 'code-shell__scrollbar-track';
+
+    const thumb = document.createElement('div');
+    thumb.className = 'code-shell__scrollbar-thumb';
+    thumb.tabIndex = 0;
+    thumb.setAttribute('role', 'scrollbar');
+    thumb.setAttribute('aria-label', '코드 가로 스크롤');
+    thumb.setAttribute('aria-controls', pre.id);
+    thumb.setAttribute('aria-orientation', 'horizontal');
+    thumb.setAttribute('aria-valuemin', '0');
+    thumb.setAttribute('aria-valuemax', '100');
+    thumb.setAttribute('aria-valuenow', '0');
+
+    track.append(thumb);
+    scrollbar.append(track);
+
+    let frame = 0;
+    let maximumScroll = 0;
+    let thumbTravel = 0;
+
+    const update = () => {
+      frame = 0;
+      maximumScroll = Math.max(pre.scrollWidth - pre.clientWidth, 0);
+      scrollbar.hidden = maximumScroll <= 1;
+
+      if (scrollbar.hidden) {
+        thumb.setAttribute('aria-valuenow', '0');
+        return;
+      }
+
+      const trackWidth = track.clientWidth;
+      const visibleRatio = Math.min(pre.clientWidth / pre.scrollWidth, 1);
+      const thumbWidth = Math.min(trackWidth, Math.max(trackWidth * visibleRatio, 48));
+      const progress = maximumScroll === 0 ? 0 : pre.scrollLeft / maximumScroll;
+
+      thumbTravel = Math.max(trackWidth - thumbWidth, 0);
+      thumb.style.width = `${thumbWidth}px`;
+      thumb.style.transform = `translate3d(${thumbTravel * progress}px, -50%, 0)`;
+      thumb.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+    };
+
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    const scrollByKeyboard = (event: KeyboardEvent) => {
+      const lineStep = 48;
+      const pageStep = pre.clientWidth * 0.8;
+      let nextPosition: number | null = null;
+
+      if (event.key === 'ArrowLeft') nextPosition = pre.scrollLeft - lineStep;
+      if (event.key === 'ArrowRight') nextPosition = pre.scrollLeft + lineStep;
+      if (event.key === 'PageUp') nextPosition = pre.scrollLeft - pageStep;
+      if (event.key === 'PageDown') nextPosition = pre.scrollLeft + pageStep;
+      if (event.key === 'Home') nextPosition = 0;
+      if (event.key === 'End') nextPosition = maximumScroll;
+      if (nextPosition === null) return;
+
+      event.preventDefault();
+      pre.scrollLeft = Math.max(0, Math.min(nextPosition, maximumScroll));
+      scheduleUpdate();
+    };
+
+    thumb.addEventListener('keydown', scrollByKeyboard);
+
+    thumb.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      const startX = event.clientX;
+      const startScroll = pre.scrollLeft;
+      thumb.setPointerCapture(event.pointerId);
+      thumb.dataset.dragging = 'true';
+
+      const move = (moveEvent: PointerEvent) => {
+        if (!thumb.hasPointerCapture(moveEvent.pointerId) || thumbTravel === 0) return;
+        const delta = moveEvent.clientX - startX;
+        pre.scrollLeft = startScroll + (delta / thumbTravel) * maximumScroll;
+      };
+
+      const finish = (finishEvent: PointerEvent) => {
+        if (thumb.hasPointerCapture(finishEvent.pointerId)) {
+          thumb.releasePointerCapture(finishEvent.pointerId);
+        }
+        delete thumb.dataset.dragging;
+        thumb.removeEventListener('pointermove', move);
+        thumb.removeEventListener('pointerup', finish);
+        thumb.removeEventListener('pointercancel', finish);
+      };
+
+      thumb.addEventListener('pointermove', move);
+      thumb.addEventListener('pointerup', finish);
+      thumb.addEventListener('pointercancel', finish);
+    });
+
+    track.addEventListener('pointerdown', (event) => {
+      if (event.target === thumb || maximumScroll === 0 || thumbTravel === 0) return;
+
+      const bounds = track.getBoundingClientRect();
+      const thumbWidth = thumb.getBoundingClientRect().width;
+      const nextThumbPosition = Math.max(
+        0,
+        Math.min(event.clientX - bounds.left - (thumbWidth / 2), thumbTravel),
+      );
+      pre.scrollLeft = (nextThumbPosition / thumbTravel) * maximumScroll;
+    });
+
+    pre.addEventListener('scroll', scheduleUpdate, { passive: true });
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(pre);
+    document.fonts?.ready.then(scheduleUpdate);
+    window.addEventListener('load', scheduleUpdate, { once: true });
+    window.requestAnimationFrame(update);
+
+    return scrollbar;
+  }
+
+  document.querySelectorAll<HTMLPreElement>('.article__content pre').forEach((pre, index) => {
     if (pre.parentElement?.classList.contains('code-shell')) return;
 
     const shell = document.createElement('div');
@@ -91,6 +215,7 @@
 
     header.append(marker, createCopyButton(pre));
     pre.before(shell);
-    shell.append(header, pre);
+    shell.append(header, pre, createHorizontalScrollbar(pre, index));
+    shell.classList.add('code-shell--custom-scrollbar');
   });
 </script>

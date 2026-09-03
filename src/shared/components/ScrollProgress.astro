@@ -1,0 +1,68 @@
+<div
+  class="scroll-progress"
+  data-scroll-progress
+  role="progressbar"
+  aria-label="문서 읽기 진행률"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <span class="scroll-progress__fill" aria-hidden="true"></span>
+</div>
+
+<script is:inline>
+  (() => {
+    const progress = document.querySelector('[data-scroll-progress]');
+    const fill = progress?.querySelector('.scroll-progress__fill');
+    if (!progress || !fill) return;
+
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const root = document.documentElement;
+      const maximum = Math.max(root.scrollHeight - window.innerHeight, 0);
+      const ratio = maximum === 0 ? 0 : Math.min(window.scrollY / maximum, 1);
+      const percentage = Math.round(ratio * 100);
+
+      fill.style.width = `${ratio * 100}%`;
+      progress.setAttribute('aria-valuenow', String(percentage));
+    };
+
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+  })();
+</script>
+
+<style is:inline>
+  .scroll-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1100;
+    height: 2px;
+    overflow: hidden;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .scroll-progress__fill {
+    display: block;
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    height: 100%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0.5rem color-mix(in srgb, var(--color-accent) 50%, transparent);
+    transition: width 120ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-progress__fill { transition: none; }
+  }
+</style>

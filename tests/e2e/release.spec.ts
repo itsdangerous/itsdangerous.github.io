@@ -32,7 +32,7 @@ describe('release configuration', () => {
   it('has a Pages workflow and site metadata', () => {
     expect(existsSync('.github/workflows/deploy.yml')).toBe(true);
     expect(existsSync('public/robots.txt')).toBe(true);
-    expect(existsSync('public/favicon.svg')).toBe(true);
+    expect(existsSync('public/favicon.png')).toBe(true);
     expect(existsSync('src/pages/rss.xml.ts')).toBe(true);
     expect(readFileSync('astro.config.mjs', 'utf8')).toContain('itsdangerous.github.io');
     expect(readFileSync('astro.config.mjs', 'utf8')).toContain('@astrojs/sitemap');

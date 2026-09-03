@@ -1,4 +1,7 @@
 ---
+import PageLoader from '../../../shared/components/PageLoader.astro';
+import ScrollProgress from '../../../shared/components/ScrollProgress.astro';
+
 interface Props {
   title: string;
   description: string;
@@ -13,13 +16,19 @@ const { title, description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <link rel="preload" as="image" href="/splash-leather-texture.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/splash-crest-embroidered.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/splash-title-embroidered.webp" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Noto+Serif+KR:wght@400;500&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
     <title>{title}</title>
   </head>
   <body class="splash-page">
+    <PageLoader />
+    <ScrollProgress />
     <slot />
   </body>
 </html>

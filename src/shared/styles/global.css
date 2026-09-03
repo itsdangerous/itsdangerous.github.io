@@ -1,3 +1,63 @@
+/* Shared tactile scrollbar treatment for document, tables, TOC, and other scrollable surfaces. */
+* {
+  scrollbar-color: var(--color-code-shell-edge) color-mix(in srgb, var(--color-code-shell) 88%, var(--color-background));
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+
+*::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--color-code-shell) 88%, var(--color-background));
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 18%);
+}
+
+*::-webkit-scrollbar-thumb {
+  min-width: 2.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-code-shell-edge) 82%, transparent);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--color-code-shell) 76%, var(--color-code-shell-edge));
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 3px,
+      color-mix(in srgb, var(--color-code-shell-edge) 88%, transparent) 3px 4px,
+      transparent 4px 7px
+    ),
+    url('/code-shell-texture.webp');
+  background-position: 0 0, center;
+  background-size: auto, 0.75rem 0.75rem;
+  background-blend-mode: screen, soft-light;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-code-shell-edge) 80%, transparent),
+    inset 0 -1px 2px rgb(0 0 0 / 42%),
+    0 1px 2px rgb(0 0 0 / 26%);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  border-color: var(--color-code-shell-edge);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-code-shell-edge) 92%, transparent),
+    inset 0 -1px 2px rgb(0 0 0 / 42%),
+    0 0 0 2px color-mix(in srgb, var(--color-code-shell-edge) 24%, transparent);
+}
+
+[data-theme='light'] *::-webkit-scrollbar-track {
+  box-shadow: inset 0 1px 2px rgb(51 65 75 / 18%), 0 1px 0 rgb(255 255 255 / 55%);
+}
+
+[data-theme='light'] *::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--color-code-shell) 74%, var(--color-code-shell-edge));
+  background-blend-mode: multiply, normal;
+  filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    inset 0 -1px 2px rgb(51 65 75 / 20%),
+    0 1px 2px rgb(51 65 75 / 18%);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -34,19 +94,26 @@ a {
 }
 
 .site-header {
-  --sidebar-accent: #d4bd8a;
-  --sidebar-accent-strong: #f0dfb7;
+  --sidebar-accent: #c9ac66;
+  --sidebar-accent-strong: #c9ac66;
   position: sticky;
-  top: 0;
+  top: 0.5rem;
   align-self: start;
-  height: 100svh;
+  height: calc(100svh - 1rem);
   min-height: 40rem;
-  border: 0;
-  border-right: 1px solid var(--color-border);
-  border-radius: 0;
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
   background: var(--color-surface);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-text) 5%, transparent), 0 1.5rem 4rem rgb(0 0 0 / 16%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-text) 5%, transparent), 0 1.5rem 4rem rgb(0 0 0 / 22%);
   overflow: hidden;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+.site-header[data-scroll-hidden] {
+  transform: translateY(-105%);
+  opacity: 0.04;
+  pointer-events: none;
 }
 
 [data-theme='light'] .site-header {
@@ -62,7 +129,7 @@ a {
   opacity: 0.88;
   background-image:
     linear-gradient(90deg, color-mix(in srgb, var(--color-background) 36%, transparent), transparent 22%),
-    url('/sidebar-texture.webp');
+    url('/splash-leather-texture.webp');
   background-position: center, center;
   background-size: auto, cover;
   background-blend-mode: multiply, soft-light;
@@ -72,21 +139,24 @@ a {
   opacity: 0.72;
   background-image:
     linear-gradient(90deg, color-mix(in srgb, var(--color-border) 24%, transparent), transparent 24%),
-    url('/sidebar-texture.webp');
+    url('/splash-leather-texture.webp');
   background-blend-mode: multiply, normal;
   filter: grayscale(1) invert(1) sepia(0.1) brightness(1.08) contrast(0.62);
 }
 
 .site-header::after {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 1.45rem;
-  width: 1px;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: 0.35rem;
+  z-index: 1;
   content: '';
-  background: repeating-linear-gradient(to bottom, color-mix(in srgb, var(--color-text-muted) 32%, transparent) 0 1px, transparent 1px 4px);
-  opacity: 0.6;
-  box-shadow: 3px 0 0 color-mix(in srgb, var(--color-background) 55%, transparent), -5px 0 0 color-mix(in srgb, var(--color-background) 45%, transparent);
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-text-muted) 32%, transparent) 8%, color-mix(in srgb, var(--color-text-muted) 32%, transparent) 92%, transparent);
+  opacity: 0.82;
+  box-shadow:
+    2px 0 0 color-mix(in srgb, var(--color-background) 48%, transparent),
+    -2px 0 0 color-mix(in srgb, var(--color-text) 5%, transparent);
 }
 
 .site-header__inner {
@@ -124,23 +194,6 @@ a {
   z-index: 1;
 }
 
-.site-header__profile {
-  display: grid;
-  place-items: center;
-  min-height: 8rem;
-  margin: 0 -1rem 1.4rem;
-  padding-bottom: 1.4rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.site-header__profile img {
-  display: block;
-  width: 7.2rem;
-  height: 7.2rem;
-  object-fit: contain;
-  filter: drop-shadow(0 0.5rem 0.6rem rgb(0 0 0 / 22%));
-}
-
 .site-header nav {
   display: flex;
   flex-direction: column;
@@ -152,7 +205,7 @@ a {
 .site-header nav a {
   position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.8rem;
   padding: 0.5rem 0;
   color: var(--color-text);
@@ -162,6 +215,7 @@ a {
   background: none;
   border: 0;
   cursor: pointer;
+  transition: color 160ms ease, text-shadow 160ms ease;
 }
 
 .site-header nav a svg {
@@ -173,6 +227,7 @@ a {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.45;
+  transition: filter 160ms ease, transform 160ms ease;
 }
 
 .site-header nav a b {
@@ -194,9 +249,29 @@ a {
   height: 1.2rem;
   content: '';
   background: var(--sidebar-accent);
+  box-shadow: 0 0 0.7rem color-mix(in srgb, var(--sidebar-accent) 38%, transparent);
 }
 
 .site-header nav a.is-current::before { position: absolute; left: -2rem; width: 0.2rem; height: 1.2rem; content: ''; background: var(--sidebar-accent); box-shadow: 0 0 0.7rem color-mix(in srgb, var(--sidebar-accent) 38%, transparent); }
+
+.site-header nav a:hover,
+.site-header nav a:focus-visible {
+  color: var(--sidebar-accent-strong);
+  text-shadow: 0 0 0.5rem color-mix(in srgb, var(--sidebar-accent) 42%, transparent);
+}
+
+.site-header nav a:hover span,
+.site-header nav a:focus-visible span {
+  color: var(--sidebar-accent-strong);
+  text-shadow: 0 0 0.5rem color-mix(in srgb, var(--sidebar-accent) 42%, transparent), 0 1px 0 color-mix(in srgb, var(--color-text) 28%, transparent), 0 -1px 0 rgb(0 0 0 / 62%);
+  transform: translateY(-1px);
+}
+
+.site-header nav a:hover svg,
+.site-header nav a:focus-visible svg {
+  filter: drop-shadow(0 0 0.45rem color-mix(in srgb, var(--sidebar-accent) 42%, transparent));
+  transform: translateY(-1px);
+}
 
 .site-header nav a span {
   color: var(--color-text);
@@ -205,22 +280,28 @@ a {
   font-weight: 600;
   font-variant-caps: small-caps;
   letter-spacing: 0.04em;
+  line-height: 1.1;
+  transition: color 160ms ease, text-shadow 160ms ease, transform 160ms ease;
   text-shadow: 0 1px 0 color-mix(in srgb, var(--color-text) 28%, transparent), 0 -1px 0 rgb(0 0 0 / 62%), 0 2px 2px rgb(0 0 0 / 24%);
 }
 
 .site-header__brand {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  color: var(--sidebar-accent-strong);
-  font-weight: 700;
   text-decoration: none;
-  font-family: var(--font-western);
-  font-size: 1.72rem;
-  letter-spacing: 0.025em;
-  text-align: center;
   padding-bottom: 1.8rem;
   border-bottom: 1px solid var(--color-border);
-  text-shadow: 0 1px 0 color-mix(in srgb, var(--sidebar-accent-strong) 35%, transparent), 0 -1px 0 rgb(0 0 0 / 72%), 0 2px 3px rgb(0 0 0 / 28%);
+}
+
+.site-header__brand-image {
+  display: block;
+  width: min(100%, 12rem);
+  height: auto;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 76%)) drop-shadow(0 2px 3px rgb(0 0 0 / 28%));
+  user-select: none;
+  pointer-events: none;
 }
 
 .site-header__stats {
@@ -310,10 +391,6 @@ a {
   text-shadow: 0 1px 0 rgb(255 255 255 / 75%), 0 -1px 0 rgb(66 45 20 / 12%), 0 1px 2px rgb(66 45 20 / 10%);
 }
 
-[data-theme='light'] .site-header__profile img {
-  filter: drop-shadow(0 0.45rem 0.5rem rgb(70 58 42 / 13%));
-}
-
 .site-footer {
   width: min(calc(100% - 3rem), var(--shell-width));
   margin: 0;
@@ -336,7 +413,7 @@ a {
 
 .shell {
   width: min(calc(100% - 2rem), 67.5rem);
-  margin: 0;
+  margin-inline: auto;
   padding: 5.5rem 0 4rem;
 }
 
@@ -413,9 +490,9 @@ h1 span {
 
 @media (max-width: 900px) {
   .site-frame { display: block; width: 100%; }
-  .site-header { position: relative; top: 0; height: auto; min-height: auto; border-width: 0 0 1px; border-radius: 0; }
+  .site-header { position: sticky; top: 0; z-index: 100; height: auto; min-height: auto; margin: 0; border-width: 0 0 1px; border-radius: 0; }
   .site-header__inner { min-height: auto; padding: var(--space-4) 1.5rem; }
-  .site-header__profile { display: none; }
+  .site-header::after { display: none; }
   .site-header__brand { padding-bottom: 0; border-bottom: 0; }
   .site-header nav { flex-direction: row; flex-wrap: wrap; align-items: center; margin-top: var(--space-4); gap: var(--space-1) var(--space-4); }
   .site-header nav a { padding: var(--space-1) 0; }
@@ -424,6 +501,7 @@ h1 span {
   .site-header__controls { position: absolute; top: 0.75rem; right: 1rem; padding: 0; border: 0; }
   .shell {
     width: min(calc(100% - 2rem), var(--shell-width));
+    margin-inline: auto;
     padding: var(--space-12) 0;
   }
 

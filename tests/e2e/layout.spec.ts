@@ -16,9 +16,58 @@ test('root splash links to each independent site space', async ({ page }) => {
 
   await expect(page.locator('.book-splash__chapters a')).toHaveCount(4);
   await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/portfolio/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/games/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters a[href="/works/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters a[href="/playroom/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapter-index')).toHaveText(/I|II|III|IV/);
+});
+
+test('independent spaces show a standalone coming soon page', async ({ page }) => {
+  for (const route of ['/works/', '/playroom/', '/about/']) {
+    await page.goto(route);
+    await expect(page.locator('.main-space-page')).toBeVisible();
+    await expect(page.locator('.main-space-page')).toContainText('Coming soon');
+    await expect(page.locator('.site-header')).toHaveCount(0);
+  }
+});
+
+test('blog sidebar home and posts links stay inside the blog', async ({ page }) => {
+  await page.goto('/blog/');
+
+  await expect(page.locator('.site-header nav a[href="/blog/"] span')).toHaveText('Home');
+  await expect(page.locator('.site-header nav a[href="/blog/posts/"] span')).toHaveText('Posts');
+
+  await page.goto('/blog/posts/');
+  await expect(page.locator('.site-header nav a[href="/blog/"]')).not.toHaveClass(/is-current/);
+  await expect(page.locator('.site-header nav a[href="/blog/posts/"]')).toHaveClass(/is-current/);
+});
+
+test('blog home shows five recent posts', async ({ page }) => {
+  await page.goto('/blog/');
+  await expect(page.locator('.recent .post-card')).toHaveCount(5);
+});
+
+test('page opacity fade remains available when reduced motion is requested', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/blog/categories/Algorithm/');
+
+  await expect(page.locator('.site-frame')).toHaveCSS('animation-name', 'page-content-reveal');
+  await expect(page.locator('.page-loader__rule')).toHaveCSS('animation-name', 'none');
+});
+
+test('top scroll progress tracks the full document scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
+  const progress = page.locator('[data-scroll-progress]');
+  const fill = progress.locator('.scroll-progress__fill');
+  await expect(progress).toHaveAttribute('aria-valuenow', '0');
+  await expect(progress).toHaveCSS('position', 'fixed');
+  await expect(progress).toHaveCSS('overflow', 'hidden');
+  await expect(fill).toHaveCSS('position', 'absolute');
+
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect(progress).toHaveAttribute('aria-valuenow', '100');
 });
 
 test('blog lists recent posts with stable article links', async ({ page }) => {
@@ -125,7 +174,7 @@ test('sidebar controls stay compact and left-aligned without styling wrapper cla
   await expect(searchButton.locator('[data-search-shortcut]')).toHaveCSS('color', 'rgb(139, 106, 67)');
 });
 
-test('article shows a sticky desktop TOC and a mobile disclosure', async ({ page }) => {
+test('article shows a sticky desktop TOC and a narrow right rail', async ({ page }) => {
   await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const desktopToc = page.locator('.article__desktop-toc .table-of-contents__desktop');
@@ -134,8 +183,16 @@ test('article shows a sticky desktop TOC and a mobile disclosure', async ({ page
   await expect(page.locator('.article__desktop-toc details.table-of-contents__mobile')).toBeHidden();
 
   await page.setViewportSize({ width: 360, height: 800 });
-  await expect(desktopToc).toBeHidden();
-  await expect(page.locator('.article__mobile-toc details.table-of-contents__mobile')).toBeVisible();
+  await expect(desktopToc).toBeVisible();
+  await expect(page.locator('.article__mobile-toc details.table-of-contents__mobile')).toBeHidden();
+});
+
+test('article initial load does not inject a TOC hash or jump the scroll position', async ({ page }) => {
+  await page.goto('/blog/posts/macos-space/');
+  await page.waitForTimeout(300);
+
+  expect(new URL(page.url()).hash).toBe('');
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
 test('long desktop TOC scrolls independently within the viewport', async ({ page }) => {
@@ -153,15 +210,112 @@ test('long desktop TOC scrolls independently within the viewport', async ({ page
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
 });
 
-test('desktop TOC aligns to the right edge of the content viewport', async ({ page }) => {
+test('sidebar and desktop TOC keep their top offsets when scrolling begins', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/blog/posts/macos-space/');
 
+  const sidebar = page.locator('.site-header');
+  const toc = page.locator('.article__desktop-toc .table-of-contents__desktop');
+  const initial = {
+    sidebarTop: (await sidebar.boundingBox())!.y,
+    tocTop: (await toc.boundingBox())!.y,
+  };
+
+  await page.evaluate(() => window.scrollTo(0, 40));
+
+  expect((await sidebar.boundingBox())!.y).toBe(initial.sidebarTop);
+  expect((await toc.boundingBox())!.y).toBe(initial.tocTop);
+});
+
+test('desktop TOC aligns to the right edge of the content viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 1680, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
   const toc = await page.locator('.article__desktop-toc').boundingBox();
+  const article = await page.locator('.article').boundingBox();
   const content = await page.locator('.site-content').boundingBox();
   expect(toc).not.toBeNull();
+  expect(article).not.toBeNull();
   expect(content).not.toBeNull();
-  expect(toc!.x + toc!.width).toBe(content!.x + content!.width);
+  expect(toc!.x + toc!.width).toBe(content!.x + content!.width - 16);
+  const tocBreathingGap = 32;
+  expect(Math.abs(
+    (article!.x + (article!.width / 2)) - ((content!.x + toc!.x - tocBreathingGap) / 2),
+  )).toBeLessThan(1);
+});
+
+test('desktop article and TOC keep a breathing gap near the layout breakpoint', async ({ page }) => {
+  await page.setViewportSize({ width: 1240, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
+  const article = await page.locator('.article').boundingBox();
+  const toc = await page.locator('.article__desktop-toc').boundingBox();
+  expect(article).not.toBeNull();
+  expect(toc).not.toBeNull();
+  expect(toc!.x - (article!.x + article!.width)).toBeGreaterThanOrEqual(32);
+});
+
+test('desktop TOC starts as a rail and expands on hover', async ({ page }) => {
+  for (const width of [1240, 1680]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/blog/posts/macos-space/');
+
+    const article = page.locator('.article');
+    const toc = page.locator('.article__desktop-toc');
+    const tocList = toc.locator('.table-of-contents__desktop > ol');
+    const collapsedWidth = (await article.boundingBox())!.width;
+
+    await expect(toc).toHaveAttribute('data-toc-collapsed');
+    await expect(toc).toBeVisible();
+    await expect(toc.locator('.table-of-contents__collapsed-preview')).toBeVisible();
+    await expect(toc.locator('[data-toc-preview]')).toHaveCount(
+      await page.locator('.article__desktop-toc a').evaluateAll(
+        (links) => new Set(
+          links
+            .filter((link) => link.closest('li')?.className.includes('depth-2'))
+            .map((link) => link.getAttribute('href')),
+        ).size,
+      ),
+    );
+    await expect(tocList).toBeHidden();
+
+    await toc.hover();
+    await expect(tocList).toBeVisible();
+    await expect.poll(async () => (await article.boundingBox())!.width).toBe(collapsedWidth);
+    await expect.poll(async () => (await toc.boundingBox())!.width).toBeGreaterThan(40);
+
+    await page.locator('.article h1').hover();
+    await expect(tocList).toBeHidden();
+    await expect.poll(async () => (await article.boundingBox())!.width).toBe(collapsedWidth);
+  }
+});
+
+test('narrow article widths keep the TOC as a right rail', async ({ page }) => {
+  for (const width of [390, 900]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/blog/posts/macos-space/');
+
+    const toc = page.locator('.article__desktop-toc');
+    await expect(page.locator('.site-frame')).toHaveCSS('display', 'block');
+    expect((await page.locator('.site-header').boundingBox())!.height).toBeLessThan(200);
+    await expect(page.locator('.site-header nav')).toHaveCSS('flex-direction', 'row');
+    await expect(toc).toBeVisible();
+    await expect(toc.locator('.table-of-contents__collapsed-preview')).toBeVisible();
+    await expect(page.locator('.article__mobile-toc .table-of-contents__mobile')).toBeHidden();
+    await expect(page.locator('[data-toc-top-toggle]')).toBeHidden();
+  }
+});
+
+test('blog navigation hides on downward scroll and returns on upward scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
+  const header = page.locator('.site-header');
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(header).toHaveAttribute('data-scroll-hidden');
+
+  await page.evaluate(() => window.scrollTo(0, 200));
+  await expect(header).not.toHaveAttribute('data-scroll-hidden');
 });
 
 test('desktop TOC updates its active color and URL hash as headings pass', async ({ page }) => {
@@ -181,6 +335,9 @@ test('desktop TOC updates its active color and URL hash as headings pass', async
   await expect.poll(() => page.evaluate(() => decodeURIComponent(window.location.hash))).toBe('#특징');
   expect(await activeLink.evaluate((link) => getComputedStyle(link).color))
     .not.toBe(await inactiveLink.evaluate((link) => getComputedStyle(link).color));
+  await expect(page.locator('.article__desktop-toc [data-toc-preview="git-reset"]'))
+    .toHaveAttribute('data-active');
+  await expect(page.locator('.article__desktop-toc [data-toc-preview="특징"]')).toHaveCount(0);
 });
 
 test('clicking a heading keeps that heading active until the next heading passes', async ({ page }) => {
@@ -218,6 +375,47 @@ test('narrow articles do not create document-level horizontal scrolling', async 
   const codeBlock = page.locator('pre').first();
   await expect(codeBlock).toHaveCSS('overflow-x', 'auto');
   expect(await codeBlock.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+});
+
+test('long code stays horizontally scrollable inside its shell', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('/blog/posts/telegram-bot/');
+
+  const shell = page.locator('.code-shell').first();
+  const codePanel = shell.locator('pre');
+  const customScrollbar = shell.locator('.code-shell__scrollbar');
+  const customThumb = customScrollbar.getByRole('scrollbar');
+
+  await expect(codePanel).toHaveCSS('overflow-x', 'auto');
+  await expect(codePanel).toHaveCSS('overscroll-behavior-x', 'contain');
+  expect(await codePanel.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+  await expect(customScrollbar).toBeVisible();
+  await expect(customThumb).toHaveAttribute('aria-orientation', 'horizontal');
+  await expect(customThumb).toHaveAttribute('aria-valuenow', '0');
+
+  await customThumb.focus();
+  await page.keyboard.press('End');
+
+  await expect(customThumb).toHaveAttribute('aria-valuenow', '100');
+  expect(await codePanel.evaluate(
+    (element) => Math.round(element.scrollLeft + element.clientWidth) === element.scrollWidth,
+  )).toBe(true);
+
+  await page.keyboard.press('Home');
+  const thumbBox = await customThumb.boundingBox();
+  const trackBox = await customScrollbar.locator('.code-shell__scrollbar-track').boundingBox();
+  expect(thumbBox).not.toBeNull();
+  expect(trackBox).not.toBeNull();
+
+  await page.mouse.move(thumbBox!.x + (thumbBox!.width / 2), thumbBox!.y + (thumbBox!.height / 2));
+  await page.mouse.down();
+  await page.mouse.move(trackBox!.x + trackBox!.width - 2, thumbBox!.y + (thumbBox!.height / 2));
+  await page.mouse.up();
+
+  expect(await codePanel.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+  expect(await page.locator('html').evaluate(
+    (element) => element.scrollWidth === element.clientWidth,
+  )).toBe(true);
 });
 
 test('short markdown tables fit their content instead of stretching to the article width', async ({ page }) => {
@@ -279,6 +477,23 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
   await expect(shellHeader).toHaveCSS('background-color', 'rgb(230, 234, 237)');
+  const customThumb = shell.locator('.code-shell__scrollbar-thumb');
+  const lightScrollbar = await customThumb.evaluate((element) => ({
+    color: getComputedStyle(element).backgroundColor,
+    texture: getComputedStyle(element, '::before').backgroundImage,
+  }));
+  expect(lightScrollbar.texture).toContain('code-shell-texture.webp');
+
+  await page.locator('html').evaluate((element) => {
+    element.dataset.theme = 'midnight';
+  });
+
+  const darkScrollbar = await customThumb.evaluate((element) => ({
+    color: getComputedStyle(element).backgroundColor,
+    texture: getComputedStyle(element, '::before').backgroundImage,
+  }));
+  expect(darkScrollbar.color).not.toBe(lightScrollbar.color);
+  expect(darkScrollbar.texture).toContain('code-shell-texture.webp');
   const headerTexture = await shellHeader.evaluate(
     (element) => getComputedStyle(element, '::before').backgroundImage,
   );

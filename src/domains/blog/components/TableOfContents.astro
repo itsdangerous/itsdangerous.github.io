@@ -13,12 +13,12 @@ const { headings } = Astro.props;
 const navigableHeadings = headings.filter(({ depth, slug, text }) => (
   depth >= 2 && depth <= 3 && slug.trim().length > 0 && text.trim().length > 0
 ));
+const collapsedHeadings = navigableHeadings.filter(({ depth }) => depth === 2);
 ---
 
 {navigableHeadings.length > 0 && (
   <>
-    <nav class="table-of-contents__desktop" aria-label="이 글의 목차">
-      <p>On this page</p>
+    <nav id="article-toc" class="table-of-contents__desktop" aria-label="이 글의 목차">
       <ol>
         {navigableHeadings.map((heading) => (
           <li class:list={[`table-of-contents__item--depth-${heading.depth}`]}>
@@ -26,6 +26,9 @@ const navigableHeadings = headings.filter(({ depth, slug, text }) => (
           </li>
         ))}
       </ol>
+      <div class="table-of-contents__collapsed-preview" aria-hidden="true">
+        {collapsedHeadings.map((heading) => <span data-toc-preview={heading.slug} />)}
+      </div>
     </nav>
     <details class="table-of-contents__mobile">
       <summary>이 글의 목차</summary>
@@ -39,6 +42,8 @@ const navigableHeadings = headings.filter(({ depth, slug, text }) => (
     </details>
     <script>
       const initializeToc = () => {
+        const aside = document.querySelector<HTMLElement>('.article__desktop-toc');
+
         if (document.documentElement.dataset.tocInitialized) return;
         const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
         const headingIds = [...new Set(links.map((link) => decodeURIComponent(link.hash.slice(1))))];
@@ -49,7 +54,9 @@ const navigableHeadings = headings.filter(({ depth, slug, text }) => (
         if (links.length === 0 || headings.length === 0) return;
         document.documentElement.dataset.tocInitialized = 'true';
 
-        const setActiveLink = (id: string) => {
+        let hasObservedScroll = false;
+
+        const setActiveLink = (id: string, syncHash: boolean) => {
           const currentIndex = headings.findIndex((heading) => heading.id === id);
           const activeIds = new Set([id]);
           if (currentIndex >= 0 && headings[currentIndex].tagName === 'H3') {
@@ -63,23 +70,29 @@ const navigableHeadings = headings.filter(({ depth, slug, text }) => (
             if (activeIds.has(decodeURIComponent(link.hash.slice(1)))) link.setAttribute('aria-current', 'location');
             else link.removeAttribute('aria-current');
           });
-          if (decodeURIComponent(window.location.hash.slice(1)) !== id) {
+          aside?.querySelectorAll<HTMLElement>('[data-toc-preview]').forEach((preview) => {
+            preview.toggleAttribute('data-active', activeIds.has(preview.dataset.tocPreview ?? ''));
+          });
+          if (syncHash && decodeURIComponent(window.location.hash.slice(1)) !== id) {
             window.history.replaceState(window.history.state, '', `#${encodeURIComponent(id)}`);
           }
         };
 
-        const updateActiveHeading = () => {
+        const updateActiveHeading = (syncHash = hasObservedScroll) => {
           if (headings.length === 0) return;
           const threshold = 48;
           const current = headings.reduce<HTMLElement>((active, heading) => (
             heading.getBoundingClientRect().top <= threshold ? heading : active
           ), headings[0]);
-          setActiveLink(current.id);
+          setActiveLink(current.id, syncHash);
         };
 
-        updateActiveHeading();
-        window.addEventListener('scroll', updateActiveHeading, { passive: true });
-        window.addEventListener('resize', updateActiveHeading);
+        updateActiveHeading(false);
+        window.addEventListener('scroll', () => {
+          hasObservedScroll = true;
+          updateActiveHeading(true);
+        }, { passive: true });
+        window.addEventListener('resize', () => updateActiveHeading());
 
         document.querySelectorAll<HTMLElement>('.table-of-contents__desktop').forEach((toc) => {
           let hideScrollbarTimer: number | undefined;

@@ -29,7 +29,13 @@ const commentsCategoryId = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY_ID?.t
   description={post.data.description}
   canonicalPath={`/blog/posts/${slug}/`}
 >
-  <main class="article-shell">
+  <main class="article-shell" data-toc-collapsed>
+    <div class="article__toc-bar" data-toc-topbar>
+      <button type="button" data-toc-top-toggle aria-expanded="false" aria-controls="article-toc-panel">
+        <span aria-hidden="true">☷</span>
+        <span>목차</span>
+      </button>
+    </div>
     <article class="article" data-pagefind-body>
       <header class="article__header">
         <ArticleMeta post={post} />
@@ -54,9 +60,32 @@ const commentsCategoryId = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY_ID?.t
         <slot name="comments" />
       </section>
     </article>
-    <aside class="article__desktop-toc">
+    <aside id="article-toc-panel" class="article__desktop-toc" data-toc-collapsed>
       <TableOfContents headings={headings} />
     </aside>
   </main>
   <CodeShellEnhancer />
+  <script>
+    const initializeArticleTocBar = () => {
+      const toggle = document.querySelector<HTMLButtonElement>('[data-toc-top-toggle]');
+      const shell = toggle?.closest<HTMLElement>('.article-shell');
+      const panel = document.querySelector<HTMLElement>('#article-toc-panel');
+
+      if (!toggle || !shell || !panel || toggle.dataset.bound) return;
+      toggle.addEventListener('click', () => {
+        const open = shell.toggleAttribute('data-toc-top-open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+      panel.addEventListener('click', (event) => {
+        if ((event.target as HTMLElement).closest('a')) {
+          shell.removeAttribute('data-toc-top-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      toggle.dataset.bound = 'true';
+    };
+
+    initializeArticleTocBar();
+    document.addEventListener('astro:page-load', initializeArticleTocBar);
+  </script>
 </BlogLayout>

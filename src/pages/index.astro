@@ -1,17 +1,11 @@
 ---
 import SplashLayout from '../domains/main/layouts/SplashLayout.astro';
 import '../domains/main/styles/splash.css';
+import BookCrest from '../domains/main/components/BookCrest.astro';
 ---
 
 <SplashLayout title="itsdangerous" description="기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서">
   <main class="book-splash">
-    <aside class="book-splash__spine" aria-hidden="true">
-      <span class="book-splash__spine-rib"></span>
-      <span class="book-splash__spine-rib"></span>
-      <span class="book-splash__spine-rib"></span>
-      <span class="book-splash__spine-rib"></span>
-    </aside>
-
     <section class="book-splash__face" aria-labelledby="splash-title">
       <div class="book-splash__filigree" aria-hidden="true"></div>
       <header class="book-splash__header">
@@ -21,23 +15,35 @@ import '../domains/main/styles/splash.css';
 
       <div class="book-splash__center">
         <div class="book-splash__crest" aria-hidden="true">
-          <svg viewBox="0 0 100 100" fill="none">
-            <circle cx="50" cy="50" r="42" stroke="currentColor" opacity="0.52" />
-            <path d="M29 39c8-11 15-15 21-15s13 4 21 15l-7 1c5 6 7 12 7 19 0 14-9 23-21 23s-21-9-21-23c0-7 2-13 7-19l-7-1Z" stroke="currentColor" stroke-width="1.5" />
-            <circle cx="41" cy="51" r="6" stroke="currentColor" /><circle cx="59" cy="51" r="6" stroke="currentColor" />
-            <circle cx="41" cy="51" r="2" fill="currentColor" /><circle cx="59" cy="51" r="2" fill="currentColor" />
-            <path d="m50 55-5 6h10l-5-6ZM36 70l14-8 14 8M50 24v-8M27 27l-6-6M73 27l6-6" stroke="currentColor" />
-          </svg>
+          <img
+            src="/images/splash-crest-embroidered.webp"
+            alt=""
+            class="book-splash__crest-img"
+            width="512"
+            height="512"
+            loading="eager"
+            decoding="async"
+          />
         </div>
-        <h1 class="book-splash__title" id="splash-title">itsdangerous</h1>
-        <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p>
+        <h1 class="book-splash__title" id="splash-title">
+          <img
+            src="/images/splash-title-embroidered.webp"
+            alt="itsdangerous"
+            class="book-splash__title-img"
+            width="1095"
+            height="250"
+            loading="eager"
+            decoding="async"
+          />
+        </h1>
+        <!-- <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p> -->
       </div>
 
       <nav class="book-splash__chapters" aria-label="사이트 공간">
-        <a href="/blog/">Blog</a>
-        <a href="/portfolio/">Portfolio</a>
-        <a href="/games/">Games</a>
-        <a href="/about/">About</a>
+        <a href="/blog/"><span class="book-splash__chapter-index">I</span><span>Journal</span></a>
+        <a href="/works/"><span class="book-splash__chapter-index">II</span><span>Works</span></a>
+        <a href="/playroom/"><span class="book-splash__chapter-index">III</span><span>Playroom</span></a>
+        <a href="/about/"><span class="book-splash__chapter-index">IV</span><span>About</span></a>
       </nav>
     </section>
   </main>

@@ -1,0 +1,118 @@
+<div class="page-loader" data-page-loader role="status" aria-live="polite" aria-label="페이지를 불러오는 중">
+  <span class="page-loader__mark" aria-hidden="true">&gt;_</span>
+  <span class="page-loader__rule" aria-hidden="true"></span>
+  <span class="sr-only">페이지를 불러오는 중</span>
+</div>
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const loader = document.querySelector('[data-page-loader]');
+    let revealed = false;
+    let loaderShown = false;
+
+    const showLoader = () => {
+      if (revealed) return;
+      loaderShown = true;
+      root.classList.add('page-loading');
+      document.body?.setAttribute('aria-busy', 'true');
+    };
+    const showTimer = window.setTimeout(showLoader, 1000);
+
+    const pageLoaded = document.readyState === 'complete'
+      ? Promise.resolve()
+      : new Promise((resolve) => window.addEventListener('load', resolve, { once: true }));
+    const fontsLoaded = document.fonts?.ready ?? Promise.resolve();
+    const fallback = new Promise((resolve) => window.setTimeout(resolve, 2500));
+
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      window.clearTimeout(showTimer);
+      if (!loaderShown) return;
+      root.classList.remove('page-loading');
+      root.classList.add('page-ready');
+      loader?.setAttribute('aria-hidden', 'true');
+      document.body?.removeAttribute('aria-busy');
+      window.setTimeout(() => root.classList.remove('page-ready'), 700);
+    };
+
+    Promise.race([Promise.all([pageLoaded, fontsLoaded]), fallback]).then(reveal);
+  })();
+</script>
+
+<style is:inline>
+  .page-loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    place-items: center;
+    align-content: center;
+    gap: 0.9rem;
+    color: #c9ac66;
+    background: #030d1d;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+  }
+
+  .page-loader__mark {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 1rem rgb(201 172 102 / 38%);
+  }
+
+  .page-loader__rule {
+    display: block;
+    width: 3.2rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c9ac66, transparent);
+    animation: page-loader-pulse 1.2s ease-in-out infinite;
+  }
+
+  body > :not([data-page-loader]) {
+    animation: page-content-reveal 420ms ease both;
+  }
+
+  html.page-loading .page-loader { display: grid; }
+  html.page-loading body > :not([data-page-loader]) { opacity: 0; }
+
+  html.page-ready .page-loader {
+    display: grid;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 420ms ease, visibility 420ms ease;
+  }
+
+  html.page-ready body > :not([data-page-loader]) {
+    animation: page-content-reveal 420ms ease both;
+  }
+
+  @keyframes page-content-reveal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes page-loader-pulse {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.65); }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body > :not([data-page-loader]),
+    html.page-ready body > :not([data-page-loader]) {
+      animation-duration: 240ms;
+      animation-timing-function: ease-out;
+    }
+
+    html.page-ready .page-loader { transition-duration: 180ms; }
+    .page-loader__rule { animation: none; }
+  }
+
+  [data-theme='light'] .page-loader {
+    color: #8b6a43;
+    background: #f6f8fa;
+  }
+
+  [data-theme='light'] .page-loader__mark { text-shadow: 0 0 1rem rgb(139 106 67 / 24%); }
+  [data-theme='light'] .page-loader__rule { background: linear-gradient(90deg, transparent, #8b6a43, transparent); }
+</style>
