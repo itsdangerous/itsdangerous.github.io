@@ -1,8 +1,18 @@
 .worktrees/
 .superpowers/
+docs/superpowers/
 .astro/
 dist/
 node_modules/
 test-results/
 playwright-report/
 .vscode/
+
+# Local AI agent instructions and working notes
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+COPILOT.md
+.cursorrules
+.windsurfrules
+.codex/

@@ -199,6 +199,73 @@ test('narrow articles do not create document-level horizontal scrolling', async 
   expect(await codeBlock.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
 });
 
+test('short markdown tables fit their content instead of stretching to the article width', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await page.goto('/posts/telegram-bot/');
+
+  const content = await page.locator('.article__content').boundingBox();
+  const table = page.locator('.article__content table').first();
+  const tableBox = await table.boundingBox();
+
+  expect(content).not.toBeNull();
+  expect(tableBox).not.toBeNull();
+  expect(tableBox!.width).toBeLessThan(content!.width);
+});
+
+test('markdown code blocks show a shell marker and individually dismissible copy confirmations', async ({ page }) => {
+  await page.goto('/posts/telegram-bot/');
+
+  const shell = page.locator('.code-shell').first();
+  await expect(shell.locator('.code-shell__marker')).toHaveText('>_');
+
+  const copyButton = shell.getByRole('button', { name: 'Copy code' });
+  await copyButton.click();
+  await copyButton.click();
+
+  const toasts = page.locator('.code-copy-toast');
+  await expect(toasts).toHaveCount(2);
+  await expect(toasts.first()).toHaveText(/Copied to clipboard/);
+  await expect(toasts.first()).toHaveCSS('animation-name', 'code-copy-toast-rise');
+
+  await toasts.first().getByRole('button', { name: 'Dismiss copy confirmation' }).click();
+  await expect(toasts).toHaveCount(1);
+});
+
+test('code shells use theme-specific textured surfaces', async ({ page }) => {
+  await page.goto('/posts/telegram-bot/');
+
+  const shell = page.locator('.code-shell').first();
+  const codePanel = shell.locator('pre');
+  const shellHeader = shell.locator('.code-shell__header');
+  const darkSurface = await shell.evaluate((element) => ({
+    color: getComputedStyle(element).backgroundColor,
+    texture: getComputedStyle(element, '::before').backgroundImage,
+  }));
+
+  await page.locator('html').evaluate((element) => {
+    element.dataset.theme = 'light';
+  });
+
+  const lightSurface = await shell.evaluate((element) => ({
+    color: getComputedStyle(element).backgroundColor,
+    texture: getComputedStyle(element, '::before').backgroundImage,
+  }));
+
+  expect(darkSurface.color).not.toBe(lightSurface.color);
+  expect(darkSurface.texture).not.toBe('none');
+  expect(darkSurface.texture).toContain('code-shell-texture.webp');
+  expect(lightSurface.texture).not.toBe(darkSurface.texture);
+  await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
+  await expect(shellHeader).toHaveCSS('background-color', 'rgb(230, 234, 237)');
+  const headerTexture = await shellHeader.evaluate(
+    (element) => getComputedStyle(element, '::before').backgroundImage,
+  );
+  expect(headerTexture).toContain('code-shell-texture.webp');
+  expect(await shellHeader.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition))
+    .not.toBe(await shell.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition));
+});
+
 test('TOC omits headings without a target or label', async ({ page }) => {
   await page.goto('/posts/algorithm-java-swea/');
 

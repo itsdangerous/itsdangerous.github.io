@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import ArticleMeta from '../components/ArticleMeta.astro';
+import CodeShellEnhancer from '../components/CodeShellEnhancer.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import GiscusComments from '../components/GiscusComments.astro';
 
@@ -55,4 +56,5 @@ const commentsCategoryId = import.meta.env.PUBLIC_GISCUS_COMMENTS_CATEGORY_ID?.t
       <TableOfContents headings={headings} />
     </aside>
   </main>
+  <CodeShellEnhancer />
 </BaseLayout>

@@ -8,6 +8,9 @@
   --color-accent: #0969da;
   --color-accent-strong: #0550ae;
   --color-code-background: #eef1f4;
+  --color-code-shell: #f0f3f5;
+  --color-code-shell-header: #e6eaed;
+  --color-code-shell-edge: rgb(77 101 117 / 24%);
   --search-control-color: #8b6a43;
   color-scheme: light;
 }

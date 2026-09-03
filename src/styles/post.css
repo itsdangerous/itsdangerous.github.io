@@ -280,6 +280,240 @@
   background: var(--color-surface);
 }
 
+.article__content .code-shell {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin: 0 0 var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-code-shell);
+  box-shadow: inset 0 1px 0 var(--color-code-shell-edge);
+}
+
+.article__content .code-shell::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.42;
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 78%, transparent), transparent 62%),
+    url('/code-shell-texture.webp');
+  background-position: center, center;
+  background-size: auto, cover;
+  background-blend-mode: multiply, soft-light;
+}
+
+[data-theme='light'] .article__content .code-shell::before {
+  opacity: 0.52;
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 65%, transparent), transparent 62%),
+    url('/code-shell-texture.webp');
+  background-blend-mode: multiply, normal;
+  filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
+}
+
+[data-theme='light'] .article__content .code-shell pre,
+[data-theme='light'] .article__content .code-shell pre code,
+[data-theme='light'] .article__content .code-shell pre span {
+  color: var(--color-text) !important;
+}
+
+.code-shell__header {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-code-shell-header);
+}
+
+.code-shell__header::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.42;
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 78%, transparent), transparent 62%),
+    url('/code-shell-texture.webp');
+  background-position: center, 28% 72%;
+  background-size: auto, cover;
+  background-blend-mode: multiply, soft-light;
+}
+
+.code-shell__header > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme='light'] .code-shell__header::before {
+  opacity: 0.52;
+  background-image:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 65%, transparent), transparent 62%),
+    url('/code-shell-texture.webp');
+  background-blend-mode: multiply, normal;
+  filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
+}
+
+.code-shell__marker {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+}
+
+.code-shell__copy {
+  position: relative;
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  place-items: center;
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.code-shell__copy:hover,
+.code-shell__copy:focus-visible,
+.code-shell__copy[data-copied='true'] {
+  color: var(--color-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  outline: none;
+}
+
+.code-shell__copy svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.code-shell__copy::after {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + var(--space-2));
+  z-index: 1;
+  width: max-content;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-background);
+  border-radius: var(--radius-sm);
+  background: var(--color-text);
+  content: attr(data-tooltip);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 120ms ease;
+}
+
+.code-shell__copy:hover::after,
+.code-shell__copy:focus-visible::after { opacity: 1; }
+
+.article__content .code-shell pre {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+}
+
+.code-copy-toasts {
+  position: fixed;
+  right: var(--space-6);
+  bottom: var(--space-6);
+  z-index: 20;
+  display: flex;
+  width: min(22rem, calc(100vw - (var(--space-6) * 2)));
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.code-copy-toast {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-code-shell) 94%, var(--color-background));
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 25%);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  pointer-events: auto;
+  animation: code-copy-toast-rise 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.code-copy-toast__message::before {
+  display: inline-grid;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-right: var(--space-2);
+  place-items: center;
+  color: var(--color-accent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: 50%;
+  content: '✓';
+  font-size: 0.7rem;
+}
+
+.code-copy-toast__dismiss {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  color: var(--color-text-muted);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.code-copy-toast__dismiss:hover,
+.code-copy-toast__dismiss:focus-visible {
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  outline: none;
+}
+
+@keyframes code-copy-toast-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code-copy-toast { animation: none; }
+}
+
 .article__content pre,
 .article__content pre code,
 .article__content pre span {
@@ -301,7 +535,8 @@
 
 .article__content table {
   display: block;
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   margin-bottom: var(--space-6);
   overflow-x: auto;
   border-collapse: collapse;

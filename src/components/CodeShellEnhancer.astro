@@ -1,0 +1,96 @@
+<script>
+  function showCopyToast() {
+    let container = document.querySelector<HTMLElement>('.code-copy-toasts');
+
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'code-copy-toasts';
+      document.body.append(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'code-copy-toast';
+    toast.setAttribute('role', 'status');
+
+    const message = document.createElement('span');
+    message.className = 'code-copy-toast__message';
+    message.textContent = 'Copied to clipboard';
+
+    const dismiss = document.createElement('button');
+    dismiss.type = 'button';
+    dismiss.className = 'code-copy-toast__dismiss';
+    dismiss.setAttribute('aria-label', 'Dismiss copy confirmation');
+    dismiss.textContent = '×';
+    dismiss.addEventListener('click', () => toast.remove());
+
+    toast.append(message, dismiss);
+    container.prepend(toast);
+  }
+
+  async function copyCode(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.append(textarea);
+      textarea.select();
+      const copied = document.execCommand('copy');
+      textarea.remove();
+      return copied;
+    }
+  }
+
+  function createCopyButton(pre: HTMLPreElement) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-shell__copy';
+    button.setAttribute('aria-label', 'Copy code');
+    button.setAttribute('data-tooltip', 'Copy code');
+    button.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="9" y="9" width="11" height="11" rx="1.5"></rect>
+        <path d="M15 9V5.5A1.5 1.5 0 0 0 13.5 4h-9A1.5 1.5 0 0 0 3 5.5v9A1.5 1.5 0 0 0 4.5 16H9"></path>
+      </svg>
+    `;
+
+    button.addEventListener('click', async () => {
+      if (!await copyCode(pre.textContent ?? '')) return;
+
+      button.setAttribute('aria-label', 'Copied');
+      button.setAttribute('data-tooltip', 'Copied');
+      button.dataset.copied = 'true';
+      showCopyToast();
+      window.setTimeout(() => {
+        button.setAttribute('aria-label', 'Copy code');
+        button.setAttribute('data-tooltip', 'Copy code');
+        delete button.dataset.copied;
+      }, 1800);
+    });
+
+    return button;
+  }
+
+  document.querySelectorAll<HTMLPreElement>('.article__content pre').forEach((pre) => {
+    if (pre.parentElement?.classList.contains('code-shell')) return;
+
+    const shell = document.createElement('div');
+    shell.className = 'code-shell';
+
+    const header = document.createElement('div');
+    header.className = 'code-shell__header';
+
+    const marker = document.createElement('span');
+    marker.className = 'code-shell__marker';
+    marker.textContent = '>_';
+    marker.setAttribute('aria-hidden', 'true');
+
+    header.append(marker, createCopyButton(pre));
+    pre.before(shell);
+    shell.append(header, pre);
+  });
+</script>
