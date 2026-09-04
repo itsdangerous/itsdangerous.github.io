@@ -208,7 +208,7 @@ describe('blog routes', () => {
     }
   });
 
-  it('uses the guarded loading transition across every page layout', () => {
+  it('fades only the page content while keeping the sidebar outside the transition', () => {
     const loader = readFileSync('src/shared/components/PageLoader.astro', 'utf8');
 
     expect(loader).toContain('data-page-loader');
@@ -216,7 +216,10 @@ describe('blog routes', () => {
     expect(loader).toContain('window.setTimeout(showLoader, 1000)');
     expect(loader).toContain('2500');
     expect(loader).toContain('page-loading');
-    expect(loader).toContain('  body > :not([data-page-loader]) {\n    animation: page-content-reveal 420ms ease both;');
+    expect(loader).toContain('  body > :not([data-page-loader]):not(.site-frame) {\n    animation: page-content-reveal 420ms ease both;');
+    expect(loader).toContain('  .site-content {\n    animation: page-content-reveal 420ms ease both;');
+    expect(loader).toContain('  html.page-loading .site-content { opacity: 0; }');
+    expect(loader).not.toContain('html.page-loading body > :not([data-page-loader]) { opacity: 0; }');
     expect(loader).not.toContain('page-content-subtle-reveal');
 
     for (const path of [

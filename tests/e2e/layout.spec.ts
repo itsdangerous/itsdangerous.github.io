@@ -51,7 +51,8 @@ test('page opacity fade remains available when reduced motion is requested', asy
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/blog/categories/Algorithm/');
 
-  await expect(page.locator('.site-frame')).toHaveCSS('animation-name', 'page-content-reveal');
+  await expect(page.locator('.site-content')).toHaveCSS('animation-name', 'page-content-reveal');
+  await expect(page.locator('.site-frame')).toHaveCSS('animation-name', 'none');
   await expect(page.locator('.page-loader__rule')).toHaveCSS('animation-name', 'none');
 });
 
