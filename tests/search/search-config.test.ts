@@ -44,7 +44,15 @@ describe('Pagefind', () => {
 
     expect(modal).toContain("const term = homeSearchInput?.value.trim() ?? ''");
     expect(modal).toContain('if (term) void openSearch(term);');
-    expect(modal).toContain('modalPagefind?.triggerSearch(initialTerm);');
+    expect(modal).toContain('modalPagefind?.triggerSearch(searchTerm);');
     expect(modal).toContain("button.addEventListener('click', () => { void openSearch(); })");
+  });
+
+  it('ignores non-string values before passing an initial query to Pagefind', () => {
+    const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+
+    expect(modal).toContain("const searchTerm = typeof initialTerm === 'string' ? initialTerm : '';");
+    expect(modal).toContain('if (modalInput && searchTerm)');
+    expect(modal).toContain('modalPagefind?.triggerSearch(searchTerm);');
   });
 });

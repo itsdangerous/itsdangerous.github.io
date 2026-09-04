@@ -64,8 +64,9 @@
     if (term) void openSearch(term);
   });
 
-  const openSearch = async (initialTerm = '') => {
+  const openSearch = async (initialTerm: unknown = '') => {
     if (!modal) return;
+    const searchTerm = typeof initialTerm === 'string' ? initialTerm : '';
     modal.hidden = false;
     document.body.classList.add('search-modal-open');
     if (!initialized) {
@@ -80,9 +81,9 @@
     }
     window.setTimeout(() => {
       const modalInput = document.querySelector<HTMLInputElement>('.search-modal .pagefind-ui__search-input');
-      if (modalInput && initialTerm) {
-        modalInput.value = initialTerm;
-        modalPagefind?.triggerSearch(initialTerm);
+      if (modalInput && searchTerm) {
+        modalInput.value = searchTerm;
+        modalPagefind?.triggerSearch(searchTerm);
       }
       modalInput?.focus();
     }, 80);

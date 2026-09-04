@@ -163,6 +163,7 @@ test('sidebar search matches the primary navigation while feature controls stay 
 
   await searchButton.click();
   await expect(page.locator('[data-search-modal]')).toBeVisible();
+  await expect(page.locator('.search-modal .pagefind-ui__search-input')).toHaveValue('');
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-search-modal]')).toBeHidden();
 
@@ -173,6 +174,16 @@ test('sidebar search matches the primary navigation while feature controls stay 
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeHidden();
   await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
   await expect(searchButton.locator('span')).toBeVisible();
+});
+
+test('home search opens the modal with the typed query', async ({ page }) => {
+  await page.goto('/blog/');
+
+  await page.locator('[data-home-search-input]').fill('git');
+  await page.locator('[data-home-search-form]').press('Enter');
+
+  await expect(page.locator('[data-search-modal]')).toBeVisible();
+  await expect(page.locator('.search-modal .pagefind-ui__search-input')).toHaveValue('git');
 });
 
 test('article shows a wide mobile TOC below the header', async ({ page }) => {
