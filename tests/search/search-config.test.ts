@@ -38,4 +38,12 @@ describe('Pagefind', () => {
     expect(modal).toContain("element: '#pagefind-search-home'");
     expect(modal).toContain('showImages: false');
   });
+
+  it('opens the modal with the home query when the home search form is submitted', () => {
+    const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+
+    expect(modal).toContain("const term = homeSearchInput?.value.trim() ?? ''");
+    expect(modal).toContain('if (term) void openSearch(term);');
+    expect(modal).toContain('modalPagefind?.triggerSearch(initialTerm);');
+  });
 });

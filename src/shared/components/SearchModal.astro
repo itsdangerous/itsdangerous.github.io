@@ -25,6 +25,7 @@
   let initialized = false;
   let homeInitialized = false;
   let homePagefind: { triggerSearch: (term: string) => void } | undefined;
+  let modalPagefind: { triggerSearch: (term: string) => void } | undefined;
 
   const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
   document.querySelectorAll<HTMLElement>('.home-search__shortcut-key').forEach((key) => {
@@ -59,10 +60,11 @@
   homeSearchInput?.addEventListener('input', () => { void searchFromHome(); });
   homeSearchForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-    void searchFromHome();
+    const term = homeSearchInput?.value.trim() ?? '';
+    if (term) void openSearch(term);
   });
 
-  const openSearch = async () => {
+  const openSearch = async (initialTerm = '') => {
     if (!modal) return;
     modal.hidden = false;
     document.body.classList.add('search-modal-open');
@@ -70,14 +72,19 @@
       initialized = true;
       try {
         const { PagefindUI } = await import('@pagefind/default-ui');
-        new PagefindUI({ element: '#pagefind-search-modal', showImages: false });
+        modalPagefind = new PagefindUI({ element: '#pagefind-search-modal', showImages: false });
       } catch {
         const container = document.querySelector('#pagefind-search-modal');
         if (container) container.textContent = '검색 색인은 배포 후 사용할 수 있습니다.';
       }
     }
     window.setTimeout(() => {
-      document.querySelector<HTMLInputElement>('.search-modal .pagefind-ui__search-input')?.focus();
+      const modalInput = document.querySelector<HTMLInputElement>('.search-modal .pagefind-ui__search-input');
+      if (modalInput && initialTerm) {
+        modalInput.value = initialTerm;
+        modalPagefind?.triggerSearch(initialTerm);
+      }
+      modalInput?.focus();
     }, 80);
   };
 
