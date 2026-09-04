@@ -55,4 +55,29 @@ describe('Pagefind', () => {
     expect(modal).toContain('if (modalInput && searchTerm)');
     expect(modal).toContain('modalPagefind?.triggerSearch(searchTerm);');
   });
+
+  it('styles the modal search field like the home search control', () => {
+    const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+
+    expect(modal).toContain('.search-modal .pagefind-ui .pagefind-ui__search-input');
+    expect(modal).toContain('min-height: 3.75rem');
+    expect(modal).toContain('border-radius: 999px');
+    expect(modal).toContain('.search-modal .pagefind-ui .pagefind-ui__search-input:focus');
+    expect(modal).toContain('.search-modal .pagefind-ui .pagefind-ui__search-clear');
+  });
+
+  it('keeps the modal search field self-explanatory with an inline clear icon', () => {
+    const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+
+    expect(modal).not.toContain('Enter로 결과를 열고, Esc로 닫습니다.');
+    expect(modal).toContain("content: '×';");
+    expect(modal).toContain('font-size: 0;');
+    expect(modal).toContain('.search-modal .pagefind-ui .pagefind-ui__search-clear {\n    position: absolute;');
+    expect(modal).toContain('top: .875rem;');
+    expect(modal).not.toContain('transform: translateY(-50%);');
+    expect(modal).toContain('border: 0;');
+    expect(modal).toContain('background: transparent;');
+    expect(modal).toContain('font: 1.2rem/2rem var(--font-ui);');
+    expect(modal).not.toContain('transform: translateY(1px);');
+  });
 });
