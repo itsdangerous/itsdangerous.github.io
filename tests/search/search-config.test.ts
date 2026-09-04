@@ -45,5 +45,6 @@ describe('Pagefind', () => {
     expect(modal).toContain("const term = homeSearchInput?.value.trim() ?? ''");
     expect(modal).toContain('if (term) void openSearch(term);');
     expect(modal).toContain('modalPagefind?.triggerSearch(initialTerm);');
+    expect(modal).toContain("button.addEventListener('click', () => { void openSearch(); })");
   });
 });
