@@ -8,7 +8,7 @@ slug: "macos-yabai-skhd"
 draft: false
 ---
 
-이 글은 [1편: macOS에서 가상 데스크탑 전환 애니메이션 제거하기](https://itsdangerous.github.io/posts/macos-space/)에서 yabai와 skhd를 설치하고 손쉬운 사용 권한을 준 상태를 전제로 한다. 모니터 포커스 자체는 scripting addition 없이도 사용할 수 있지만, 1편의 구성을 적용하면 Space가 바뀌는 상황에서도 더 안정적으로 동작한다.
+이 글은 [1편: macOS에서 가상 데스크탑 전환 애니메이션 제거하기](https://itsdangerous.github.io/blog/posts/macos-space/)에서 yabai와 skhd를 설치하고 손쉬운 사용 권한을 준 상태를 전제로 한다. 모니터 포커스 자체는 scripting addition 없이도 사용할 수 있지만, 1편의 구성을 적용하면 Space가 바뀌는 상황에서도 더 안정적으로 동작한다.
 
 ---
 
