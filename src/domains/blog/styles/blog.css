@@ -256,11 +256,90 @@
   text-underline-offset: 0.2em;
 }
 
+.article__content .callout {
+  --callout-accent: var(--color-accent);
+  --callout-background: var(--color-surface);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--callout-background);
+  background-image: url('/splash-leather-cover-texture.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: soft-light;
+  box-shadow: var(--shadow-sm);
+}
+
+.article__content .callout--note { --callout-accent: #6db8ee; --callout-background: #102b43; }
+.article__content .callout--tip { --callout-accent: #74c69d; --callout-background: #123629; }
+.article__content .callout--warning { --callout-accent: #e4b65e; --callout-background: #3d2f14; }
+.article__content .callout--important { --callout-accent: #e58a83; --callout-background: #3b2025; }
+.article__content .callout--success { --callout-accent: #63c7c0; --callout-background: #10363a; }
+
+[data-theme='light'] .article__content .callout--note { --callout-background: #e6f2fb; }
+[data-theme='light'] .article__content .callout--tip { --callout-background: #e8f6ed; }
+[data-theme='light'] .article__content .callout--warning { --callout-background: #fff3d7; }
+[data-theme='light'] .article__content .callout--important { --callout-background: #ffebea; }
+[data-theme='light'] .article__content .callout--success { --callout-background: #e3f6f4; }
+
+.article__content .callout__title {
+  margin: 0 0 var(--space-2);
+  color: var(--callout-accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.article__content .callout > :last-child {
+  margin-bottom: 0;
+}
+
+.article__content table {
+  width: 100%;
+  margin: 0;
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  background-image: url('/splash-leather-cover-texture.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.article__content td,
+.article__content th {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article__content tr:last-child td {
+  border-bottom: 0;
+}
+
 .article__content blockquote {
+  margin: 0 0 var(--space-6);
   padding: var(--space-4) var(--space-6);
   color: var(--color-text-muted);
-  border-left: 3px solid var(--color-accent);
-  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid color-mix(in srgb, var(--color-accent) 58%, var(--color-surface));
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  background-image: url('/splash-leather-cover-texture.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: soft-light;
 }
 
 .article__content pre {
@@ -297,7 +376,7 @@
   opacity: 0.42;
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 78%, transparent), transparent 62%),
-    url('/code-shell-texture.webp');
+    url('/splash-leather-cover-texture.webp');
   background-position: center, center;
   background-size: auto, cover;
   background-blend-mode: multiply, soft-light;
@@ -307,7 +386,7 @@
   opacity: 0.52;
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 65%, transparent), transparent 62%),
-    url('/code-shell-texture.webp');
+    url('/splash-leather-cover-texture.webp');
   background-blend-mode: multiply, normal;
   filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
 }
@@ -340,7 +419,7 @@
   opacity: 0.42;
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 78%, transparent), transparent 62%),
-    url('/code-shell-texture.webp');
+    url('/splash-leather-cover-texture.webp');
   background-position: center, 28% 72%;
   background-size: auto, cover;
   background-blend-mode: multiply, soft-light;
@@ -355,7 +434,7 @@
   opacity: 0.52;
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 65%, transparent), transparent 62%),
-    url('/code-shell-texture.webp');
+    url('/splash-leather-cover-texture.webp');
   background-blend-mode: multiply, normal;
   filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
 }
@@ -408,7 +487,9 @@
   padding: var(--space-1) var(--space-2);
   color: var(--color-background);
   border-radius: var(--radius-sm);
-  background: var(--color-text);
+  background-color: var(--color-text);
+  background-image: url('/splash-leather-cover-texture.webp');
+  background-size: 12rem auto;
   content: attr(data-tooltip);
   font-family: var(--font-mono);
   font-size: 0.7rem;
@@ -571,12 +652,12 @@
   color: var(--color-code-text);
   border: 1px solid color-mix(in srgb, var(--color-code-shell-edge) 82%, var(--color-accent));
   border-radius: 0.65rem;
-  background-color: var(--color-code-shell);
+  background-color: var(--color-surface);
   background-image:
-    linear-gradient(105deg, color-mix(in srgb, var(--color-code-shell-header) 70%, transparent), transparent 62%),
-    url('/code-shell-texture.webp');
-  background-position: center, 0.25rem 0.2rem;
-  background-size: auto, 0.9rem 0.9rem;
+    linear-gradient(105deg, color-mix(in srgb, var(--color-surface) 70%, transparent), transparent 62%),
+    url('/splash-leather-cover-texture.webp');
+  background-position: center, center;
+  background-size: auto, 18rem auto;
   box-shadow:
     0 1rem 2.5rem rgb(0 0 0 / 34%),
     inset 0 1px 0 rgb(255 255 255 / 12%),
@@ -678,7 +759,7 @@
 }
 
 .article__content th {
-  background: var(--color-surface);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
 }
 
 .article__content img {
@@ -808,8 +889,24 @@
     padding: var(--space-4);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    background: var(--color-background);
+    background-color: var(--color-background);
+    background-image:
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-background) 82%, transparent),
+        transparent 68%
+      ),
+      url('/splash-leather-cover-texture.webp');
+    background-size:
+      auto,
+      cover;
+    background-repeat: no-repeat;
     box-shadow: var(--shadow-lg);
+  }
+
+  .article-shell > .article__desktop-toc:has(.table-of-contents__desktop:hover) .table-of-contents__desktop a,
+  .article-shell > .article__desktop-toc:has(.table-of-contents__desktop:focus-within) .table-of-contents__desktop a {
+    color: var(--color-text);
   }
 
   .article-shell > .article__desktop-toc .table-of-contents__desktop {

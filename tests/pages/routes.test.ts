@@ -110,7 +110,7 @@ describe('blog routes', () => {
     const layout = readFileSync('src/shared/layouts/SiteLayout.astro', 'utf8');
 
     expect(styles).toContain("url('/splash-leather-cover-texture.webp')");
-    expect(styles).toContain('background-position: center, 24% center;');
+    expect(styles).toMatch(/background-position:\s*center,\s*24% center;/);
     expect(styles).not.toContain("url('/splash-leather-texture.webp')");
     expect(styles).not.toContain("url('/sidebar-texture.webp')");
     expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-cover-texture.webp"');
@@ -136,7 +136,7 @@ describe('blog routes', () => {
 
     expect(styles).toContain('.site-header nav :is(a, .site-header__nav-search):hover span');
     expect(styles).toContain('text-shadow: 0 0 0.5rem');
-    expect(styles).toContain('transition: color 160ms ease, text-shadow 160ms ease');
+    expect(styles).toMatch(/transition:\s*color 160ms ease,\s*text-shadow 160ms ease/);
     expect(styles).toContain('.site-header nav :is(a, .site-header__nav-search):hover span');
     expect(styles).toContain('transform: translateY(-1px);');
     expect(styles).toContain('align-items: center;');
@@ -160,9 +160,30 @@ describe('blog routes', () => {
     expect(existsSync('public/article-manuscript-paper-texture.webp')).toBe(true);
     expect(blogStyles).not.toContain('article-manuscript-paper-texture');
     expect(globalStyles).toContain('html::before');
-    expect(globalStyles).toContain("background: url('/article-manuscript-paper-texture.webp') center / 40rem repeat;");
+    expect(globalStyles).toMatch(/background:\s*url\(['"]\/article-manuscript-paper-texture\.webp['"]\) center \/ 40rem\s*repeat;/);
     expect(globalStyles).toContain('mix-blend-mode: soft-light;');
     expect(globalStyles).toContain('filter: brightness(0.6) contrast(3);');
+    expect(globalStyles).toMatch(/html\[data-theme=['"]light['"]\]::before/);
+    expect(globalStyles).toContain('opacity: 0.32;');
+    expect(globalStyles).toContain('mix-blend-mode: multiply;');
+    expect(globalStyles).toContain('filter: grayscale(1) sepia(0.12) brightness(0.96) contrast(1.12);');
+  });
+
+  it('gives floating surfaces the shared leather-cover texture', () => {
+    const globalStyles = readFileSync('src/shared/styles/global.css', 'utf8');
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(globalStyles).toContain('.feature-bundle__toggle');
+    expect(globalStyles).toContain('.feature-bundle__panel');
+    expect(globalStyles).toContain("url('/splash-leather-cover-texture.webp')");
+    expect(blogStyles).toContain('.code-shell__copy::after');
+    expect(blogStyles).toContain('.article-shell > .article__desktop-toc:has(.table-of-contents__desktop:hover)');
+    expect(blogStyles).toContain('.table-of-contents__desktop a,');
+    expect(blogStyles).toContain('background-repeat: no-repeat;');
+    expect(blogStyles).toContain('.code-copy-toast');
+    expect(blogStyles).toContain("url('/splash-leather-cover-texture.webp')");
+    expect(blogStyles).toContain('.article__content table');
+    expect(blogStyles).toContain('background-repeat: no-repeat;');
   });
 
   it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {

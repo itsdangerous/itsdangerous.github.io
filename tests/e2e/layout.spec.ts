@@ -499,7 +499,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
 
   expect(darkSurface.color).not.toBe(lightSurface.color);
   expect(darkSurface.texture).not.toBe('none');
-  expect(darkSurface.texture).toContain('code-shell-texture.webp');
+  expect(darkSurface.texture).toContain('splash-leather-cover-texture.webp');
   expect(lightSurface.texture).not.toBe(darkSurface.texture);
   await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
@@ -524,7 +524,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const headerTexture = await shellHeader.evaluate(
     (element) => getComputedStyle(element, '::before').backgroundImage,
   );
-  expect(headerTexture).toContain('code-shell-texture.webp');
+  expect(headerTexture).toContain('splash-leather-cover-texture.webp');
   expect(await shellHeader.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition))
     .not.toBe(await shell.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition));
 });

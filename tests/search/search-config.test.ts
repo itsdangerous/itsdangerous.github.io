@@ -59,6 +59,7 @@ describe('Pagefind', () => {
   it('styles the modal search field like the home search control', () => {
     const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
 
+    expect(modal).toContain("url('/splash-leather-cover-texture.webp')");
     expect(modal).toContain('.search-modal .pagefind-ui .pagefind-ui__search-input');
     expect(modal).toContain('min-height: 3.75rem');
     expect(modal).toContain('border-radius: 999px');
