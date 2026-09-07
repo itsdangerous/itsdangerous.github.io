@@ -13,7 +13,7 @@ draft: false
 
 완성되는 흐름은 다음과 같다.
 
-```
+```text
 백그라운드 작업 완료
   -> 애플리케이션이 Telegram Bot API 호출
   -> 비공개 운영 알림 채널에 메시지 게시
@@ -57,7 +57,7 @@ draft: false
 
 Telegram에서 정확히 `@BotFather`를 검색하거나 다음 링크를 연다.
 
-```
+```text
 https://t.me/BotFather
 ```
 
@@ -67,25 +67,25 @@ https://t.me/BotFather
 
 BotFather 대화창에 다음 명령을 보낸다.
 
-```
+```text
 /newbot
 ```
 
 먼저 표시 이름을 입력한다.
 
-```
+```text
 Example Operations Bot
 ```
 
 이어서 username을 입력한다.
 
-```
+```text
 example_operations_bot
 ```
 
 username이 이미 사용 중이면 서비스명과 용도를 조합해 다른 이름을 선택한다.
 
-```
+```text
 example_job_alert_bot
 example_ops_notification_bot
 ```
@@ -96,7 +96,7 @@ username은 검색과 봇 링크에 사용되므로 역할을 알아보기 쉬�
 
 봇 생성이 끝나면 BotFather가 다음과 같은 형식의 인증 토큰을 발급한다.
 
-```
+```text
 1234567890:문자열...
 ```
 
@@ -161,7 +161,7 @@ Telegram Bot은 그룹과 채널 모두에 메시지를 보낼 수 있다. 다�
 3. 채널 이름을 `Example Operations Alerts`로 입력한다.
 4. 채널 설명을 입력한다.
 
-```
+```text
 Operational alerts and service status updates.
 ```
 5. 채널 유형으로 `Private Channel`을 선택한다.
@@ -219,7 +219,7 @@ Telegram Bot API로 메시지를 보내려면 두 값이 필요하다.
 
 토큰이 명령 기록에 그대로 남지 않도록 안전한 터미널에서 숨김 입력을 사용한다.
 
-```
+```bash
 printf 'Telegram bot token: '
 read -r -s TELEGRAM_BOT_TOKEN
 printf '\n'
@@ -231,7 +231,7 @@ printf '\n'
 
 다음 명령은 Bot API의 `getMe` 메서드로 현재 봇 정보를 확인한다.
 
-```
+```bash
 curl --silent --show-error --config - <<EOF | jq .
 url = "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe"
 EOF
@@ -239,7 +239,7 @@ EOF
 
 성공하면 다음과 비슷한 응답이 나온다.
 
-```
+```json
 {
   "ok": true,
   "result": {
@@ -257,7 +257,7 @@ EOF
 
 이제 다음 명령으로 최근 업데이트에서 채널 정보를 찾는다.
 
-```
+```bash
 curl --silent --show-error --config - <<EOF | jq '
   .result[]
   | select(.channel_post.chat.type == "channel")
@@ -270,7 +270,7 @@ EOF
 
 출력에서 방금 만든 채널 이름을 찾는다.
 
-```
+```json
 {
   "id": -1001234567890,
   "title": "Example Operations Alerts",
@@ -282,7 +282,7 @@ EOF
 
 `jq` 없이 확인하려면 원본 응답에서 `"title":"Example Operations Alerts"`가 있는 `channel\_post.chat` 객체의 `id`를 찾는다.
 
-```
+```bash
 curl --silent --show-error --config - <<EOF
 url = "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates"
 EOF
@@ -299,7 +299,7 @@ EOF
 
 이미 webhook을 사용하는 봇이라면 `getUpdates`를 동시에 사용할 수 없다. 다음 명령으로 webhook 상태를 확인한다.
 
-```
+```bash
 curl --silent --show-error --config - <<EOF | jq .
 url = "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getWebhookInfo"
 EOF
@@ -311,13 +311,13 @@ EOF
 
 확인한 채널 Chat ID를 현재 터미널의 변수에 넣는다.
 
-```
+```bash
 TELEGRAM_NOTIFICATION_CHAT_ID='-1001234567890'
 ```
 
 이제 `sendMessage` 메서드로 테스트 메시지를 전송한다.
 
-```
+```bash
 curl --silent --show-error \
   --request POST \
   --data-urlencode "chat_id=${TELEGRAM_NOTIFICATION_CHAT_ID}" \
@@ -329,7 +329,7 @@ EOF
 
 응답의 `ok`가 `true`이고 채널에 테스트 메시지가 표시되면 Telegram 설정은 끝난 것이다.
 
-```
+```json
 {
   "ok": true
 }
@@ -337,7 +337,7 @@ EOF
 
 테스트가 끝나면 현재 터미널에서 변수를 제거한다.
 
-```
+```bash
 unset TELEGRAM_BOT_TOKEN TELEGRAM_NOTIFICATION_CHAT_ID
 ```
 
@@ -368,7 +368,7 @@ Bot API 전송과 기기의 푸시 알림 설정은 별개다. 다음 항목을 
 
 직접 전송이 성공했다면 배포 환경의 Secret Manager 또는 서버의 `.env`에 두 값을 등록한다.
 
-```
+```dotenv
 TELEGRAM_BOT_TOKEN=실제_봇_토큰
 TELEGRAM_NOTIFICATION_CHAT_ID=-1001234567890
 ```

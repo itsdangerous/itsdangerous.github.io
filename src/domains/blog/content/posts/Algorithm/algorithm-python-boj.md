@@ -85,7 +85,7 @@ O(N \* 2^g) N \<= 20 g \<= 10 **최대** 20 \* 1024 ≈ 20,480
 
 ## **Code**
 
-```
+```python
 N = int(input())
 
 arr = [[False] * 101 for _ in range(101)]

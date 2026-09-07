@@ -15,7 +15,7 @@ pip install uwsgi를 해보았으나...
 
 에러가 떠서 구글링 해 본 결과
 
-```
+```bash
 sudo apt-get install python3.10-dev
 ```
 

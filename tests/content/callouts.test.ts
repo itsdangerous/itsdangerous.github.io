@@ -53,8 +53,23 @@ describe('Markdown callouts', () => {
     expect(styles).toContain('font-size: 1.125rem;');
     expect(styles).not.toContain('vertical-align: -0.18em;');
     expect(styles).toContain("[data-theme='light'] .article__content .callout--warning");
-    expect(surfaces).toContain('--surface-texture-opacity: 0.34;');
-    expect(surfaces).toContain('background-blend-mode: multiply, luminosity;');
+    expect(surfaces).toContain("--surface-texture-image: url('/light-code-shell-texture-v2.webp');");
+    expect(surfaces).toContain('--surface-texture-opacity: 0.52;');
+    expect(surfaces).toContain('--surface-texture-tint: color-mix(in srgb, var(--color-surface) 92%, var(--color-background));');
+    expect(surfaces).toContain('background-blend-mode: normal, multiply;');
     expect(styles).not.toContain('border-left: 3px solid color-mix(in srgb, var(--callout-accent)');
+  });
+
+  it('keeps light code shells darker than the other light editorial surfaces', () => {
+    const styles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(styles).toContain(
+      "[data-theme='light'] .article__content .code-shell {\n  --surface-background: #d2cec6;",
+    );
+    expect(styles).toContain(
+      "[data-theme='light'] .article__content .code-shell__header {\n  --surface-background: #c3bdb3;",
+    );
+    expect(styles).toContain("[data-theme='light'] .article__content .code-shell::before,");
+    expect(styles).toContain('--surface-texture-opacity: 0.32;');
   });
 });

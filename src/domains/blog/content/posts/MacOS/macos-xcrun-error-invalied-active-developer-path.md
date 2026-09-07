@@ -7,7 +7,7 @@ tags: []
 slug: "macos-xcrun-error-invalied-active-developer-path"
 draft: false
 ---
-```
+```text
 xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools),
 missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
 error: command '/usr/bin/clang' failed with exit code 1
@@ -20,7 +20,7 @@ pip install mysqlclient 설치할 때 위와 같은 오류가 떠서 구글링�
 
 해결 방법!!
 
-```
+```bash
 xcode-select --install
 ```
 

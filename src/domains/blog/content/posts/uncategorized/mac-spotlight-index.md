@@ -31,7 +31,7 @@ Apple도 저장 공간 설정에서 카테고리별 사용량과 추천 정리�
 
 Time Machine 로컬 스냅샷
 
-```
+```bash
 tmutil listlocalsnapshots /
 ```
 
@@ -39,7 +39,7 @@ tmutil listlocalsnapshots /
 
 ### 3-1. iPhone / iPad 로컬 백업
 
-```
+```bash
 du -sh ~/Library/Application\ Support/MobileSync/Backup 2>/dev/null
 ```
 
@@ -47,7 +47,7 @@ du -sh ~/Library/Application\ Support/MobileSync/Backup 2>/dev/null
 
 ### 3-2. Xcode / CoreSimulator
 
-```
+```bash
 du -sh ~/Library/Developer/Xcode 2>/dev/null
 du -sh ~/Library/Developer/CoreSimulator 2>/dev/null
 ```
@@ -56,7 +56,7 @@ du -sh ~/Library/Developer/CoreSimulator 2>/dev/null
 
 ### 3-3. 사용자 Library 전체 크기
 
-```
+```bash
 du -xhd 1 ~/Library 2>/dev/null | sort -h
 ```
 
@@ -73,7 +73,7 @@ du -xhd 1 ~/Library 2>/dev/null | sort -h
 
 결정적인 단서는 이 명령에서 나왔다.
 
-```
+```bash
 sudo du -xhd 1 /System/Volumes/Data 2>/dev/null | sort -h
 ```
 
@@ -110,7 +110,7 @@ Apple은 이 절차를 통해 Spotlight 인덱스를 다시 구성할 수 있다
 
 다음 명령 재실행
 
-```
+```bash
 sudo du -xhd 1 /System/Volumes/Data 2>/dev/null | sort -h
 ```
 

@@ -24,7 +24,7 @@ Git을 이해할 때 가장 중요한 개념 중 하나는 **브랜치는 복사
 
 예를 들어 다음과 같은 상태가 있다고 가정해보겠습니다.
 
-```
+```text
  A --- B --- C (main)
 ```
 
@@ -32,7 +32,7 @@ Git을 이해할 때 가장 중요한 개념 중 하나는 **브랜치는 복사
 
 이 상태에서 새로운 브랜치 `feature`를 만들면 다음과 같습니다.
 
-```
+```text
  A --- B --- C (main, feature)
 ```
 
@@ -40,7 +40,7 @@ Git을 이해할 때 가장 중요한 개념 중 하나는 **브랜치는 복사
 
 이후 feature 브랜치에서 commit이 추가되면 다음과 같이 그래프가 분기됩니다.
 
-```
+```text
  A --- B --- C (main)
                          \
                             D --- E (feature)
@@ -68,7 +68,7 @@ merge를 할 때 Git은 먼저 다음 질문을 합니다.
 
 다음 commit 그래프를 보겠습니다.
 
-```
+```text
  A --- B --- C (main)
                          \ 
                             D --- E (feature)
@@ -81,7 +81,7 @@ merge를 할 때 Git은 먼저 다음 질문을 합니다.
 
 이 상태에서 다음 명령을 실행합니다.
 
-```
+```bash
  git checkout main
  git merge feature
 ```
@@ -92,7 +92,7 @@ Git은 먼저 다음을 확인합니다.
 
 commit 관계는 다음과 같습니다.
 
-```
+```text
  E | D | C | B | A
 ```
 
@@ -102,7 +102,7 @@ commit 관계는 다음과 같습니다.
 
 브랜치 포인터만 이동하면 되기 때문입니다.
 
-```
+```text
  A --- B --- C --- D --- E (main, feature)
 ```
 
@@ -114,7 +114,7 @@ commit 관계는 다음과 같습니다.
 
 이번에는 다음 상태를 보겠습니다.
 
-```
+```text
  A --- B --- C --- F (main)
                         \
                           D --- E (feature)
@@ -127,7 +127,7 @@ commit 관계는 다음과 같습니다.
 
 이 상태에서 merge를 실행하면
 
-```
+```bash
  git checkout main
  git merge feature
 ```
@@ -138,7 +138,7 @@ Git은 다음을 검사합니다.
 
 하지만 commit 관계는 다음과 같습니다.
 
-```
+```text
  E --- D --- C --- B --- A
  F --- C --- B --- A
 ```
@@ -147,7 +147,7 @@ Git은 다음을 검사합니다.
 
 이 경우 Git은 두 히스토리를 연결하기 위해 새로운 commit을 생성합니다.
 
-```
+```text
 A --- B --- C -------- M   (main)
                         \              /
                           D --- E   (feature)
@@ -168,13 +168,13 @@ Git은 기본적으로 fast-forward가 가능하면 merge commit을 만들지 �
 
 이때 사용하는 옵션이 `--no-ff` 입니다.
 
-```
+```bash
  git merge --no-ff feature
 ```
 
 이 옵션을 사용하면 fast-forward가 가능한 상황에서도 merge commit이 생성됩니다.
 
-```
+```text
 A --- B --- C -------- M   (main)
                         \             /
                           D --- E   (feature)
@@ -188,7 +188,7 @@ A --- B --- C -------- M   (main)
 
 예를 들어 다음 상태에서
 
-```
+```text
  A --- B --- C --- F (main)
                          \ 
                            D --- E (feature)
@@ -196,13 +196,13 @@ A --- B --- C -------- M   (main)
 
 다음 명령을 실행하면
 
-```
+```bash
  git rebase main
 ```
 
 feature 브랜치의 commit이 main 위로 재배치됩니다.
 
-```
+```text
  A --- B --- C --- F --- D' --- E'
 ```
 

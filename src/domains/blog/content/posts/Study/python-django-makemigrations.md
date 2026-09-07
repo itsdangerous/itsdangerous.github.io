@@ -15,7 +15,7 @@ python manage.py makemigrations를 하니... mysqlclient가 없어서 안된다�
 
 다음을 하니 해결이 되었다....
 
-```
+```bash
 sudo apt-get update
 sudo apt-get install python3.10-dev libmysqlclient-dev gcc # python 버전에 맞게 쓰세요
 pip install mysqlclient

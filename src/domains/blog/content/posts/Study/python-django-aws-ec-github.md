@@ -7,7 +7,7 @@ tags: ["AWS EC2","Django","python","서버"]
 slug: "python-django-aws-ec-github"
 draft: false
 ---
-```
+```bash
 git add .
 git remote add origin https://github.com/itsdangerous/server_dev.git
 git commit -m '1st cmt'
@@ -20,7 +20,7 @@ git push -u origin main​
 
 server\_dev 디렉토리로 가서 다음과 같이 입력하여 깃헙 저장소에 올립니다
 
-```
+```bash
 git init
 git add .
 git remote add origin https://github.com/itsdangerous/server_dev.git
@@ -40,13 +40,13 @@ ec2 서버에 들어가봅시다!
 
 먼저 python과 pip를 설치해봅니다
 
-```
+```bash
 sudo apt update
 ```
 
 전 로컬에서 파이썬을 3.10 버전을 사용해서, ec2에서도 같은 환경을 적용해줄게요
 
-```
+```bash
 sudo add-apt-repository ppa:deadsnakes/ppa # 선택적
 sudo apt install python3.10
 ```
@@ -55,7 +55,7 @@ sudo apt install python3.10
 
 아래꺼 실행해주세요
 
-```
+```bash
 curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 ```
 
@@ -81,13 +81,13 @@ curl -sS https://bootstrap.pypa.io/get-pip.py | python3.10
 
 이렇게 확인해보니 링크된 폴더에 파이썬이 여러 버전이 깔려있네요 ㄷ ㄷ
 
-```
+```bash
 sudo update-alternatives --config python # python python의 버전 변경 가능
 
 # --config python : python의 버전 변경
 ```
 
-```
+```text
 update-alternatives: error: no alternatives for python
 ```
 
@@ -95,14 +95,14 @@ update-alternatives: error: no alternatives for python
 
 그런 경우에는
 
-```
+```bash
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1 # 마지막 1은 첫번째 대안이란 뜻
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 2
 ```
 
 을 입력해주고 다시
 
-```
+```bash
 sudo update-alternatives --config python
 ```
 
@@ -118,7 +118,7 @@ sudo update-alternatives --config python
 
 이러고 나서 python -m venv .venv를 입력해서 가상환경을 설정했으나...
 
-```
+```text
 Error: Command '['/home/ubuntu/server_dev/.venv/bin/python', '-Im', 'ensurepip', '--upgrade', '--default-pip']' returned non-zero exit status 1.
 ```
 
@@ -128,7 +128,7 @@ Error: Command '['/home/ubuntu/server_dev/.venv/bin/python', '-Im', 'ensurepip',
 
 아래 입력으로 pip 설치 및 업그레이드
 
-```
+```bash
 sudo apt install python-pip # pip 설치
 
 pip install --upgrade pip # upgrade pip version
@@ -138,13 +138,13 @@ pip install --upgrade pip # upgrade pip version
 
 venv 설치
 
-```
+```bash
 sudo apt-get install python3.10-venv # 3.10 버전 venv 설치
 ```
 
 그리고 나서
 
-```
+```bash
 python -m venv .venv
 ```
 
@@ -160,7 +160,7 @@ python -m venv .venv
 
 로컬로 가서 가상환경에 접속한 다음,
 
-```
+```bash
 pip freeze > requirements.txt
 ```
 
@@ -176,7 +176,7 @@ pip freeze > requirements.txt
 
 push는 리모트와 브런치가 정해졌다면, 다음과 같이 하면 됩니다.
 
-```
+```bash
 git add .
 git commit -m "add reuqirements"
 git push -u origin main
@@ -184,7 +184,7 @@ git push -u origin main
 
 서버에서는 디렉토리에 들어가서 다음과 같이 입력 하면 내려받을 수 있겠죠.
 
-```
+```bash
 git init
 
 git remote add origin https://github.com/itsdangerous/server_dev.git
@@ -202,13 +202,13 @@ git pull origin main
 
 아래 코드를 입력하고 아래 중 하나로 버전을 확인해봅니다.
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 만약 mysqlclient나 uwsgi 설치가 안된다면 아래 줄 입력
 
-```
+```bash
 sudo apt-get update
 sudo apt-get install python3.10-dev libmysqlclient-dev gcc # python 버전에 맞게 쓰세요
 ```
@@ -217,7 +217,7 @@ sudo apt-get install python3.10-dev libmysqlclient-dev gcc # python 버전에 �
 
 장고서버를 실행시켜봅니다.
 
-```
+```bash
 python manage.py runserver
 ```
 
@@ -233,7 +233,7 @@ python manage.py runserver
 
 아래 줄 입력해줍니다.
 
-```
+```bash
 python manage.py migrate
 ```
 

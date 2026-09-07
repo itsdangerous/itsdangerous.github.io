@@ -13,7 +13,7 @@ draft: false
 
 먼저, 가상환경을 설치한 디렉토리에 들어가서
 
-```
+```bash
 pip install django
 ```
 
@@ -21,25 +21,25 @@ pip install django
 
 만약 pip 버전이 낮아 설치가 안된다면, 다음과 같이 커맨드 입력
 
-```
+```bash
 pip install --upgrade pip
 ```
 
 django 버전 확인
 
-```
+```bash
 python -m django --version
 ```
 
 장고 프로젝트 생성은 다음과 같습니다. 맨 뒤에 .을 붙이는 경우는 현재 디렉토리를 장고 프로젝트로 설정하는 옵션입니다.
 
-```
+```bash
 django-admin startproject '프로젝트명' .
 ```
 
 저의 디렉토리 상황은 이렇습니다.
 
-```
+```text
 Server_dev
 ㄴ server_dev
 	ㄴ .venv
@@ -76,7 +76,7 @@ DB엔진은 sqlite를 사용하고 있네요. 저는 MySQL을 사용할 것이�
 
 만약 DB를 갖고계신다면, mysql 연동은 다음과 같이 해주시면 됩니다.
 
-```
+```python
 'ENGINE': 'django.db.backends.mysql',
           'HOST': 'host name',
           'NAME': 'db_name',

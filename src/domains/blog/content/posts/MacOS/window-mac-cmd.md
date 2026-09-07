@@ -29,7 +29,7 @@ AutoHotkey 스크립트 파일을 하나 생성한 뒤, 해당 파일에 단축�
 
 먼저, 메모장을 켜서, 다음 스크립트를 복붙합니다.
 
-```
+```text
 ; Alt + ` 입력 시 동일 프로세스 창만 순환
 !`:: {
     activeProcessName := WinGetProcessName("A")

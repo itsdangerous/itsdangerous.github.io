@@ -219,6 +219,15 @@ describe('blog routes', () => {
     expect(surfaceStyles).toContain('.editorial-surface');
     expect(surfaceStyles).toContain('--surface-texture-repeat: repeat;');
     expect(surfaceStyles).toContain("url('/code-shell-texture.webp')");
+    expect(surfaceStyles).toContain("url('/light-code-shell-texture-v2.webp')");
+  });
+
+  it('gives the light search tool a paper surface instead of the dark cover texture', () => {
+    const searchModal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+
+    expect(searchModal).toContain("[data-theme='light'] .search-modal__dialog");
+    expect(searchModal).toContain("url('/article-manuscript-paper-texture.webp')");
+    expect(searchModal).toContain('background-blend-mode: normal, multiply;');
   });
 
   it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {

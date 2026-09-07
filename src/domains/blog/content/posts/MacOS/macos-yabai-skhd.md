@@ -29,7 +29,7 @@ yabai는 타일링뿐 아니라 창·Space·디스플레이 포커스를 제어�
 
 yabai에는 현재 디스플레이를 기준으로 방향을 지정하는 선택자가 있다.
 
-```
+```bash
 yabai -m display --focus west
 yabai -m display --focus east
 ```
@@ -40,19 +40,19 @@ yabai -m display --focus east
 
 왼쪽 모니터로 이동:
 
-```
+```bash
 yabai -m display --focus west
 ```
 
 오른쪽 모니터로 이동:
 
-```
+```bash
 yabai -m display --focus east
 ```
 
 현재 yabai가 인식한 모니터 배치는 다음으로 확인할 수 있다.
 
-```
+```bash
 yabai -m query --displays | jq -r \
   '.[] | "index=\(.index), x=\(.frame.x), y=\(.frame.y), focused=\(."has-focus")"'
 ```
@@ -63,20 +63,20 @@ yabai -m query --displays | jq -r \
 
 1편에서는 `Ctrl + ←/→`를 Space 전환에 사용했다. 이 글에서는 그 두 키를 모니터 이동에 쓰므로, 먼저 기존 Space 단축키를 `Ctrl + \[`와 `Ctrl + \]`로 옮긴다.
 
-```
+```bash
 vim ~/.config/skhd/skhdrc
 ```
 
 기존의 아래 두 줄은 제거한다.
 
-```
+```text
 ctrl - left  : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
 ```
 
 대신 다음 두 줄을 넣는다.
 
-```
+```text
 # 현재 모니터의 이전/다음 Space
 ctrl - 0x21 : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - 0x1E : ~/.config/yabai/focus-space-on-current-display.sh next
@@ -88,13 +88,13 @@ ctrl - 0x1E : ~/.config/yabai/focus-space-on-current-display.sh next
 
 설정 파일을 연다.
 
-```
+```bash
 vim ~/.config/skhd/skhdrc
 ```
 
 아래를 추가한다.
 
-```
+```text
 # 물리적으로 왼쪽/오른쪽 모니터의 활성 창으로 포커스 이동
 ctrl - left  : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus west
 ctrl - right : PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin; yabai -m display --focus east
@@ -104,7 +104,7 @@ Apple Silicon Homebrew는 일반적으로 `/opt/homebrew/bin`을 사용하고, I
 
 설정을 반영한다.
 
-```
+```bash
 skhd --restart-service
 ```
 
@@ -131,7 +131,7 @@ skhd --restart-service
 
 핵심은 `window\_focused` signal이다.
 
-```
+```bash
 yabai -m signal --add label="remember_last_work_window" \
   event=window_focused action="$HOME/.config/yabai/remember-last-work-window.sh"
 ```
@@ -157,14 +157,14 @@ yabai -m signal --add label="remember_last_work_window" \
 
 먼저 skhd가 실행 중인지 확인한다.
 
-```
+```bash
 pgrep -fl '(^|/)skhd( |$)'
 tail -50 /tmp/skhd_$USER.err.log
 ```
 
 `skhd: must be run with accessibility access! abort..`가 나오면 시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용에서 현재 skhd 실행 파일을 다시 허용한 뒤 재시작한다.
 
-```
+```bash
 skhd --restart-service
 ```
 
@@ -172,7 +172,7 @@ skhd --restart-service
 
 현재 모니터보다 더 왼쪽 또는 더 오른쪽에 모니터가 없으면 `west/east`는 이동하지 않는다. 먼저 아래로 실제 배열을 확인한다.
 
-```
+```bash
 yabai -m query --displays
 ```
 
@@ -184,7 +184,7 @@ yabai -m query --displays
 
 yabai와 skhd 서비스가 등록돼 있다면 로그인 뒤 자동 시작한다.
 
-```
+```bash
 yabai --start-service
 skhd --start-service
 
@@ -193,7 +193,7 @@ launchctl list | rg 'yabai|skhd'
 
 설정 파일은 다음 경로에 둔다.
 
-```
+```text
 ~/.config/skhd/skhdrc
 ~/.config/yabai/yabairc
 ```

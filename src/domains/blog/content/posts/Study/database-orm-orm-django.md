@@ -47,7 +47,7 @@ draft: false
 - SQL 쿼리문은 다음과 같이 쿼리문을 작성하고, 데이터를 가져오는 일련의 모든 과정들을 코드에 적어야 함.
 -
 
-```
+```text
 book_list = new list();
 sql = "SELECT book FROM library WHERE author = 'kim'";
 data = query(sql);
@@ -60,13 +60,13 @@ while (row = data.next()){
 
 - ORM을 사용할 경우
 
-```
+```python
 book_list = BookTable.query(author="kim")
 ```
 
 #### ORM 활용 예시
 
-```
+```python
 1. objects.all() # 데이터 가져오기
 	ex) Book.objects.all()
 

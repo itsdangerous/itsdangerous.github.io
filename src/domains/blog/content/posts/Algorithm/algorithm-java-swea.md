@@ -89,7 +89,7 @@ draft: false
 
 ## **Code**
 
-```
+```java
 /*
 [swea_1767] 프로세서 연결하기
 https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV4suNtaXFEDFAUf&

@@ -17,7 +17,7 @@ draft: false
 
 원래는 API로 데이터 받아서 사용했는데 이게... 1년치까지밖에 못쓴다고 합니다.. 그래서 크롤링으로 사이트에 무리가 가지 않는 선에서 천천히 데이터를 DB에 쌓고 프로젝트를 진행 중입니다 ㅋㅋ
 
-```
+```python
 
 import pandas as pd
 import requests

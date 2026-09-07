@@ -21,7 +21,7 @@ draft: false
 
 terminal에서 ec2 접속명령은 다음과 같습니다.
 
-```
+```bash
 $ ssh -i {YOUR_KEY_PAIR_FILE.pem} {USER_NAME}@{AWS_PUBLIC_DNS_}
 ```
 

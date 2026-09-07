@@ -37,7 +37,7 @@ draft: false
 
 다시 터미널로 가서
 
-```
+```bash
 git config --global user.name username
 git config --global user.email useremail
 ```
@@ -50,7 +50,7 @@ usermail : 본인 github의 계정 메일
 
 그 다음
 
-```
+```bash
 git push -u origin main
 ```
 

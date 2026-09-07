@@ -17,13 +17,13 @@ git add는 현재 작업 디렉터리의 변경사항을 **스테이징 영역(S
 
 보통은 아래처럼 사용합니다.
 
-```
+```bash
 git add 파일명
 ```
 
 하지만 -i 옵션을 사용하면 **interactive 모드**로 실행됩니다.
 
-```
+```bash
 git add -i
 ```
 
@@ -49,7 +49,7 @@ git add -i를 실행하면 스테이징되지 않은 파일 목록을 먼저 보
 
 특히 **patch 기능**이 매우 유용합니다.
 
-```
+```bash
 git add -p
 ```
 
@@ -72,13 +72,13 @@ git add -p
 
 ### 실행 예시
 
-```
+```bash
 git add -p
 ```
 
 실행하면 Git이 변경 내용을 **hunk 단위**로 보여주고, 각 덩어리를 스테이징할지 묻게 됩니다.
 
-```
+```diff
 diff --git a/app.py b/app.py
 @@ -10,6 +10,7 @@
  def login():
@@ -103,7 +103,7 @@ Stage this hunk [y,n,q,a,d,e,?]?
 
 예를 들어 한 파일에 아래와 같은 수정이 함께 들어갔다고 가정해보겠습니다.
 
-```
+```python
 # 버그 수정
 if user is None:
     return redirect("/login")
@@ -138,7 +138,7 @@ user_name = user.name
 
 제가 자주 사용하는 git log 옵션입니다.
 
-```
+```bash
 git log --oneline --graph --decorate=short \
   --date=format:"%Y-%m-%d %H:%M" \
   --pretty=format:"%C(yellow)%h %C(cyan)%ad %C(green)%an %C(reset)%s %C(auto)%d"
@@ -167,19 +167,19 @@ git log --oneline --graph --decorate=short \
 
 이 명령어는 길기 때문에 저는 alias로 등록해서 사용합니다.
 
-```
+```bash
 echo "alias glg='git log --graph --decorate=short --date=format:\"%Y-%m-%d %H:%M\" --pretty=format:\"%C(yellow)%h %C(cyan)%ad %C(green)%an %C(reset)%s %C(auto)%d\"'" >> ~/.zshrc
 ```
 
 적용
 
-```
+```bash
 source ~/.zshrc
 ```
 
 이제 아래 명령어로 바로 사용할 수 있습니다.
 
-```
+```bash
 glg
 ```
 
@@ -187,7 +187,7 @@ glg
 
 ### Commit
 
-```
+```bash
 git commit -m "message"
 ```
 

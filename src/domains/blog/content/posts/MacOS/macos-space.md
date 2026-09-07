@@ -33,7 +33,7 @@ skhd는 전역 키보드 단축키 데몬이다. 키 입력을 감지해 shell �
 | **yabai** | macOS 창·Space·디스플레이를 제어 | 이전/다음 Space를 실제로 포커스하고 scripting addition을 로드 |
 | **skhd** | 전역 키보드 단축키를 감지하고 명령을 실행 | `Ctrl + ←/→`를 받아 yabai 명령을 실행 |
 
-```
+```text
 Ctrl + ← / →
       ↓
 skhd: 전역 단축키 감지
@@ -63,7 +63,7 @@ Sonoma 이후에는 Desktop & Stage Manager의 다음 옵션도 권장한다.
 
 Homebrew가 없다면 [Homebrew 공식 사이트](https://brew.sh)에서 먼저 설치한다.
 
-```
+```bash
 brew install asmvik/formulae/yabai asmvik/formulae/skhd jq
 ```
 
@@ -71,7 +71,7 @@ brew install asmvik/formulae/yabai asmvik/formulae/skhd jq
 
 서비스를 시작한다.
 
-```
+```bash
 yabai --start-service
 skhd --start-service
 ```
@@ -80,21 +80,21 @@ skhd --start-service
 
 Apple Silicon + Homebrew의 일반 경로:
 
-```
+```text
 /opt/homebrew/bin/yabai
 /opt/homebrew/bin/skhd
 ```
 
 실제 경로는 다음으로 확인한다.
 
-```
+```bash
 command -v yabai
 command -v skhd
 ```
 
 권한을 허용했다면 서비스를 재시작한다.
 
-```
+```bash
 yabai --restart-service
 skhd --restart-service
 ```
@@ -118,31 +118,31 @@ yabai는 scripting addition을 통해 Dock의 창 서버 기능을 활용한다.
 
 #### Apple Silicon, macOS 13 이상
 
-```
+```bash
 csrutil enable --without fs --without debug --without nvram
 ```
 
 #### Apple Silicon, macOS 12
 
-```
+```bash
 csrutil disable --with kext --with dtrace --with basesystem
 ```
 
 #### Intel, macOS 11 이상
 
-```
+```bash
 csrutil disable --with kext --with dtrace --with nvram --with basesystem
 ```
 
 재시동 후 Apple Silicon에서는 일반 macOS 터미널에서 아래를 실행하고 한 번 더 재시동한다.
 
-```
+```bash
 sudo nvram boot-args=-arm64e_preview_abi
 ```
 
 상태 확인:
 
-```
+```bash
 csrutil status
 ```
 
@@ -156,20 +156,20 @@ scripting addition 로드는 root 권한이 필요하다. 대신 현재 yabai �
 
 ### 5-1. yabai 경로와 SHA-256 확인
 
-```
+```bash
 YABAI_BIN="$(command -v yabai)"
 shasum -a 256 "$YABAI_BIN"
 ```
 
 ### 5-2. sudoers 규칙 추가
 
-```
+```bash
 sudo visudo -f /private/etc/sudoers.d/yabai
 ```
 
 열린 파일에 다음 한 줄을 넣는다. 각 값은 자신의 환경에 맞춰 바꾼다.
 
-```
+```text
 <사용자명> ALL=(root) NOPASSWD: sha256:<SHA256> <yabai-경로> --load-sa
 ```
 
@@ -177,14 +177,14 @@ sudo visudo -f /private/etc/sudoers.d/yabai
 
 ### 5-3. yabairc 만들기
 
-```
+```bash
 mkdir -p ~/.config/yabai ~/.config/skhd
 vim ~/.config/yabai/yabairc
 ```
 
 `/opt/homebrew/bin/yabai`는 `command -v yabai` 결과로 바꾼다.
 
-```
+```sh
 #!/bin/sh
 
 sudo /opt/homebrew/bin/yabai --load-sa
@@ -192,7 +192,7 @@ yabai -m signal --add label="load_scripting_addition" \
   event=dock_did_restart action="sudo /opt/homebrew/bin/yabai --load-sa"
 ```
 
-```
+```bash
 chmod +x ~/.config/yabai/yabairc
 yabai --restart-service
 ```
@@ -201,11 +201,11 @@ yabai --restart-service
 
 `yabai -m space --focus prev`를 그대로 쓰면 다중 모니터 환경에서는 전체 Space 순서를 따라갈 수 있다. 아래 스크립트는 **현재 포커스된 모니터에 속한 Space만** 조회한다.
 
-```
+```bash
 vim ~/.config/yabai/focus-space-on-current-display.sh
 ```
 
-```
+```sh
 #!/bin/sh
 
 PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
@@ -229,7 +229,7 @@ esac
 [ -n "$space_id" ] && yabai -m space --focus "$space_id"
 ```
 
-```
+```bash
 chmod +x ~/.config/yabai/focus-space-on-current-display.sh
 ```
 
@@ -237,11 +237,11 @@ chmod +x ~/.config/yabai/focus-space-on-current-display.sh
 
 ## 8. skhd 단축키 연결
 
-```
+```bash
 vim ~/.config/skhd/skhdrc
 ```
 
-```
+```text
 # 이전/다음 Space: Ctrl + ← / →
 ctrl - left  : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
@@ -251,7 +251,7 @@ ctrl - right : ~/.config/yabai/focus-space-on-current-display.sh next
 
 반영:
 
-```
+```bash
 skhd --restart-service
 ```
 
@@ -259,7 +259,7 @@ skhd --restart-service
 
 한 번 `--start-service`로 시작한 yabai와 skhd는 LaunchAgent로 등록되어 로그인 뒤 자동 시작한다.
 
-```
+```bash
 launchctl list | rg 'yabai|skhd'
 ```
 
@@ -267,7 +267,7 @@ launchctl list | rg 'yabai|skhd'
 
 문제가 생기면 다음 로그부터 확인한다.
 
-```
+```bash
 tail -50 /tmp/yabai_$USER.err.log
 tail -50 /tmp/skhd_$USER.err.log
 ```

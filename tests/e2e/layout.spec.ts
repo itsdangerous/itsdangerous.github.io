@@ -511,17 +511,19 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   expect(darkSurface.textureOpacity).toBe('0.72');
   expect(lightSurface.texture).not.toBe(darkSurface.texture);
   expect(lightSurface.textureColor).not.toBe(darkSurface.textureColor);
-  expect(lightSurface.textureBlend).toContain('luminosity');
-  expect(lightSurface.textureOpacity).toBe('0.34');
+  expect(lightSurface.color).toBe('rgb(210, 206, 198)');
+  expect(lightSurface.texture).toContain('light-code-shell-texture-v2.webp');
+  expect(lightSurface.textureBlend).toContain('multiply');
+  expect(lightSurface.textureOpacity).toBe('0.32');
   await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
-  await expect(shellHeader).toHaveCSS('background-color', 'rgb(230, 234, 237)');
+  await expect(codePanel).toHaveCSS('color', 'rgb(47, 48, 50)');
+  await expect(shellHeader).toHaveCSS('background-color', 'rgb(195, 189, 179)');
   const customThumb = shell.locator('.code-shell__scrollbar-thumb');
   const lightScrollbar = await customThumb.evaluate((element) => ({
     color: getComputedStyle(element).backgroundColor,
     texture: getComputedStyle(element, '::before').backgroundImage,
   }));
-  expect(lightScrollbar.texture).toContain('code-shell-texture.webp');
+  expect(lightScrollbar.texture).toContain('light-code-shell-texture-v2.webp');
 
   await page.locator('html').evaluate((element) => {
     element.dataset.theme = 'midnight';
@@ -541,7 +543,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
     .not.toBe(await shell.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition));
 });
 
-test('table headers share the code-shell header texture in every theme', async ({ page }) => {
+test('table headers share the texture asset while light code headers use a quieter darker treatment', async ({ page }) => {
   await page.goto('/blog/posts/telegram-bot/');
 
   const tableHeader = page.locator('.article__content thead').first();
@@ -573,11 +575,24 @@ test('table headers share the code-shell header texture in every theme', async (
     const codeSurface = await codeHeader.evaluate(readHeaderSurface);
 
     expect(tableSurface.content).toBe('\"\"');
-    expect(tableSurface.image).toContain('code-shell-texture.webp');
-    expect(tableSurface.blend).toContain('luminosity');
+    expect(tableSurface.image).toContain(
+      theme === 'light' ? 'light-code-shell-texture-v2.webp' : 'code-shell-texture.webp',
+    );
+    expect(tableSurface.blend).toContain(theme === 'light' ? 'multiply' : 'luminosity');
     expect(tableSurface.repeat).toContain('repeat');
-    expect(tableSurface.size).toContain('36rem');
-    expect(tableSurface).toEqual(codeSurface);
+    expect(tableSurface.size).toContain('576px');
+
+    if (theme === 'light') {
+      expect(tableSurface.backgroundColor).toBe('rgb(221, 216, 206)');
+      expect(codeSurface.backgroundColor).toBe('rgb(195, 189, 179)');
+      expect(codeSurface.image).toContain('light-code-shell-texture-v2.webp');
+      expect(tableSurface.opacity).toBe('0.52');
+      expect(codeSurface.opacity).toBe('0.32');
+      expect(tableSurface.image).not.toBe(codeSurface.image);
+      expect(tableSurface.backgroundColor).not.toBe(codeSurface.backgroundColor);
+    } else {
+      expect(tableSurface).toEqual(codeSurface);
+    }
   }
 
   await expect(tableHeader.locator('th').first()).toHaveCSS('background-image', 'none');

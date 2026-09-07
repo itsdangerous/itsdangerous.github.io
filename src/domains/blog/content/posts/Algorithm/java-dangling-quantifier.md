@@ -17,6 +17,6 @@ draft: false
 
 **이러한 오류는 다음과 같이 문자임을 표시하여 해결이 가능하다.**
 
-```
+```java
 String[] tmp = str.split("\\+");
 ```

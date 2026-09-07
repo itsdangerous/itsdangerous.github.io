@@ -19,7 +19,7 @@ Django 프레임워크에서 REST API를 사용하기 위해 Django를 이용하
 
 Django로 app 생성
 
-```
+```bash
 python manage.py startapp appname
 ```
 
@@ -33,7 +33,7 @@ app을 만들게 되면, 아래와 같이프로젝트 안에 login이라는 폴�
 
 models.py에서 사용자의 ID와 PW를 저장할 모델을 만들어준다.
 
-```
+```python
 #login/models.py
 
 from django.db import models
@@ -55,7 +55,7 @@ DB에 반영하기 위해서는 2가지를 해야한다.
 
 2.아래를 실행
 
-```
+```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -84,7 +84,7 @@ python manage.py migrate
 
 더보기
 
-```
+```bash
 python manage.py showmigrations [app_name]
 # 프로젝트의 마이그레이션에 대해 적용 여부를 한 눈에 보여줌
 # app_name 생략 : 전체 앱에 대해 보여줌
@@ -118,7 +118,7 @@ Django의 model은 기본적으로 pk값으로 사용하는 id 필드를 추가�
 
 아래를 쉘에서 입력해서 프레임워크를 다운받아주고,
 
-```
+```bash
 pip install djangorestframework
 ```
 
@@ -128,7 +128,7 @@ settings.py의 INSTALLED\_APP에 'rest\_framework'추가 해준다.
 
 login앱 폴더의 views.py 파일에 새로운 api call을 만든다.
 
-```
+```python
 # login/views.py
 
 from rest_framework.views import APIView
@@ -170,7 +170,7 @@ urls.py는 python manage.py startapp을 통해 기본으로 생성되지 않는�
 
 --\> 생성
 
-```
+```python
 # login/urls.py
 
 from django.urls import include, path
@@ -188,7 +188,7 @@ as\_view 함수의 파라미터로는, 해당 view에 전달될 인자가 된다
 
 그리고 root폴더에 있는 urls.py도 수정해주어야한다!
 
-```
+```python
 # login/urls.py
 
 from django.contrib import admin
@@ -236,7 +236,7 @@ Postman으로 요청을 보내 보았다.
 
 또한, id값이 정상적인 format인지도 검증해야 하는데요.
 
-```
+```python
 # login/views.py
 
 from rest_framework.views import APIView
@@ -270,7 +270,7 @@ View에서 if 문을 통해 중복값 검사 로직을 추가하였는데, 코�
 
 그래서, Model 선언부에서 user\_id field에 unique값을 주어, 더 확실하게 중복을 피해보자
 
-```
+```python
 #login/models.py
 
 from django.db import models
@@ -314,7 +314,7 @@ Django에서 제공하는 users테이블을 사용하면, 기본적으로 passwo
 
 하지만 나는 login\_user라는 테이블을 따로 만들었기 때문에, user모델과 비슷한 기능을 하도록 user\_pw필드를 바꿔야 한다.
 
-```
+```python
 #login/models.py
 
 from django.db import models
@@ -332,7 +332,7 @@ class LoginUser(models.Model) :
 
 암호화 되면 길이가 길어지기 때문에 필드의 제한 길이를 255로 바꿈
 
-```
+```python
 # login/views.py
 
 from rest_framework.views import APIView
@@ -384,7 +384,7 @@ views.py에서는 make\_password라는 django의 기본 함수를 사용하여 u
 
 django에서 제공하는 check\_password로 가능
 
-```
+```python
 # login/views.py
 
 from rest_framework.views import APIView
