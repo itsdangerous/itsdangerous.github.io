@@ -5,7 +5,7 @@ pubDate: 2026-09-04T06:45:00.000Z
 category: "Study"
 tags: ["markdown", "design"]
 slug: "markdown-surface-test"
-draft: false
+draft: true
 ---
 
 이 글은 블로그 글을 작성할 때 자주 사용하는 Markdown 문법을 한곳에 모아둔 내부 초안입니다. 콘텐츠는 단순한 문법 설명에 그치지 않고, 실제 글에서 어떤 요소를 선택하면 좋은지도 함께 기록합니다.
