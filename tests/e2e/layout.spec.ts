@@ -486,6 +486,8 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const darkSurface = await shell.evaluate((element) => ({
     color: getComputedStyle(element).backgroundColor,
     texture: getComputedStyle(element, '::before').backgroundImage,
+    textureBlend: getComputedStyle(element, '::before').backgroundBlendMode,
+    textureColor: getComputedStyle(element, '::before').backgroundColor,
     textureOpacity: getComputedStyle(element, '::before').opacity,
   }));
 
@@ -496,15 +498,21 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const lightSurface = await shell.evaluate((element) => ({
     color: getComputedStyle(element).backgroundColor,
     texture: getComputedStyle(element, '::before').backgroundImage,
+    textureBlend: getComputedStyle(element, '::before').backgroundBlendMode,
+    textureColor: getComputedStyle(element, '::before').backgroundColor,
     textureOpacity: getComputedStyle(element, '::before').opacity,
   }));
 
   expect(darkSurface.color).not.toBe(lightSurface.color);
   expect(darkSurface.texture).not.toBe('none');
-  expect(darkSurface.texture).toContain('splash-leather-cover-texture.webp');
+  expect(darkSurface.texture).toContain('code-shell-texture.webp');
+  expect(darkSurface.textureBlend).toContain('luminosity');
+  expect(darkSurface.textureColor).not.toBe('rgba(0, 0, 0, 0)');
   expect(darkSurface.textureOpacity).toBe('0.72');
   expect(lightSurface.texture).not.toBe(darkSurface.texture);
-  expect(lightSurface.textureOpacity).toBe('0.72');
+  expect(lightSurface.textureColor).not.toBe(darkSurface.textureColor);
+  expect(lightSurface.textureBlend).toContain('luminosity');
+  expect(lightSurface.textureOpacity).toBe('0.34');
   await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
   await expect(shellHeader).toHaveCSS('background-color', 'rgb(230, 234, 237)');
@@ -528,7 +536,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const headerTexture = await shellHeader.evaluate(
     (element) => getComputedStyle(element, '::before').backgroundImage,
   );
-  expect(headerTexture).toContain('splash-leather-cover-texture.webp');
+  expect(headerTexture).toContain('code-shell-texture.webp');
   expect(await shellHeader.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition))
     .not.toBe(await shell.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition));
 });
@@ -552,8 +560,10 @@ test('table headers share the code-shell header texture in every theme', async (
         backgroundColor: style.backgroundColor,
         content: texture.content,
         image: texture.backgroundImage,
+        blend: texture.backgroundBlendMode,
         opacity: texture.opacity,
         position: texture.backgroundPosition,
+        repeat: texture.backgroundRepeat,
         size: texture.backgroundSize,
         filter: texture.filter,
       };
@@ -563,7 +573,10 @@ test('table headers share the code-shell header texture in every theme', async (
     const codeSurface = await codeHeader.evaluate(readHeaderSurface);
 
     expect(tableSurface.content).toBe('\"\"');
-    expect(tableSurface.image).toContain('splash-leather-cover-texture.webp');
+    expect(tableSurface.image).toContain('code-shell-texture.webp');
+    expect(tableSurface.blend).toContain('luminosity');
+    expect(tableSurface.repeat).toContain('repeat');
+    expect(tableSurface.size).toContain('36rem');
     expect(tableSurface).toEqual(codeSurface);
   }
 

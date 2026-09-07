@@ -6,10 +6,13 @@
 .article__mobile-toc .table-of-contents__mobile,
 .article__content thead {
   --surface-background: var(--color-code-shell);
-  --surface-texture-size: 48rem auto;
+  --surface-texture-image: url('/code-shell-texture.webp');
+  --surface-texture-size: 36rem 36rem;
   --surface-texture-opacity: 0.72;
   --surface-texture-position: center;
-  --surface-texture-blend: multiply, normal;
+  --surface-texture-repeat: repeat;
+  --surface-texture-blend: multiply, luminosity;
+  --surface-texture-tint: color-mix(in srgb, var(--surface-background) 72%, var(--color-background));
   position: relative;
   isolation: isolate;
   background-color: var(--surface-background);
@@ -27,12 +30,13 @@
   pointer-events: none;
   content: '';
   opacity: var(--surface-texture-opacity);
+  background-color: var(--surface-texture-tint);
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--surface-background) 78%, transparent), transparent 62%),
-    url('/splash-leather-cover-texture.webp');
+    var(--surface-texture-image);
   background-position: var(--surface-texture-position), var(--surface-texture-position);
   background-size: auto, var(--surface-texture-size);
-  background-repeat: no-repeat;
+  background-repeat: no-repeat, var(--surface-texture-repeat);
   background-blend-mode: var(--surface-texture-blend);
 }
 
@@ -46,7 +50,7 @@
 .article__content thead::before {
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--color-code-shell) 78%, transparent), transparent 62%),
-    url('/splash-leather-cover-texture.webp');
+    var(--surface-texture-image);
   background-position: center, 28% 72%;
 }
 
@@ -66,11 +70,11 @@
 [data-theme='light'] .article-shell > .article__desktop-toc .table-of-contents__desktop::before,
 [data-theme='light'] .article__mobile-toc .table-of-contents__mobile::before,
 [data-theme='light'] .article__content thead::before {
+  --surface-texture-opacity: 0.34;
   background-image:
     linear-gradient(135deg, color-mix(in srgb, var(--surface-background) 65%, transparent), transparent 62%),
-    url('/splash-leather-cover-texture.webp');
-  background-blend-mode: multiply, normal;
-  filter: grayscale(1) invert(1) sepia(0.12) brightness(0.93) contrast(1.05);
+    var(--surface-texture-image);
+  background-blend-mode: multiply, luminosity;
 }
 
 .article__content table,

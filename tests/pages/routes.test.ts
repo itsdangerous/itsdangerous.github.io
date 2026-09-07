@@ -217,8 +217,8 @@ describe('blog routes', () => {
     expect(blogStyles).toContain("url('/splash-leather-cover-texture.webp')");
     expect(blogStyles).toContain('.article__content table');
     expect(surfaceStyles).toContain('.editorial-surface');
-    expect(surfaceStyles).toContain('background-repeat: no-repeat;');
-    expect(surfaceStyles).toContain("url('/splash-leather-cover-texture.webp')");
+    expect(surfaceStyles).toContain('--surface-texture-repeat: repeat;');
+    expect(surfaceStyles).toContain("url('/code-shell-texture.webp')");
   });
 
   it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {
