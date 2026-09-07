@@ -60,16 +60,11 @@ describe('Markdown callouts', () => {
     expect(styles).not.toContain('border-left: 3px solid color-mix(in srgb, var(--callout-accent)');
   });
 
-  it('keeps light code shells darker than the other light editorial surfaces', () => {
+  it('keeps light code shells on the shared table surface without a stretched texture override', () => {
     const styles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
 
-    expect(styles).toContain(
-      "[data-theme='light'] .article__content .code-shell {\n  --surface-background: #d2cec6;",
-    );
-    expect(styles).toContain(
-      "[data-theme='light'] .article__content .code-shell__header {\n  --surface-background: #c3bdb3;",
-    );
-    expect(styles).toContain("[data-theme='light'] .article__content .code-shell::before,");
-    expect(styles).toContain('--surface-texture-opacity: 0.32;');
+    expect(styles).not.toContain('--surface-background: #d2cec6;');
+    expect(styles).not.toContain('--surface-background: #c3bdb3;');
+    expect(styles).not.toContain("[data-theme='light'] .article__content .code-shell::before");
   });
 });
