@@ -484,7 +484,7 @@ a {
     color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
   border-radius: 50%;
   background-color: var(--color-surface);
-  background-image: url('/splash-leather-cover-texture.webp');
+  background-image: url("/splash-leather-cover-texture.webp");
   background-position: center;
   background-size: 8rem auto;
   box-shadow:
@@ -523,7 +523,7 @@ a {
       color-mix(in srgb, var(--color-surface) 82%, transparent),
       transparent 68%
     ),
-    url('/splash-leather-cover-texture.webp');
+    url("/splash-leather-cover-texture.webp");
   background-size:
     auto,
     12rem auto;
@@ -554,12 +554,18 @@ a {
   pointer-events: none;
   content: "";
   opacity: 0.52;
-  background-color: color-mix(in srgb, var(--color-surface) 92%, var(--color-background));
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) 92%,
+    var(--color-background)
+  );
   background-image:
     linear-gradient(135deg, rgb(255 255 255 / 18%), rgb(234 237 238 / 6%)),
-    url('/light-code-shell-texture-v2.webp');
+    url("/light-code-shell-texture-v2.webp");
   background-position: center, center;
-  background-size: auto, 36rem 36rem;
+  background-size:
+    auto,
+    36rem 36rem;
   background-repeat: no-repeat, repeat;
   background-blend-mode: normal, multiply;
 }
@@ -724,9 +730,21 @@ a {
 
 @media (min-width: 901px) {
   .site-content:has(.article-shell) > .site-footer {
-    width: min(var(--content-width), calc(100% - 2.5rem - var(--space-8) - var(--space-4)));
+    width: min(
+      var(--content-width),
+      calc(100% - 2.5rem - var(--space-8) - var(--space-4))
+    );
     margin-right: 0;
-    margin-left: max(0px, calc((100% - 2.5rem - var(--space-8) - var(--space-4) - var(--content-width)) / 2));
+    margin-left: max(
+      0px,
+      calc(
+        (
+            100% - 2.5rem - var(--space-8) - var(--space-4) -
+              var(--content-width)
+          ) /
+          2
+      )
+    );
   }
 }
 
@@ -926,6 +944,51 @@ h1 .intro--home__typing {
 }
 .home-search__results .pagefind-ui__results-area {
   text-align: left;
+}
+
+.pagefind-ui .pagefind-ui__result {
+  margin: 0;
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pagefind-ui .pagefind-ui__result:first-child {
+  padding-top: var(--space-4);
+}
+
+.pagefind-ui .pagefind-ui__result:last-child {
+  border-bottom: 0;
+}
+
+.pagefind-ui .pagefind-ui__result-link {
+  color: var(--color-text);
+}
+
+.pagefind-ui .pagefind-ui__result-excerpt {
+  color: var(--color-text-muted);
+}
+
+.pagefind-ui .pagefind-ui__button {
+  display: block;
+  width: min(100%, 15rem);
+  margin: var(--space-5) auto 0;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  font: 0.8rem var(--font-ui);
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.pagefind-ui .pagefind-ui__button:hover,
+.pagefind-ui .pagefind-ui__button:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent-strong);
+  background: var(--color-surface);
 }
 
 h1 span {
