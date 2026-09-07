@@ -18,7 +18,7 @@ const collapsedHeadings = navigableHeadings.filter(({ depth }) => depth === 2);
 
 {navigableHeadings.length > 0 && (
   <>
-    <nav id="article-toc" class="table-of-contents__desktop" aria-label="이 글의 목차">
+    <nav id="article-toc" class="table-of-contents__desktop editorial-surface" aria-label="이 글의 목차">
       <ol>
         {navigableHeadings.map((heading) => (
           <li class:list={[`table-of-contents__item--depth-${heading.depth}`]}>
@@ -30,7 +30,7 @@ const collapsedHeadings = navigableHeadings.filter(({ depth }) => depth === 2);
         {collapsedHeadings.map((heading) => <span data-toc-preview={heading.slug} />)}
       </div>
     </nav>
-    <details class="table-of-contents__mobile">
+    <details class="table-of-contents__mobile editorial-surface">
       <summary>이 글의 목차</summary>
       <ol>
         {navigableHeadings.map((heading) => (

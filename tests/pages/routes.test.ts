@@ -93,10 +93,34 @@ describe('blog routes', () => {
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
     expect(existsSync('public/splash-leather-cover-texture.webp')).toBe(true);
+    expect(existsSync('public/splash-leather-texture.webp')).toBe(false);
     expect(splash).toContain("url('/splash-leather-cover-texture.webp')");
     expect(splash).not.toContain("url('/splash-leather-texture.webp')");
     expect(rootPage).toContain('book-splash');
     expect(rootPage).not.toContain('Open the volume');
+  });
+
+  it('keeps the splash crest static while retaining the reverse crest asset', () => {
+    const splash = readFileSync('src/domains/main/styles/splash.css', 'utf8');
+    const rootPage = readFileSync('src/pages/index.astro', 'utf8');
+
+    expect(rootPage).not.toContain('book-splash__crest-card');
+    expect(rootPage).not.toContain('book-splash__crest-face--front');
+    expect(rootPage).not.toContain('book-splash__crest-face--back');
+    expect(existsSync('public/images/splash-crest-embroidered-back.webp')).toBe(true);
+    expect(splash).not.toContain('@keyframes book-splash-crest-flip');
+    expect(splash).not.toContain('rotateY(360deg)');
+    expect(splash).not.toContain('backface-visibility: hidden;');
+  });
+
+  it('uses copy toasts without a code-copy hover tooltip', () => {
+    const enhancer = readFileSync('src/domains/blog/components/CodeShellEnhancer.astro', 'utf8');
+    const styles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(enhancer).toContain('showCopyToast();');
+    expect(enhancer).not.toContain('data-tooltip');
+    expect(styles).not.toContain('.code-shell__copy::after');
+    expect(styles).not.toContain('content: attr(data-tooltip);');
   });
 
   it('preloads the splash texture before the first paint', () => {
@@ -153,6 +177,15 @@ describe('blog routes', () => {
     expect(blogStyles).toContain('font-family: var(--font-prose);');
   });
 
+  it('aligns blog lists, article content, and the footer to shared reading widths', () => {
+    const globalStyles = readFileSync('src/shared/styles/global.css', 'utf8');
+
+    expect(globalStyles).toContain('.shell {\n  width: min(calc(100% - 2rem), var(--content-width));');
+    expect(globalStyles).toContain('.site-footer {\n  width: min(calc(100% - 2rem), var(--content-width));\n  margin: 0 auto;');
+    expect(globalStyles).toContain('.site-content:has(.article-shell) > .site-footer {');
+    expect(globalStyles).toContain('margin-left: max(0px, calc((100% - 2.5rem - var(--space-8) - var(--space-4) - var(--content-width)) / 2));');
+  });
+
   it('layers the manuscript-paper texture into the site background without changing theme colors', () => {
     const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
     const globalStyles = readFileSync('src/shared/styles/global.css', 'utf8');
@@ -172,18 +205,20 @@ describe('blog routes', () => {
   it('gives floating surfaces the shared leather-cover texture', () => {
     const globalStyles = readFileSync('src/shared/styles/global.css', 'utf8');
     const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+    const surfaceStyles = readFileSync('src/domains/blog/styles/editorial-surfaces.css', 'utf8');
 
     expect(globalStyles).toContain('.feature-bundle__toggle');
     expect(globalStyles).toContain('.feature-bundle__panel');
     expect(globalStyles).toContain("url('/splash-leather-cover-texture.webp')");
-    expect(blogStyles).toContain('.code-shell__copy::after');
+    expect(blogStyles).not.toContain('.code-shell__copy::after');
     expect(blogStyles).toContain('.article-shell > .article__desktop-toc:has(.table-of-contents__desktop:hover)');
     expect(blogStyles).toContain('.table-of-contents__desktop a,');
-    expect(blogStyles).toContain('background-repeat: no-repeat;');
     expect(blogStyles).toContain('.code-copy-toast');
     expect(blogStyles).toContain("url('/splash-leather-cover-texture.webp')");
     expect(blogStyles).toContain('.article__content table');
-    expect(blogStyles).toContain('background-repeat: no-repeat;');
+    expect(surfaceStyles).toContain('.editorial-surface');
+    expect(surfaceStyles).toContain('background-repeat: no-repeat;');
+    expect(surfaceStyles).toContain("url('/splash-leather-cover-texture.webp')");
   });
 
   it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {
@@ -200,6 +235,17 @@ describe('blog routes', () => {
     expect(blogStyles).toContain('width: calc(var(--toc-column-width) + 0.5rem);');
     expect(blogStyles).toContain(':has(.table-of-contents__desktop:hover)');
     expect(blogStyles).toContain('width: 15rem;');
+  });
+
+  it('keeps the collapsed TOC rail transparent while its panel remains sticky on the right', () => {
+    const blogStyles = readFileSync('src/domains/blog/styles/blog.css', 'utf8');
+
+    expect(blogStyles).toContain('.article__desktop-toc[data-toc-collapsed]:not(:has(.table-of-contents__desktop:hover))');
+    expect(blogStyles).toContain('background-color: transparent;');
+    expect(blogStyles).toContain('content: none;');
+    expect(blogStyles).toContain('.table-of-contents__desktop {\n  display: block;\n  position: sticky;');
+    expect(blogStyles).toContain('.article-shell > .article__desktop-toc .table-of-contents__desktop {\n    position: sticky;');
+    expect(blogStyles).toContain('right: var(--toc-edge-inset);');
   });
 
   it('gives TOC heading links consistent interactive rows', () => {

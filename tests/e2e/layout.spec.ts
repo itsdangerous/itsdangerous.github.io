@@ -486,6 +486,7 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const darkSurface = await shell.evaluate((element) => ({
     color: getComputedStyle(element).backgroundColor,
     texture: getComputedStyle(element, '::before').backgroundImage,
+    textureOpacity: getComputedStyle(element, '::before').opacity,
   }));
 
   await page.locator('html').evaluate((element) => {
@@ -495,12 +496,15 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   const lightSurface = await shell.evaluate((element) => ({
     color: getComputedStyle(element).backgroundColor,
     texture: getComputedStyle(element, '::before').backgroundImage,
+    textureOpacity: getComputedStyle(element, '::before').opacity,
   }));
 
   expect(darkSurface.color).not.toBe(lightSurface.color);
   expect(darkSurface.texture).not.toBe('none');
   expect(darkSurface.texture).toContain('splash-leather-cover-texture.webp');
+  expect(darkSurface.textureOpacity).toBe('0.72');
   expect(lightSurface.texture).not.toBe(darkSurface.texture);
+  expect(lightSurface.textureOpacity).toBe('0.72');
   await expect(codePanel).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(codePanel).toHaveCSS('color', 'rgb(31, 35, 40)');
   await expect(shellHeader).toHaveCSS('background-color', 'rgb(230, 234, 237)');
@@ -527,6 +531,43 @@ test('code shells use theme-specific textured surfaces', async ({ page }) => {
   expect(headerTexture).toContain('splash-leather-cover-texture.webp');
   expect(await shellHeader.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition))
     .not.toBe(await shell.evaluate((element) => getComputedStyle(element, '::before').backgroundPosition));
+});
+
+test('table headers share the code-shell header texture in every theme', async ({ page }) => {
+  await page.goto('/blog/posts/telegram-bot/');
+
+  const tableHeader = page.locator('.article__content thead').first();
+  const codeHeader = page.locator('.article__content .code-shell__header').first();
+
+  for (const theme of ['midnight', 'light']) {
+    await page.locator('html').evaluate((element, nextTheme) => {
+      element.dataset.theme = nextTheme;
+    }, theme);
+
+    const readHeaderSurface = (element: HTMLElement) => {
+      const style = getComputedStyle(element);
+      const texture = getComputedStyle(element, '::before');
+
+      return {
+        backgroundColor: style.backgroundColor,
+        content: texture.content,
+        image: texture.backgroundImage,
+        opacity: texture.opacity,
+        position: texture.backgroundPosition,
+        size: texture.backgroundSize,
+        filter: texture.filter,
+      };
+    };
+
+    const tableSurface = await tableHeader.evaluate(readHeaderSurface);
+    const codeSurface = await codeHeader.evaluate(readHeaderSurface);
+
+    expect(tableSurface.content).toBe('\"\"');
+    expect(tableSurface.image).toContain('splash-leather-cover-texture.webp');
+    expect(tableSurface).toEqual(codeSurface);
+  }
+
+  await expect(tableHeader.locator('th').first()).toHaveCSS('background-image', 'none');
 });
 
 test('TOC omits headings without a target or label', async ({ page }) => {

@@ -17,7 +17,7 @@ export default function remarkCallouts() {
       node.data ??= {};
       node.data.hName = 'aside';
       node.data.hProperties = {
-        className: ['callout', `callout--${type}`],
+        className: ['callout', `callout--${type}`, 'editorial-surface'],
         role: 'note',
       };
       node.children.unshift({
@@ -25,7 +25,17 @@ export default function remarkCallouts() {
         data: {
           hProperties: { className: ['callout__title'] },
         },
-        children: [{ type: 'text', value: `${callout.icon} ${callout.label}` }],
+        children: [
+          {
+            type: 'emphasis',
+            data: {
+              hName: 'span',
+              hProperties: { className: ['callout__icon'], 'aria-hidden': 'true' },
+            },
+            children: [{ type: 'text', value: callout.icon }],
+          },
+          { type: 'text', value: ` ${callout.label}` },
+        ],
       });
     });
   };

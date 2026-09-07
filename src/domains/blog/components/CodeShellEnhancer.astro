@@ -51,7 +51,6 @@
     button.type = 'button';
     button.className = 'code-shell__copy';
     button.setAttribute('aria-label', 'Copy code');
-    button.setAttribute('data-tooltip', 'Copy code');
     button.innerHTML = `
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="9" y="9" width="11" height="11" rx="1.5"></rect>
@@ -63,12 +62,10 @@
       if (!await copyCode(pre.textContent ?? '')) return;
 
       button.setAttribute('aria-label', 'Copied');
-      button.setAttribute('data-tooltip', 'Copied');
       button.dataset.copied = 'true';
       showCopyToast();
       window.setTimeout(() => {
         button.setAttribute('aria-label', 'Copy code');
-        button.setAttribute('data-tooltip', 'Copy code');
         delete button.dataset.copied;
       }, 1800);
     });
@@ -204,10 +201,10 @@
     if (pre.parentElement?.classList.contains('code-shell')) return;
 
     const shell = document.createElement('div');
-    shell.className = 'code-shell';
+    shell.className = 'code-shell editorial-surface';
 
     const header = document.createElement('div');
-    header.className = 'code-shell__header';
+    header.className = 'code-shell__header editorial-surface editorial-surface--header';
 
     const marker = document.createElement('span');
     marker.className = 'code-shell__marker';
