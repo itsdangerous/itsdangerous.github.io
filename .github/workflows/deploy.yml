@@ -36,6 +36,7 @@ jobs:
           PUBLIC_GISCUS_GUESTBOOK_CATEGORY: ${{ vars.PUBLIC_GISCUS_GUESTBOOK_CATEGORY }}
           PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID: ${{ vars.PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID }}
           PUBLIC_GUESTBOOK_DISCUSSION_NUMBER: ${{ vars.PUBLIC_GUESTBOOK_DISCUSSION_NUMBER }}
+          PUBLIC_ADMIN_URL: ${{ vars.PUBLIC_ADMIN_URL }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -62,6 +62,11 @@ npm run test:e2e
 | `PUBLIC_GISCUS_GUESTBOOK_CATEGORY` | 방명록에 사용할 GitHub Discussions category 이름입니다. |
 | `PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID` | 방명록 category의 Giscus ID입니다. |
 | `PUBLIC_GUESTBOOK_DISCUSSION_NUMBER` | 방명록에 고정할 양의 GitHub Discussion 번호입니다. |
+| `PUBLIC_ADMIN_URL` | 별도 관리자 Worker의 HTTPS 주소입니다. 비워 두면 `/admin/` 설정 안내가 표시됩니다. |
+
+## 관리자 기반
+
+`admin/`에는 본인 전용 관리자 UI와 Cloudflare Worker/D1의 초기 기반이 있습니다. `admin/wrangler.jsonc`의 D1 ID와 Worker secrets를 설정한 뒤 배포해야 로그인, 글 저장, GitHub 발행, GA4 및 Search Console 통계 API가 활성화됩니다. 현재 공개 Astro 빌드는 관리자 초안 본문을 포함하지 않으며 `/publication-manifest.json`에는 공개 글만 포함합니다.
 
 Giscus 앱을 repository에 설치하고 Discussions를 활성화한 후, Giscus 설정 화면에서 repository/category ID를 복사합니다. 게시물 댓글은 `Comments` category의 URL별 Discussion을 쓰고, 방명록은 `Guestbook` category의 고정 Discussion 번호를 씁니다. 값이 없거나 유효하지 않으면 댓글 영역은 안전한 안내문만 표시됩니다.
 

@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "itsdangerous-admin",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-08",
+  "assets": {
+    "directory": "./dist",
+    "run_worker_first": ["/api/*", "/auth/*", "/admin/*"],
+  },
+  "triggers": { "crons": ["* * * * *"] },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "itsdangerous-admin",
+      "database_id": "fc7aac50-fb10-46da-b82b-b256e05ba1cc",
+      "migrations_dir": "worker/migrations",
+    },
+  ],
+}
