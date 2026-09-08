@@ -27,6 +27,7 @@ export const previewApi: typeof liveApi = {
   },
   async session() { return { user: { id: 0, login: 'local-preview' }, csrfToken: 'preview-only' }; },
   async posts(visibility = 'all') { return { items: structuredClone(posts.filter(post => visibility === 'all' || post.desiredVisibility === visibility)) }; },
+  async importPosts() { return { imported: 0, unchanged: posts.length }; },
   async post(id) { return structuredClone(find(id)); },
   async create(input) {
     const post: Post = { ...structuredClone(input), id: crypto.randomUUID(), slug: 'local-draft', version: 1, desiredVisibility: 'draft', status: 'draft', updatedAt: now() };

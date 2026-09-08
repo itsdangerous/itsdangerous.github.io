@@ -47,7 +47,9 @@ async function renderPosts() {
   cancelEditorTimer();
   currentView = 'posts';
   const result = await api.posts();
-  shell(`<div class="page-heading"><div><p class="eyebrow">MANUSCRIPTS</p><h1>글 관리</h1></div><button class="primary" data-view="editor">새 글 쓰기</button></div><div class="post-list">${result.items.map(post => `<button class="post-row" data-post="${escape(post.id)}"><span><strong>${escape(post.title)}</strong><small>${escape(post.category)} · ${escape(post.updatedAt.slice(0, 10))}</small></span><em class="status ${post.status}">${post.status === 'draft' ? '초안' : post.status === 'published_with_draft' ? '공개 · 수정본' : '공개'}</em></button>`).join('') || '<p class="empty">아직 관리할 글이 없습니다.</p>'}</div>`);
+  shell(`<div class="page-heading"><div><p class="eyebrow">MANUSCRIPTS</p><h1>글 관리</h1></div><div class="page-actions"><button class="secondary" id="import-posts">GitHub에서 동기화</button><button class="primary" data-view="editor">새 글 쓰기</button></div></div><div class="post-list">${result.items.map(post => `<button class="post-row" data-post="${escape(post.id)}"><span><strong>${escape(post.title)}</strong><small>${escape(post.category)} · ${escape(post.updatedAt.slice(0, 10))}</small></span><em class="status ${post.status}">${post.status === 'draft' ? '초안' : post.status === 'published_with_draft' ? '공개 · 수정본' : '공개'}</em></button>`).join('') || '<p class="empty">아직 관리할 글이 없습니다.</p>'}</div>`);
+  const importButton = document.querySelector<HTMLButtonElement>('#import-posts')!;
+  importButton.onclick = async () => { importButton.disabled = true; importButton.textContent = '동기화 중…'; try { const sync = await api.importPosts(csrfToken); importButton.textContent = `${sync.imported}개 가져옴`; await renderPosts(); } catch (error) { importButton.disabled = false; importButton.textContent = error instanceof Error ? error.message : '동기화 실패'; } };
   document.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(button => button.onclick = async () => renderEditor(await api.post(button.dataset.post!)));
   const toolbar = document.createElement('div');
   toolbar.className = 'toolbar';
