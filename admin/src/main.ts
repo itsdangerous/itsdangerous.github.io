@@ -43,30 +43,65 @@ function shell(content: string, background = false) {
   document.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { if (!await flushEditor()) return; await api.logout(csrfToken); location.reload(); };
 }
 
+const postFilters = { query: '', category: 'all', status: 'all', sort: 'updated' };
+const collapsedCategories = new Set<string>();
+
 async function renderPosts() {
   cancelEditorTimer();
   currentView = 'posts';
   const result = await api.posts();
-  shell(`<div class="page-heading"><div><p class="eyebrow">MANUSCRIPTS</p><h1>글 관리</h1></div><div class="page-actions"><button class="secondary" id="import-posts">GitHub에서 동기화</button><button class="primary" data-view="editor">새 글 쓰기</button></div></div><div class="post-list">${result.items.map(post => `<button class="post-row" data-post="${escape(post.id)}"><span><strong>${escape(post.title)}</strong><small>${escape(post.category)} · ${escape(post.updatedAt.slice(0, 10))}</small></span><em class="status ${post.status}">${post.status === 'draft' ? '초안' : post.status === 'published_with_draft' ? '공개 · 수정본' : '공개'}</em></button>`).join('') || '<p class="empty">아직 관리할 글이 없습니다.</p>'}</div>`);
-  const importButton = document.querySelector<HTMLButtonElement>('#import-posts')!;
-  importButton.onclick = async () => { importButton.disabled = true; importButton.textContent = '동기화 중…'; try { const sync = await api.importPosts(csrfToken); importButton.textContent = `${sync.imported}개 가져옴${sync.failed ? ` · ${sync.failed}개 실패` : ''}`; await renderPosts(); } catch (error) { importButton.disabled = false; importButton.textContent = error instanceof Error ? error.message : '동기화 실패'; } };
-  document.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(button => button.onclick = async () => renderEditor(await api.post(button.dataset.post!)));
-  const toolbar = document.createElement('div');
-  toolbar.className = 'toolbar';
-  toolbar.innerHTML = '<input id="post-search" aria-label="글 검색" placeholder="제목이나 카테고리로 검색"><select id="post-filter" aria-label="공개 상태"><option value="all">모든 글</option><option value="published">공개</option><option value="draft">초안</option></select>';
-  const list = document.querySelector<HTMLElement>('.post-list')!;
-  list.parentNode!.insertBefore(toolbar, list);
-  const filterPosts = () => {
-    const query = (toolbar.querySelector('input') as HTMLInputElement).value.toLowerCase();
-    const visibility = (toolbar.querySelector('select') as HTMLSelectElement).value;
-    document.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(row => {
-      const post = result.items.find(post => post.id === row.dataset.post)!;
-      row.style.display = `${post.title} ${post.category}`.toLowerCase().includes(query) && (visibility === 'all' || post.desiredVisibility === visibility) ? '' : 'none';
+  const categories = [...new Set(result.items.map(post => post.category))].sort((a,b) => a.localeCompare(b, 'ko'));
+  shell(`<div class="page-heading"><div><p class="eyebrow">MANUSCRIPTS</p><h1>글 관리</h1><p class="muted">카테고리별로 글을 찾아 편집하세요.</p></div><div class="page-actions"><button class="secondary" id="import-posts">GitHub에서 동기화</button><button class="primary" data-view="editor">새 글 쓰기</button></div></div><div class="post-tools"><input id="post-search" aria-label="글 검색" placeholder="제목·설명·태그 검색" value="${escape(postFilters.query)}"><select id="post-category" aria-label="카테고리"><option value="all">모든 카테고리</option>${categories.map(category => `<option value="${escape(category)}">${escape(category)}</option>`).join('')}</select><select id="post-filter" aria-label="공개 상태"><option value="all">모든 상태</option><option value="published">공개 전체</option><option value="draft">초안</option><option value="published_with_draft">공개 · 수정본</option></select><select id="post-sort" aria-label="정렬"><option value="updated">최근 수정순</option><option value="published">발행일 최신순</option><option value="oldest">발행일 오래된순</option><option value="title">제목순</option></select></div><p id="post-summary" class="muted" role="status"></p><p id="sync-status" role="status"></p><div id="post-groups"></div>`);
+  const search = document.querySelector<HTMLInputElement>('#post-search')!;
+  const category = document.querySelector<HTMLSelectElement>('#post-category')!;
+  const status = document.querySelector<HTMLSelectElement>('#post-filter')!;
+  const sort = document.querySelector<HTMLSelectElement>('#post-sort')!;
+  if (!categories.includes(postFilters.category)) postFilters.category = 'all';
+  category.value = postFilters.category; status.value = postFilters.status; sort.value = postFilters.sort;
+  const draw = () => {
+    Object.assign(postFilters, { query: search.value, category: category.value, status: status.value, sort: sort.value });
+    const query = search.value.trim().toLocaleLowerCase();
+    const filtered = result.items.filter(post =>
+      (!query || [post.title, post.description, post.category, ...post.tags].join(' ').toLocaleLowerCase().includes(query)) &&
+      (category.value === 'all' || post.category === category.value) &&
+      (status.value === 'all' || (status.value === 'published' ? post.desiredVisibility === 'published' : post.status === status.value))
+    ).sort((a,b) => {
+      if (sort.value === 'title') return a.title.localeCompare(b.title, 'ko');
+      const date = (p: Post) => Date.parse(sort.value === 'updated' ? p.updatedAt : p.pubDate) || 0;
+      return (sort.value === 'oldest' ? date(a) - date(b) : date(b) - date(a)) || a.title.localeCompare(b.title, 'ko');
+    });
+    document.querySelector('#post-summary')!.textContent = `전체 ${result.items.length}개 중 ${filtered.length}개 · 카테고리 안에서 정렬됩니다`;
+    const groups = document.querySelector('#post-groups')!;
+    groups.innerHTML = categories.map(name => {
+      const posts = filtered.filter(post => post.category === name);
+      if (!posts.length) return '';
+      return `<details class="post-group" data-category="${escape(name)}" ${collapsedCategories.has(name) ? '' : 'open'}><summary><span>${escape(name)}</span><span class="group-count">${posts.length}</span></summary><div class="post-list">${posts.map(post => `<button class="post-row" data-post="${escape(post.id)}"><span><strong>${escape(post.title)}</strong><small>${sort.value === 'updated' ? '수정' : '발행'} ${escape((sort.value === 'updated' ? post.updatedAt : post.pubDate).slice(0,10))}</small></span><em class="status ${post.status}">${post.status === 'draft' ? '초안' : post.status === 'published_with_draft' ? '공개 · 수정본' : '공개'}</em></button>`).join('')}</div></details>`;
+    }).join('') || '<p class="empty">조건에 맞는 글이 없습니다. 검색어나 필터를 변경해 주세요.</p>';
+    groups.querySelectorAll<HTMLDetailsElement>('details').forEach(group => group.addEventListener('toggle', () => {
+      if (!group.isConnected) return;
+      if (group.open) collapsedCategories.delete(group.dataset.category!); else collapsedCategories.add(group.dataset.category!);
+    }));
+    groups.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(button => button.onclick = async () => {
+      try { renderEditor(await api.post(button.dataset.post!)); }
+      catch (error) { document.querySelector('#sync-status')!.textContent = error instanceof Error ? error.message : '글을 불러오지 못했습니다.'; }
     });
   };
-  toolbar.addEventListener('input', filterPosts);
+  search.addEventListener('input', draw);
+  for (const select of [category, status, sort]) select.addEventListener('input', draw);
+  draw();
   enhanceControls(document.querySelector('#content')!);
-  document.querySelector<HTMLButtonElement>('[data-view="editor"]')!.onclick = () => renderEditor();
+  const importButton = document.querySelector<HTMLButtonElement>('#import-posts')!;
+  importButton.onclick = async () => {
+    importButton.disabled = true; importButton.textContent = '동기화 중…';
+    try {
+      const sync = await api.importPosts(csrfToken);
+      await renderPosts();
+      document.querySelector('#sync-status')!.textContent = `가져옴 ${sync.imported}개 · 기존 유지 ${sync.unchanged}개 · 실패 ${sync.failed ?? 0}개`;
+    } catch (error) {
+      importButton.disabled = false; importButton.textContent = 'GitHub에서 동기화';
+      document.querySelector('#sync-status')!.textContent = error instanceof Error ? error.message : '동기화 실패';
+    }
+  };
 }
 
 async function renderAnalytics(start?: string, end?: string, background = false) {
