@@ -14,9 +14,15 @@ export async function ga4Report(env: Env, request: { dimensions: string[]; metri
   if (!env.GA4_PROPERTY_ID) return { status: 'unconfigured' as const, rows: [], totals: {}, warnings: ['GA4 property ID가 설정되지 않았습니다.'] };
   const token = await serviceAccountToken(env, 'https://www.googleapis.com/auth/analytics.readonly'); const body: Record<string, unknown> = { dateRanges: [{ startDate: request.start, endDate: request.end }], dimensions: request.dimensions.map(name => ({ name })), metrics: request.metrics.map(name => ({ name })), limit: 100 };
   if (request.filter) body.dimensionFilter = request.filter;
-  if (request.orderBy) body.orderBys = [{ metric: { metricName: request.orderBy.metric }, desc: request.orderBy.desc ?? true }];
+  if (request.orderBy) body.orderBys = [{ ...(request.dimensions.includes(request.orderBy.metric) ? { dimension: { dimensionName: request.orderBy.metric } } : { metric: { metricName: request.orderBy.metric } }), desc: request.orderBy.desc ?? true }];
+  if (request.dimensions.includes('date')) body.limit = 10000;
   const response = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${encodeURIComponent(env.GA4_PROPERTY_ID)}:runReport`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); const result = await response.json() as any; if (!response.ok) throw new Error(`GA4 report failed (${response.status}): ${result.error?.message ?? 'unknown error'}`);
-  const rows = (result.rows ?? []).map((row: any) => Object.fromEntries((result.dimensionHeaders ?? []).map((header: any, index: number) => [header.name, row.dimensionValues[index]?.value ?? '']) .concat((result.metricHeaders ?? []).map((header: any, index: number) => [header.name, Number(row.metricValues[index]?.value ?? 0)])))); const totals = Object.fromEntries((result.metricHeaders ?? []).map((header: any, index: number) => [header.name, Number(result.totals?.[0]?.metricValues?.[index]?.value ?? 0)])); return { status: 'ok' as const, rows, totals, warnings: result.metadata?.samplingMetadatas ? ['GA4 응답에 샘플링 정보가 포함되어 있습니다.'] : [] };
+  const rows = (result.rows ?? []).map((row: any) => Object.fromEntries((result.dimensionHeaders ?? []).map((header: any, index: number) => [header.name, row.dimensionValues?.[index]?.value ?? '']).concat((result.metricHeaders ?? []).map((header: any, index: number) => [header.name, Number(row.metricValues?.[index]?.value ?? 0)]))));
+  // A report without dimensions returns its period-wide values in the first row.
+  // Never sum per-page users: a person can visit more than one page.
+  const totalRow = request.dimensions.length === 0 ? result.rows?.[0] : result.totals?.[0];
+  const totals = Object.fromEntries(request.metrics.map((name, index) => [name, Number(totalRow?.metricValues?.[index]?.value ?? 0)]));
+  return { status: 'ok' as const, rows, totals, warnings: result.metadata?.samplingMetadatas ? ['GA4 응답에 샘플링 정보가 포함되어 있습니다.'] : [] };
 }
 
 export async function searchConsoleReport(env: Env, start: string, end: string) {
