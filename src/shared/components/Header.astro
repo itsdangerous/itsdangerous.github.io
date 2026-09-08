@@ -9,7 +9,7 @@ const isCurrent = (href: string) => href === '/blog/'
     : pathname === href || pathname.startsWith(href);
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-sidebar">
   <div class="site-header__inner">
     <a class="site-header__brand" href="/" aria-label="itsdangerous 홈">
       <img
@@ -29,9 +29,25 @@ const isCurrent = (href: string) => href === '/blog/'
       <a href="/guestbook/" class:list={{ 'is-current': isCurrent('/guestbook/') }}><span>Guestbook</span></a>
       <SearchButton variant="navigation" />
     </nav>
-    <p class="site-header__stats">29 posts · 7 categories</p>
   </div>
 </header>
+
+<div
+  class="site-header__resize-handle"
+  role="separator"
+  aria-orientation="vertical"
+  aria-label="사이드바 너비 조절"
+  tabindex="0"
+></div>
+
+<button class="site-header__sidebar-toggle" type="button" aria-expanded="true" aria-controls="site-sidebar" aria-label="사이드바 접기">
+  <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+    <path d="M6 5.5h15a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1ZM9 5.5v17" />
+    <path d="M6.9 9v2m0 6v2" stroke-width="0.8" />
+    <path class="site-header__sidebar-chevron" d="m17.5 10.5-3.5 3.5 3.5 3.5" />
+  </svg>
+  <span class="site-header__sidebar-hint" aria-hidden="true">사이드바 접기</span>
+</button>
 
 <script>
   const initializeHeaderVisibility = () => {
@@ -64,4 +80,126 @@ const isCurrent = (href: string) => href === '/blog/'
 
   initializeHeaderVisibility();
   document.addEventListener('astro:page-load', initializeHeaderVisibility);
+
+  const initializeSidebarToggle = () => {
+    const frame = document.querySelector<HTMLElement>('.site-frame');
+    const header = document.querySelector<HTMLElement>('.site-header');
+    const toggle = document.querySelector<HTMLButtonElement>('.site-header__sidebar-toggle');
+    const resizeHandle = document.querySelector<HTMLElement>('.site-header__resize-handle');
+    if (!frame || !header || !toggle || !resizeHandle || toggle.dataset.bound) return;
+    const desktop = window.matchMedia('(min-width: 901px)');
+    let panelAnimation: Animation | undefined;
+    const sidebarWidthKey = 'itsdangerous-sidebar-width';
+    const sidebarCollapsedKey = 'itsdangerous-sidebar-collapsed';
+    const sidebarBounds = () => ({ min: 144, max: Math.max(216, Math.min(420, window.innerWidth - 480)) });
+    const collapseThreshold = 176;
+    const resetSidebarWidth = () => {
+      frame.style.removeProperty('--sidebar-width');
+      document.documentElement.style.removeProperty('--saved-sidebar-width');
+      try { localStorage.removeItem(sidebarWidthKey); } catch { /* Storage may be unavailable. */ }
+      const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+      resizeHandle.setAttribute('aria-valuenow', String(Math.min(20 * rem, Math.max(16 * rem, innerWidth * 0.2))));
+    };
+    const setSidebarWidth = (width: number, persist = false) => {
+      const { min, max } = sidebarBounds();
+      const next = Math.round(Math.max(min, Math.min(max, width)));
+      frame.style.setProperty('--sidebar-width', `${next}px`);
+      resizeHandle.setAttribute('aria-valuemin', String(min));
+      resizeHandle.setAttribute('aria-valuemax', String(max));
+      resizeHandle.setAttribute('aria-valuenow', String(next));
+      if (persist) localStorage.setItem(sidebarWidthKey, String(next));
+    };
+    try {
+      const savedWidth = Number(localStorage.getItem(sidebarWidthKey));
+      if (Number.isFinite(savedWidth) && savedWidth > 0) setSidebarWidth(savedWidth);
+    } catch { /* Storage can be unavailable in private browsing. */ }
+    const syncAccessibility = () => {
+      if (!desktop.matches) panelAnimation?.cancel();
+      header.inert = desktop.matches && frame.hasAttribute('data-sidebar-collapsed');
+    };
+    const setCollapsed = (collapsed: boolean, persist = false, animate = true) => {
+      if (!collapsed && frame.hasAttribute('data-sidebar-collapsed')) resetSidebarWidth();
+      if (animate && desktop.matches) {
+        panelAnimation?.cancel();
+        panelAnimation = header.animate(
+          collapsed
+            ? [
+              { opacity: 1, transform: 'translateX(0) scaleX(1)' },
+              { opacity: 0, transform: 'translateX(-1rem) scaleX(0.94)' },
+            ]
+            : [
+              { opacity: 0, transform: 'translateX(-1rem) scaleX(0.94)' },
+              { opacity: 1, transform: 'translateX(0) scaleX(1)' },
+            ],
+          { duration: 460, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+        );
+      }
+      frame.toggleAttribute('data-sidebar-collapsed', collapsed);
+      document.documentElement.toggleAttribute('data-sidebar-collapsed', collapsed);
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      const label = collapsed ? '사이드바 펼치기' : '사이드바 접기';
+      toggle.setAttribute('aria-label', label);
+      toggle.querySelector('.site-header__sidebar-hint')!.textContent = label;
+      if (persist) {
+        try { localStorage.setItem(sidebarCollapsedKey, String(collapsed)); } catch { /* Storage can be unavailable in private browsing. */ }
+      }
+      syncAccessibility();
+    };
+    const resizeSidebar = (width: number, persist = false) => {
+      if (width <= collapseThreshold) {
+        if (!frame.hasAttribute('data-sidebar-collapsed')) setCollapsed(true, true);
+        return;
+      }
+      if (frame.hasAttribute('data-sidebar-collapsed')) setCollapsed(false, true);
+      setSidebarWidth(width, persist);
+    };
+    try {
+      if (localStorage.getItem(sidebarCollapsedKey) === 'true') setCollapsed(true, false, false);
+    } catch { /* Storage can be unavailable in private browsing. */ }
+    syncAccessibility();
+    desktop.addEventListener('change', syncAccessibility);
+    toggle.addEventListener('click', () => setCollapsed(!frame.hasAttribute('data-sidebar-collapsed'), true));
+    let resizePointerId: number | undefined;
+    const finishResize = () => {
+      resizePointerId = undefined;
+      frame.removeAttribute('data-sidebar-resizing');
+    };
+    resizeHandle.addEventListener('pointerdown', (event) => {
+      if (!desktop.matches || event.button !== 0) return;
+      resizePointerId = event.pointerId;
+      resizeHandle.setPointerCapture(event.pointerId);
+      frame.setAttribute('data-sidebar-resizing', '');
+      resizeSidebar(event.clientX);
+      event.preventDefault();
+    });
+    resizeHandle.addEventListener('pointermove', (event) => {
+      if (resizePointerId === event.pointerId) resizeSidebar(event.clientX);
+    });
+    resizeHandle.addEventListener('pointerup', (event) => {
+      if (resizePointerId !== event.pointerId) return;
+      resizeSidebar(event.clientX, true);
+      finishResize();
+    });
+    resizeHandle.addEventListener('pointercancel', finishResize);
+    resizeHandle.addEventListener('dblclick', () => {
+      if (!desktop.matches) return;
+      finishResize();
+      resetSidebarWidth();
+    });
+    resizeHandle.addEventListener('keydown', (event) => {
+      if (!desktop.matches || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const current = Number.parseFloat(getComputedStyle(frame).getPropertyValue('--sidebar-width')) || header.getBoundingClientRect().width;
+      const { min, max } = sidebarBounds();
+      const width = event.key === 'Home' ? min : event.key === 'End' ? max : current + (event.key === 'ArrowLeft' ? -16 : 16);
+      resizeSidebar(width, true);
+      event.preventDefault();
+    });
+    window.addEventListener('resize', () => {
+      const current = Number.parseFloat(getComputedStyle(frame).getPropertyValue('--sidebar-width'));
+      if (Number.isFinite(current)) setSidebarWidth(current, true);
+    });
+    toggle.dataset.bound = 'true';
+  };
+  initializeSidebarToggle();
+  document.addEventListener('astro:page-load', initializeSidebarToggle);
 </script>

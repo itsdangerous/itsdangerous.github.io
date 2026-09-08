@@ -6,6 +6,11 @@ import remarkCallouts from './src/shared/markdown/remark-callouts.js';
 export default defineConfig({
   site: 'https://itsdangerous.github.io',
   base: '/',
+  vite: {
+    optimizeDeps: {
+      exclude: ['shiki', '@shikijs/engine-oniguruma', '@shikijs/langs'],
+    },
+  },
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkDirective, remarkCallouts],

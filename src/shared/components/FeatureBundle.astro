@@ -9,17 +9,32 @@ import ThemePicker from './ThemePicker.astro';
     aria-expanded="false"
     aria-controls="feature-bundle-panel"
     aria-label="기능 꾸러미 열기"
+    title="클릭하여 열기 · 드래그하여 이동"
     data-feature-toggle
   >
     <span aria-hidden="true">✦</span>
   </button>
   <div class="feature-bundle__panel" id="feature-bundle-panel" data-feature-panel hidden>
-    <p>Tools</p>
     <div class="feature-bundle__controls">
       <ThemePicker />
+      <button type="button" class="feature-bundle__tool-link" data-focus-mode aria-pressed="false" aria-label="집중해서 보기" title="집중해서 보기">
+        <svg class="feature-bundle__book-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M11 5H6a1 1 0 0 0-1 1v5m16-6h5a1 1 0 0 1 1 1v5M5 21v5a1 1 0 0 0 1 1h5m10 0h5a1 1 0 0 0 1-1v-5M12 12h8m-8 4h8m-8 4h5" />
+        </svg>
+      </button>
+      <a class="feature-bundle__tool-link" href="/tools/markdown-viewer/?home=1" aria-label="Markdown Viewer" title="Markdown Viewer 홈 열기">
+        <svg class="feature-bundle__book-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path class="feature-bundle__book-cover" d="M3 8.5c4.5-1.8 8.7-1 13 1.8 4.3-2.8 8.5-3.6 13-1.8v17c-4.7-1.5-8.9-.8-13 1.5-4.1-2.3-8.3-3-13-1.5z" />
+          <path class="feature-bundle__book-pages" d="M5 6.5c4-.5 7.7.8 11 3.3 3.3-2.5 7-3.8 11-3.3v16c-4-.5-7.7.8-11 3.3-3.3-2.5-7-3.8-11-3.3z" />
+          <path d="M16 10v15M8 12l4.5 1.6M8 16l4.5 1.6M8 20l4.5 1.6M19.5 16.6l4.5-1.4M19.5 20.6l4.5-1.4" />
+          <path class="feature-bundle__book-ribbon" d="M21 7.5V13l2-1.5 2 .5V6.8" />
+        </svg>
+      </a>
     </div>
   </div>
 </div>
+
+<p class="focus-mode-notice" role="status" aria-live="polite" data-focus-notice hidden></p>
 
 <script>
   const bundle = document.querySelector<HTMLElement>('[data-feature-bundle]');
@@ -27,18 +42,156 @@ import ThemePicker from './ThemePicker.astro';
   const panel = bundle?.querySelector<HTMLElement>('[data-feature-panel]');
 
   if (bundle && toggle && panel && !toggle.dataset.bound) {
+    let isOpen = false;
+    const focusButton = bundle.querySelector<HTMLButtonElement>('[data-focus-mode]');
+    const notice = document.querySelector<HTMLElement>('[data-focus-notice]');
+    let focusAnimation: Animation | undefined;
+    let noticeAnimation: Animation | undefined;
+    const setFocusMode = (enabled: boolean) => {
+      document.documentElement.toggleAttribute('data-focus-mode', enabled);
+      focusButton?.setAttribute('aria-pressed', String(enabled));
+      const label = enabled ? '집중 보기 종료 (Esc)' : '집중해서 보기';
+      focusButton?.setAttribute('aria-label', label);
+      focusButton?.setAttribute('title', label);
+      setOpen(false);
+      toggle.focus({ preventScroll: true });
+      window.dispatchEvent(new Event('resize'));
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      focusAnimation?.cancel();
+      const content = document.querySelector<HTMLElement>('.site-content');
+      focusAnimation = content?.animate([
+        { opacity: 0.25, transform: reduced ? 'none' : 'translateY(8px)' },
+        { opacity: 1, transform: 'none' },
+      ], { duration: reduced ? 150 : 520, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+      if (notice) {
+        noticeAnimation?.cancel();
+        notice.hidden = false;
+        notice.textContent = enabled ? '집중해서 보기 · Esc로 돌아가기' : '기본 보기로 돌아왔습니다';
+        noticeAnimation = notice.animate([
+          { opacity: 0, transform: reduced ? 'none' : 'translateY(-6px)', offset: 0 },
+          { opacity: 1, transform: 'none', offset: 0.15 },
+          { opacity: 1, transform: 'none', offset: 0.8 },
+          { opacity: 0, transform: 'none', offset: 1 },
+        ], { duration: 1800, easing: 'ease-out' });
+        noticeAnimation.onfinish = () => { notice.hidden = true; };
+      }
+    };
+    focusButton?.addEventListener('click', () => {
+      setFocusMode(!document.documentElement.hasAttribute('data-focus-mode'));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && document.documentElement.hasAttribute('data-focus-mode')) {
+        setFocusMode(false);
+      }
+    });
+    let animation: Animation | undefined;
+    let dragged = false;
+    let drag: { id: number; x: number; y: number; left: number; top: number } | undefined;
+    const inset = 12;
+    const hasActiveTool = () => Boolean(panel.querySelector('[aria-pressed="true"]'));
+    const placePanel = () => {
+      if (panel.hidden) return;
+      const rect = bundle.getBoundingClientRect();
+      const leftward = rect.left >= panel.offsetWidth + inset + 8 || rect.left > innerWidth / 2;
+      bundle.dataset.rollout = leftward ? 'left' : 'right';
+      panel.style.left = leftward ? `${-panel.offsetWidth - 8}px` : `${rect.width + 8}px`;
+      panel.style.top = `${(rect.height - panel.offsetHeight) / 2}px`;
+      panel.style.bottom = 'auto';
+      panel.style.transformOrigin = leftward ? 'right center' : 'left center';
+    };
+    const moveTo = (left: number, top: number) => {
+      bundle.style.right = 'auto';
+      bundle.style.bottom = 'auto';
+      bundle.style.left = `${Math.max(inset, Math.min(left, innerWidth - bundle.offsetWidth - inset))}px`;
+      bundle.style.top = `${Math.max(inset, Math.min(top, innerHeight - bundle.offsetHeight - inset))}px`;
+      placePanel();
+    };
     const setOpen = (open: boolean) => {
-      panel.hidden = !open;
+      isOpen = open;
+      animation?.cancel();
+      bundle.toggleAttribute('data-open', open);
+      panel.hidden = false;
+      panel.inert = false;
+      placePanel();
       bundle.toggleAttribute('data-open', open);
       toggle.setAttribute('aria-expanded', String(open));
       toggle.setAttribute('aria-label', open ? '기능 꾸러미 닫기' : '기능 꾸러미 열기');
+      const leftward = bundle.dataset.rollout === 'left';
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const folded = { clipPath: leftward ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)' };
+      const unfolded = { clipPath: 'inset(0 0 0 0)' };
+      if (open) {
+        const items = [...panel.querySelectorAll<HTMLElement>('.feature-bundle__controls > button, .feature-bundle__controls > a')];
+        if (leftward) items.reverse();
+        items.forEach((item, index) => {
+          item.getAnimations().forEach(effect => effect.cancel());
+          item.animate([
+            { opacity: 0, transform: reducedMotion ? 'none' : `translateX(${leftward ? 24 : -24}px)` },
+            { opacity: 1, transform: 'translateX(0)' },
+          ], {
+            duration: reducedMotion ? 160 : 320,
+            delay: reducedMotion ? index * 35 : 70 + index * 100,
+            fill: 'backwards',
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          });
+        });
+      }
+      if (!open && hasActiveTool()) return;
+      const openingFrames = reducedMotion ? [
+        { ...folded, transform: 'translateX(0)', offset: 0 },
+        { ...unfolded, transform: `translateX(${leftward ? -6 : 6}px)`, offset: 0.7 },
+        { ...unfolded, transform: 'translateX(0)', offset: 1 },
+      ] : [
+        { ...folded, transform: 'translateX(0)', offset: 0, easing: 'cubic-bezier(0.2, 0, 0.2, 1)' },
+        { ...unfolded, transform: `translateX(${leftward ? -14 : 14}px)`, offset: 0.62, easing: 'cubic-bezier(0.7, 0, 1, 1)' },
+        { ...unfolded, transform: `translateX(${leftward ? 3 : -3}px)`, offset: 0.83, easing: 'ease-out' },
+        { ...unfolded, transform: 'translateX(0)', offset: 1 },
+      ];
+      animation = panel.animate(open ? openingFrames : [unfolded, folded], {
+        duration: reducedMotion ? 260 : open ? 720 : 240,
+        easing: open && !reducedMotion ? 'linear' : 'cubic-bezier(0.4, 0, 0.2, 1)',
+      });
+      animation.onfinish = () => { panel.hidden = !isOpen && !hasActiveTool(); };
     };
 
-    toggle.addEventListener('click', () => {
-      setOpen(panel.hidden);
+    toggle.addEventListener('pointerdown', (event) => {
+      if (!event.isPrimary || event.button !== 0) return;
+      const rect = bundle.getBoundingClientRect();
+      dragged = false;
+      drag = { id: event.pointerId, x: event.clientX, y: event.clientY, left: rect.left, top: rect.top };
+      toggle.setPointerCapture(event.pointerId);
+    });
+    toggle.addEventListener('pointermove', (event) => {
+      if (!drag || drag.id !== event.pointerId) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      if (!dragged && Math.hypot(dx, dy) < 6) return;
+      dragged = true;
+      bundle.setAttribute('data-dragging', '');
+      moveTo(drag.left + dx, drag.top + dy);
+    });
+    const endDrag = () => {
+      drag = undefined;
+      bundle.removeAttribute('data-dragging');
+    };
+    toggle.addEventListener('pointerup', endDrag);
+    toggle.addEventListener('pointercancel', endDrag);
+    toggle.addEventListener('lostpointercapture', endDrag);
+    toggle.addEventListener('click', (event) => {
+      if (dragged && event.detail !== 0) { dragged = false; return; }
+      setOpen(!isOpen);
+    });
+    bundle.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen) { setOpen(false); toggle.focus(); }
+    });
+    window.addEventListener('resize', () => {
+      if (bundle.style.left) {
+        const rect = bundle.getBoundingClientRect();
+        moveTo(rect.left, rect.top);
+      } else placePanel();
     });
     document.addEventListener('click', (event) => {
-      if (!bundle.contains(event.target as Node)) {
+      if (isOpen && !bundle.contains(event.target as Node)) {
         setOpen(false);
       }
     });

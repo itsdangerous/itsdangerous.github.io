@@ -41,72 +41,9 @@ const collapsedHeadings = navigableHeadings.filter(({ depth }) => depth === 2);
       </ol>
     </details>
     <script>
-      const initializeToc = () => {
-        const aside = document.querySelector<HTMLElement>('.article__desktop-toc');
-
-        if (document.documentElement.dataset.tocInitialized) return;
-        const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
-        const headingIds = [...new Set(links.map((link) => decodeURIComponent(link.hash.slice(1))))];
-        const headings = headingIds
-          .map((id) => document.getElementById(id))
-          .filter((heading): heading is HTMLElement => Boolean(heading));
-
-        if (links.length === 0 || headings.length === 0) return;
-        document.documentElement.dataset.tocInitialized = 'true';
-
-        let hasObservedScroll = false;
-
-        const setActiveLink = (id: string, syncHash: boolean) => {
-          const currentIndex = headings.findIndex((heading) => heading.id === id);
-          const activeIds = new Set([id]);
-          if (currentIndex >= 0 && headings[currentIndex].tagName === 'H3') {
-            const parent = [...headings.slice(0, currentIndex)]
-              .reverse()
-              .find((heading) => heading.tagName === 'H2');
-            if (parent) activeIds.add(parent.id);
-          }
-
-          links.forEach((link) => {
-            if (activeIds.has(decodeURIComponent(link.hash.slice(1)))) link.setAttribute('aria-current', 'location');
-            else link.removeAttribute('aria-current');
-          });
-          aside?.querySelectorAll<HTMLElement>('[data-toc-preview]').forEach((preview) => {
-            preview.toggleAttribute('data-active', activeIds.has(preview.dataset.tocPreview ?? ''));
-          });
-          if (syncHash && decodeURIComponent(window.location.hash.slice(1)) !== id) {
-            window.history.replaceState(window.history.state, '', `#${encodeURIComponent(id)}`);
-          }
-        };
-
-        const updateActiveHeading = (syncHash = hasObservedScroll) => {
-          if (headings.length === 0) return;
-          const threshold = 48;
-          const current = headings.reduce<HTMLElement>((active, heading) => (
-            heading.getBoundingClientRect().top <= threshold ? heading : active
-          ), headings[0]);
-          setActiveLink(current.id, syncHash);
-        };
-
-        updateActiveHeading(false);
-        window.addEventListener('scroll', () => {
-          hasObservedScroll = true;
-          updateActiveHeading(true);
-        }, { passive: true });
-        window.addEventListener('resize', () => updateActiveHeading());
-
-        document.querySelectorAll<HTMLElement>('.table-of-contents__desktop').forEach((toc) => {
-          let hideScrollbarTimer: number | undefined;
-          toc.addEventListener('scroll', () => {
-            toc.toggleAttribute('data-toc-scrolling', true);
-            window.clearTimeout(hideScrollbarTimer);
-            hideScrollbarTimer = window.setTimeout(() => toc.removeAttribute('data-toc-scrolling'), 800);
-          }, { passive: true });
-        });
-      };
-
-      initializeToc();
-      document.addEventListener('DOMContentLoaded', initializeToc, { once: true });
-      document.addEventListener('astro:page-load', initializeToc);
+      import { initializeTableOfContents } from './table-of-contents';
+      initializeTableOfContents();
+      document.addEventListener('astro:page-load', () => initializeTableOfContents());
     </script>
   </>
 )}

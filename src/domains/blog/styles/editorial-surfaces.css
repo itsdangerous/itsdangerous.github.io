@@ -44,6 +44,8 @@
 .article__content thead {
   --surface-background: var(--color-code-shell-header);
   --surface-texture-position: center 28%;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-code-shell-edge) 62%, transparent);
 }
 
 .editorial-surface--header::before,

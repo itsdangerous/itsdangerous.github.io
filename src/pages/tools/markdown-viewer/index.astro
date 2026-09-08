@@ -1,0 +1,322 @@
+---
+import SiteLayout from '../../../shared/layouts/SiteLayout.astro';
+import '../../../domains/blog/styles/editorial-surfaces.css';
+import '../../../domains/blog/styles/blog.css';
+import CodeShellEnhancer from '../../../domains/blog/components/CodeShellEnhancer.astro';
+---
+
+<SiteLayout title="Markdown Viewer — itsdangerous" description="Markdown 문서를 itsdangerous 스타일로 읽는 도구" canonicalPath="/tools/markdown-viewer/">
+  <main class="article-shell markdown-viewer" data-toc-collapsed data-toc-empty data-pagefind-ignore>
+    <div class="article__toc-bar" data-toc-topbar>
+      <button type="button" data-toc-top-toggle aria-expanded="false" aria-controls="markdown-viewer-toc-panel">
+        <span aria-hidden="true">☷</span>
+        <span>목차</span>
+      </button>
+    </div>
+    <article class="article">
+      <header class="article__header markdown-viewer__header">
+        <p class="eyebrow">Tools</p>
+        <h1>Markdown Viewer</h1>
+        <p class="article__description">Markdown 파일을 이곳에 끌어다 놓으면 블로그 스타일로 펼쳐집니다.</p>
+      </header>
+      <input type="file" accept=".md,.markdown,text/markdown" data-file-input hidden />
+      <section class="markdown-viewer__dropzone" data-dropzone aria-label="Markdown 파일 놓기">
+        <p>Markdown 파일을 끌어다 놓으세요</p>
+        <span>또는</span>
+        <button type="button" class="markdown-viewer__choose" data-choose-file>파일 선택</button>
+      </section>
+      <section class="markdown-viewer__history" data-viewer-history hidden aria-labelledby="markdown-history-title">
+        <p class="eyebrow" id="markdown-history-title">Recent documents</p>
+        <ol data-history-list></ol>
+      </section>
+      <div class="article__mobile-toc" data-viewer-mobile-toc></div>
+      <div class="markdown-viewer__toolbar" data-viewer-toolbar hidden>
+        <p class="markdown-viewer__filename" data-filename aria-live="polite"></p>
+        <div class="markdown-viewer__actions">
+          <button type="button" class="markdown-viewer__action" data-reset-viewer aria-label="초기 화면으로 돌아가기">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5 4 9l4 4M4 9h10a5 5 0 0 1 0 10h-3" /></svg>
+            <span aria-hidden="true">처음으로</span>
+          </button>
+          <button type="button" class="markdown-viewer__action" data-choose-file aria-label="다른 파일 열기">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 18V6.5A1.5 1.5 0 0 1 4.5 5H9l2 3h7.5A1.5 1.5 0 0 1 20 9.5V11M3 18l3-7h16l-3 8H4.5A1.5 1.5 0 0 1 3 18Z" /></svg>
+            <span aria-hidden="true">파일 열기</span>
+          </button>
+        </div>
+      </div>
+      <p class="markdown-viewer__error" data-viewer-error role="alert" hidden></p>
+      <div class="article__content markdown-viewer__content" data-output hidden></div>
+    </article>
+    <aside id="markdown-viewer-toc-panel" class="article__desktop-toc" data-toc-collapsed hidden>
+      <div data-viewer-toc></div>
+    </aside>
+  </main>
+  <CodeShellEnhancer />
+</SiteLayout>
+
+<script>
+  import { renderViewer } from '../../../shared/markdown/render-viewer';
+  import { initializeTableOfContents } from '../../../domains/blog/components/table-of-contents';
+
+  const dropzone = document.querySelector<HTMLElement>('[data-dropzone]');
+  const input = document.querySelector<HTMLInputElement>('[data-file-input]');
+  const output = document.querySelector<HTMLElement>('[data-output]');
+  const filename = document.querySelector<HTMLElement>('[data-filename]');
+  const viewer = document.querySelector<HTMLElement>('.markdown-viewer');
+  const header = viewer?.querySelector<HTMLElement>('.markdown-viewer__header');
+  const toolbar = viewer?.querySelector<HTMLElement>('[data-viewer-toolbar]');
+  const error = viewer?.querySelector<HTMLElement>('[data-viewer-error]');
+  const history = viewer?.querySelector<HTMLElement>('[data-viewer-history]');
+  const historyList = viewer?.querySelector<HTMLOListElement>('[data-history-list]');
+  const tocPanel = document.querySelector<HTMLElement>('#markdown-viewer-toc-panel');
+  const toc = viewer?.querySelector<HTMLElement>('[data-viewer-toc]');
+  const mobileToc = viewer?.querySelector<HTMLElement>('[data-viewer-mobile-toc]');
+  const tocTopToggle = document.querySelector<HTMLButtonElement>('[data-toc-top-toggle]');
+  let renderVersion = 0;
+  type ViewerNavigation = { documentId: string | null };
+  const navigationState = (): ViewerNavigation | undefined => window.history.state?.markdownViewer;
+  const recordNavigation = (documentId: string | null, replace = false) => {
+    if (!replace && navigationState()?.documentId === documentId) return;
+    window.history[replace ? 'replaceState' : 'pushState']({
+      ...window.history.state,
+      markdownViewer: { documentId },
+    }, '');
+  };
+  const databaseName = 'itsdangerous-markdown-viewer';
+  const storeName = 'documents';
+
+  type StoredDocument = { id: string; name: string; markdown: string; openedAt: number };
+  const database = () => new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open(databaseName, 1);
+    request.onupgradeneeded = () => {
+      const store = request.result.createObjectStore(storeName, { keyPath: 'id' });
+      store.createIndex('openedAt', 'openedAt');
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+  const withStore = async <T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>) => {
+    const db = await database();
+    return new Promise<T>((resolve, reject) => {
+      const transaction = db.transaction(storeName, mode);
+      const request = action(transaction.objectStore(storeName));
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+      transaction.oncomplete = () => db.close();
+      transaction.onerror = () => { db.close(); reject(transaction.error); };
+    });
+  };
+  const documents = () => withStore('readonly', store => store.getAll()) as Promise<StoredDocument[]>;
+  const saveDocument = (document: StoredDocument) => withStore('readwrite', store => store.put(document));
+  const deleteDocument = (id: string) => withStore('readwrite', store => store.delete(id));
+  const activeDocument = () => localStorage.getItem('markdown-viewer-active-document');
+  const setActiveDocument = (id?: string) => id ? localStorage.setItem('markdown-viewer-active-document', id) : localStorage.removeItem('markdown-viewer-active-document');
+
+  const slugifyHeading = (text: string) => text.trim().toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}\s_-]/gu, '')
+    .trim().replace(/\s+/g, '-');
+
+  const buildToc = () => {
+    if (!output || !toc || !mobileToc || !tocPanel) return;
+    const used = new Map<string, number>();
+    const headings = [...output.querySelectorAll<HTMLHeadingElement>('h1, h2, h3, h4, h5, h6')];
+    headings.forEach((heading) => {
+      const base = slugifyHeading(heading.textContent ?? '') || 'section';
+      const count = used.get(base) ?? 0;
+      used.set(base, count + 1);
+      heading.id = count === 0 ? base : `${base}-${count}`;
+    });
+    const navigable = headings.filter((heading) => heading.tagName === 'H2' || heading.tagName === 'H3');
+    const makeNav = (mobile = false) => {
+      const nav = document.createElement(mobile ? 'details' : 'nav');
+      nav.className = mobile ? 'table-of-contents__mobile editorial-surface' : 'table-of-contents__desktop editorial-surface';
+      nav.setAttribute('aria-label', '이 글의 목차');
+      if (mobile) {
+        const summary = document.createElement('summary'); summary.textContent = '이 글의 목차'; nav.append(summary);
+      }
+      const list = document.createElement('ol');
+      navigable.forEach((heading) => {
+        const item = document.createElement('li');
+        item.className = `table-of-contents__item--depth-${heading.tagName.slice(1)}`;
+        const link = document.createElement('a');
+        link.dataset.tocLink = '';
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent ?? '';
+        item.append(link); list.append(item);
+      });
+      nav.append(list);
+      if (!mobile) {
+        const preview = document.createElement('div');
+        preview.className = 'table-of-contents__collapsed-preview'; preview.setAttribute('aria-hidden', 'true');
+        navigable.filter((heading) => heading.tagName === 'H2').forEach((heading) => { const span = document.createElement('span'); span.dataset.tocPreview = heading.id; preview.append(span); });
+        nav.append(preview);
+      }
+      return nav;
+    };
+    toc.replaceChildren(); mobileToc.replaceChildren();
+    if (navigable.length === 0) {
+      tocPanel.hidden = true; viewer?.setAttribute('data-toc-empty', ''); return;
+    }
+    tocPanel.hidden = false; viewer?.removeAttribute('data-toc-empty');
+    toc.append(makeNav()); mobileToc.append(makeNav(true));
+    initializeTableOfContents(viewer ?? document);
+  };
+
+  const showHistory = async () => {
+    if (!history || !historyList) return;
+    try {
+      const recent = (await documents()).sort((a, b) => b.openedAt - a.openedAt).slice(0, 12);
+      historyList.replaceChildren(...recent.map(entry => {
+        const item = document.createElement('li');
+        const open = document.createElement('button');
+        open.type = 'button'; open.className = 'markdown-viewer__history-open'; open.textContent = entry.name;
+        open.title = entry.name;
+        open.addEventListener('click', () => void renderDocument(entry));
+        const remove = document.createElement('button');
+        remove.type = 'button'; remove.className = 'markdown-viewer__history-remove'; remove.setAttribute('aria-label', `${entry.name} 기록에서 제거`); remove.textContent = '×';
+        remove.addEventListener('click', async () => { await deleteDocument(entry.id); if (activeDocument() === entry.id) setActiveDocument(); await showHistory(); });
+        item.append(open, remove); return item;
+      }));
+      history.hidden = recent.length === 0 || viewer?.hasAttribute('data-reading') === true;
+    } catch { history.hidden = true; }
+  };
+
+  const renderDocument = async (entry: StoredDocument, navigate = true) => {
+    if (!output || !filename) return;
+    const version = ++renderVersion;
+    try {
+      if (!/\.(md|markdown)$/i.test(entry.name)) throw new Error('Markdown 파일(.md, .markdown)을 선택해주세요.');
+      const html = await renderViewer(entry.markdown);
+      if (version !== renderVersion) return;
+      output.innerHTML = html;
+      buildToc();
+      output.hidden = false;
+      if (dropzone) dropzone.hidden = true;
+      if (header) header.hidden = true;
+      if (toolbar) toolbar.hidden = false;
+      if (history) history.hidden = true;
+      if (error) error.hidden = true;
+      viewer?.setAttribute('data-reading', '');
+      document.dispatchEvent(new Event('markdown:rendered'));
+      filename.textContent = entry.name;
+      filename.title = entry.name;
+      if (navigate) recordNavigation(entry.id);
+      setActiveDocument(entry.id);
+      void showHistory();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } catch (cause) {
+      if (version !== renderVersion || !error) return;
+      error.textContent = cause instanceof Error ? cause.message : '파일을 읽지 못했습니다. 다시 선택해주세요.';
+      error.hidden = false;
+    }
+  };
+  const renderFile = async (file?: File) => {
+    if (!file) return;
+    try {
+      const entry: StoredDocument = { id: `${file.name}:${file.size}:${file.lastModified}`, name: file.name, markdown: await file.text(), openedAt: Date.now() };
+      await saveDocument(entry);
+      const recent = (await documents()).sort((a, b) => b.openedAt - a.openedAt);
+      await Promise.all(recent.slice(12).map(entry => deleteDocument(entry.id)));
+      await renderDocument(entry);
+    } catch (cause) {
+      if (!error) return;
+      error.textContent = cause instanceof Error ? cause.message : '파일을 저장하거나 읽지 못했습니다. 다시 선택해주세요.';
+      error.hidden = false;
+    }
+  };
+
+  input?.addEventListener('change', () => {
+    void renderFile(input.files?.[0]);
+    input.value = '';
+  });
+  viewer?.querySelectorAll<HTMLButtonElement>('[data-choose-file]').forEach(button => {
+    button.addEventListener('click', () => input?.click());
+  });
+  let dragDepth = 0;
+  const resetViewer = (navigate = true) => {
+    renderVersion++;
+    dragDepth = 0;
+    viewer?.removeAttribute('data-reading');
+    viewer?.removeAttribute('data-dragging');
+    if (output) { output.replaceChildren(); output.hidden = true; }
+    toc?.replaceChildren();
+    mobileToc?.replaceChildren();
+    tocPanel?.setAttribute('hidden', '');
+    viewer?.setAttribute('data-toc-empty', '');
+    document.dispatchEvent(new Event('markdown:rendered'));
+    if (toolbar) toolbar.hidden = true;
+    if (history) history.hidden = false;
+    if (header) header.hidden = false;
+    if (dropzone) dropzone.hidden = false;
+    if (filename) { filename.textContent = ''; filename.removeAttribute('title'); }
+    if (input) input.value = '';
+    if (error) { error.textContent = ''; error.hidden = true; }
+    setActiveDocument();
+    if (navigate) recordNavigation(null);
+    void showHistory();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    dropzone?.querySelector<HTMLButtonElement>('[data-choose-file]')?.focus({ preventScroll: true });
+  };
+  viewer?.querySelector('[data-reset-viewer]')?.addEventListener('click', () => resetViewer());
+  tocTopToggle?.addEventListener('click', () => {
+    const shell = tocTopToggle.closest<HTMLElement>('.article-shell');
+    const open = shell?.toggleAttribute('data-toc-top-open') ?? false;
+    tocTopToggle.setAttribute('aria-expanded', String(open));
+  });
+  tocPanel?.addEventListener('click', (event) => {
+    if ((event.target as HTMLElement).closest('a')) {
+      viewer?.closest<HTMLElement>('.article-shell')?.removeAttribute('data-toc-top-open');
+      tocTopToggle?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  viewer?.addEventListener('dragenter', (event) => {
+    if (!event.dataTransfer?.types.includes('Files')) return;
+    event.preventDefault();
+    dragDepth++;
+    viewer.dataset.dragging = 'true';
+  });
+  viewer?.addEventListener('dragover', (event) => {
+    if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
+  });
+  viewer?.addEventListener('dragleave', () => {
+    if (--dragDepth <= 0) { dragDepth = 0; delete viewer.dataset.dragging; }
+  });
+  viewer?.addEventListener('drop', (event) => {
+    if (!event.dataTransfer?.types.includes('Files')) return;
+    event.preventDefault();
+    dragDepth = 0;
+    delete viewer.dataset.dragging;
+    void renderFile(event.dataTransfer.files[0]);
+  });
+  void showHistory();
+  const restoreNavigation = async (id: string | null) => {
+    const version = ++renderVersion;
+    if (!id) { resetViewer(false); return; }
+    try {
+      const entry = await withStore('readonly', store => store.get(id)) as StoredDocument | undefined;
+      if (version !== renderVersion) return;
+      if (entry) await renderDocument(entry, false);
+      else {
+        resetViewer(false);
+        recordNavigation(null, true);
+      }
+    } catch {
+      if (version === renderVersion) resetViewer(false);
+    }
+  };
+  window.addEventListener('popstate', () => {
+    void restoreNavigation(navigationState()?.documentId ?? null);
+  });
+  const openHome = new URLSearchParams(window.location.search).get('home') === '1';
+  if (openHome) {
+    // The Tools shortcut is an explicit request for the viewer's start screen,
+    // even when a previously opened document is still stored locally.
+    const cleanUrl = `${window.location.pathname}${window.location.hash}`;
+    window.history.replaceState(window.history.state, '', cleanUrl);
+  }
+  let initialId = openHome ? null : navigationState()?.documentId;
+  if (initialId === undefined) {
+    try { initialId = activeDocument(); } catch { initialId = null; }
+    recordNavigation(initialId, true);
+  }
+  void restoreNavigation(initialId);
+</script>

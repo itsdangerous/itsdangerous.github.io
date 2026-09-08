@@ -29,3 +29,19 @@ export const earlyThemeScript = `
   }
 })();
 `;
+
+export const earlySidebarScript = `
+(() => {
+  try {
+    const width = Number(localStorage.getItem('itsdangerous-sidebar-width'));
+    if (Number.isFinite(width) && width > 0) {
+      document.documentElement.style.setProperty('--saved-sidebar-width', String(Math.round(width)) + 'px');
+    }
+    if (localStorage.getItem('itsdangerous-sidebar-collapsed') === 'true') {
+      document.documentElement.dataset.sidebarCollapsed = 'true';
+    }
+  } catch {
+    // Storage can be unavailable in privacy-restricted browsers.
+  }
+})();
+`;

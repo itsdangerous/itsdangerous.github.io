@@ -1,4 +1,5 @@
 <script>
+  const observedPanels = new Map<HTMLPreElement, ResizeObserver>();
   function showCopyToast() {
     let container = document.querySelector<HTMLElement>('.code-copy-toasts');
 
@@ -190,6 +191,7 @@
     pre.addEventListener('scroll', scheduleUpdate, { passive: true });
     const resizeObserver = new ResizeObserver(scheduleUpdate);
     resizeObserver.observe(pre);
+    observedPanels.set(pre, resizeObserver);
     document.fonts?.ready.then(scheduleUpdate);
     window.addEventListener('load', scheduleUpdate, { once: true });
     window.requestAnimationFrame(update);
@@ -197,6 +199,10 @@
     return scrollbar;
   }
 
+  function enhanceCodeShells() {
+  observedPanels.forEach((observer, pre) => {
+    if (!pre.isConnected) { observer.disconnect(); observedPanels.delete(pre); }
+  });
   document.querySelectorAll<HTMLPreElement>('.article__content pre').forEach((pre, index) => {
     if (pre.parentElement?.classList.contains('code-shell')) return;
 
@@ -216,4 +222,7 @@
     shell.append(header, pre, createHorizontalScrollbar(pre, index));
     shell.classList.add('code-shell--custom-scrollbar');
   });
+  }
+  enhanceCodeShells();
+  document.addEventListener('markdown:rendered', enhanceCodeShells);
 </script>
