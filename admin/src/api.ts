@@ -10,7 +10,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.status === 204 ? (undefined as T) : response.json() as Promise<T>;
 }
 
-export const api = {
+export const liveApi = {
   session: () => request<{ user: { id: number; login: string }; csrfToken: string }>('/api/session'),
   posts: (visibility = 'all') => request<{ items: Post[]; nextCursor?: string }>(`/api/posts?visibility=${visibility}`),
   post: (id: string) => request<Post>(`/api/posts/${encodeURIComponent(id)}`),
@@ -20,3 +20,8 @@ export const api = {
   publish: (post: Post, csrfToken: string, unpublish = false) => request<{ operationId: string; state: string; commitSha?: string }>(`/api/posts/${encodeURIComponent(post.id)}/${unpublish ? 'unpublish' : 'publish'}`, { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ expectedVersion: post.version }) }),
   logout: (csrfToken: string) => request<void>('/api/logout', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }),
 };
+
+// Vite removes the preview import from production builds.
+export const api: typeof liveApi = import.meta.env.DEV
+  ? (await import('./preview-api')).previewApi
+  : liveApi;

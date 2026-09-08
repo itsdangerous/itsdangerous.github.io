@@ -5,34 +5,61 @@ import './styles.css';
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let csrfToken = '';
 let activePost: Post | undefined;
+let currentView = 'analytics';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const today = new Date().toISOString().slice(0, 10);
 const monthAgo = new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10);
+const analyticsNames = ['overview', 'trend', 'posts', 'sources', 'countries', 'devices', 'search'];
+const analyticsTitles: Record<string, string> = { overview: '요약', trend: '일별 추이', posts: '인기 페이지', sources: '유입 경로', countries: '지역', devices: '기기', search: '검색어' };
 
 function shell(content: string) {
   app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand">itsdangerous · 서재 관리</a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => renderView(button.dataset.view!));
+  document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
   document.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await api.logout(csrfToken); location.reload(); };
 }
 
 async function renderPosts() {
+  currentView = 'posts';
   const result = await api.posts();
   shell(`<div class="page-heading"><div><p class="eyebrow">MANUSCRIPTS</p><h1>글 관리</h1></div><button class="primary" data-view="editor">새 글 쓰기</button></div><div class="post-list">${result.items.map(post => `<button class="post-row" data-post="${escape(post.id)}"><span><strong>${escape(post.title)}</strong><small>${escape(post.category)} · ${escape(post.updatedAt.slice(0, 10))}</small></span><em class="status ${post.status}">${post.status === 'draft' ? '초안' : post.status === 'published_with_draft' ? '공개 · 수정본' : '공개'}</em></button>`).join('') || '<p class="empty">아직 관리할 글이 없습니다.</p>'}</div>`);
   document.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(button => button.onclick = async () => renderEditor(await api.post(button.dataset.post!)));
+  const toolbar = document.createElement('div');
+  toolbar.className = 'toolbar';
+  toolbar.innerHTML = '<input id="post-search" aria-label="글 검색" placeholder="제목이나 카테고리로 검색"><select id="post-filter" aria-label="공개 상태"><option value="all">모든 글</option><option value="published">공개</option><option value="draft">초안</option></select>';
+  const list = document.querySelector<HTMLElement>('.post-list')!;
+  list.parentNode!.insertBefore(toolbar, list);
+  const filterPosts = () => {
+    const query = (toolbar.querySelector('input') as HTMLInputElement).value.toLowerCase();
+    const visibility = (toolbar.querySelector('select') as HTMLSelectElement).value;
+    document.querySelectorAll<HTMLButtonElement>('[data-post]').forEach(row => {
+      const post = result.items.find(post => post.id === row.dataset.post)!;
+      row.style.display = `${post.title} ${post.category}`.toLowerCase().includes(query) && (visibility === 'all' || post.desiredVisibility === visibility) ? '' : 'none';
+    });
+  };
+  toolbar.addEventListener('input', filterPosts);
   document.querySelector<HTMLButtonElement>('[data-view="editor"]')!.onclick = () => renderEditor();
 }
 
-async function renderAnalytics() {
-  const reports = await Promise.allSettled(['overview', 'trend', 'posts', 'sources', 'countries', 'devices'].map(name => api.report(name, monthAgo, today)));
+async function renderAnalytics(start = monthAgo, end = today) {
+  currentView = 'analytics';
+  const reports = await Promise.allSettled(analyticsNames.map(name => api.report(name, start, end)));
   const overview = reports[0].status === 'fulfilled' ? reports[0].value : undefined;
   const cards = ['totalUsers', 'screenPageViews', 'sessions'].map(key => `<article class="metric"><span>${key === 'totalUsers' ? '방문자' : key === 'screenPageViews' ? '페이지뷰' : '세션'}</span><strong>${overview?.totals[key] ?? '—'}</strong></article>`).join('');
-  shell(`<div class="page-heading"><div><p class="eyebrow">OBSERVATORY</p><h1>사이트 통계</h1><p class="muted">${monthAgo} — ${today} · GA4 및 Search Console</p></div></div><div class="metrics">${cards}</div><div class="report-grid">${reports.map((result, index) => { const name = ['요약', '일별 추이', '인기 글', '유입 경로', '국가', '기기'][index]; if (result.status === 'rejected') return `<article class="panel"><h2>${name}</h2><p class="muted">통계를 불러오지 못했습니다.</p></article>`; return reportPanel(name, result.value); }).join('')}</div>`);
+  shell(`<div class="page-heading"><div><p class="eyebrow">OBSERVATORY</p><h1>사이트 통계</h1><p class="muted">GA4 및 Search Console 데이터를 한눈에 확인합니다.</p></div><div class="analytics-controls"><select id="period-preset"><option value="30">최근 30일</option><option value="7">최근 7일</option><option value="90">최근 90일</option><option value="365">최근 1년</option><option value="custom">직접 선택</option></select><input id="period-start" type="date" value="${start}"><span>—</span><input id="period-end" type="date" value="${end}"><button class="primary" id="period-apply">조회</button></div></div><div class="metrics">${cards}</div><div class="report-grid">${reports.map((result, index) => { const name = analyticsNames[index]; if (result.status === 'rejected') return `<article class="panel"><h2>${analyticsTitles[name]}</h2><p class="muted">통계를 불러오지 못했습니다.</p></article>`; return reportPanel(name, result.value); }).join('')}</div>`);
+  const preset = document.querySelector('#period-preset') as unknown as HTMLSelectElement;
+  const startInput = document.querySelector('#period-start') as unknown as HTMLInputElement;
+  const endInput = document.querySelector('#period-end') as unknown as HTMLInputElement;
+  preset.value = start === new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10) ? '7' : start === new Date(Date.now() - 89 * 86400000).toISOString().slice(0, 10) ? '90' : start === new Date(Date.now() - 364 * 86400000).toISOString().slice(0, 10) ? '365' : start === monthAgo ? '30' : 'custom';
+  preset.onchange = () => { if (preset.value !== 'custom') { startInput.value = new Date(Date.now() - (Number(preset.value) - 1) * 86400000).toISOString().slice(0, 10); endInput.value = today; } };
+  document.querySelector<HTMLButtonElement>('#period-apply')!.onclick = () => renderAnalytics(startInput.value, endInput.value);
 }
 
-function reportPanel(title: string, report: ReportResponse) { return `<article class="panel"><div class="panel-heading"><h2>${title}</h2><span class="source ${report.status}">${report.status === 'ok' ? '연결됨' : report.status === 'unconfigured' ? '설정 필요' : '조회 불가'}</span></div>${report.rows.length ? `<table><tbody>${report.rows.slice(0, 8).map(row => `<tr>${Object.values(row).map(value => `<td>${escape(String(value))}</td>`).join('')}</tr>`).join('')}</tbody></table>` : `<p class="muted">${report.warnings[0] ?? '수집된 데이터가 없습니다.'}</p>`}</article>`; }
+function reportPanel(name: string, report: ReportResponse) { const title = analyticsTitles[name]; const status = `<span class="source ${report.status}">${report.status === 'ok' ? '연결됨' : report.status === 'unconfigured' ? '설정 필요' : '조회 불가'}</span>`; if (name === 'overview' && report.status === 'ok') return `<article class="panel"><div class="panel-heading"><h2>${title}</h2>${status}</div><div class="overview-list">${Object.entries(report.totals).map(([key, value]) => `<div><span>${key === 'totalUsers' ? '방문자' : key === 'screenPageViews' ? '페이지뷰' : key}</span><strong>${value.toLocaleString()}</strong></div>`).join('')}</div></article>`; if (!report.rows.length) return `<article class="panel"><div class="panel-heading"><h2>${title}</h2>${status}</div><p class="muted">${report.warnings[0] ?? '수집된 데이터가 없습니다.'}</p></article>`; const keys = Object.keys(report.rows[0]); const labels: Record<string, string> = { pagePath: '페이지', screenPageViews: '페이지뷰', totalUsers: '방문자', sessions: '세션', sessionSourceMedium: '유입 경로', country: '국가', city: '도시', deviceCategory: '기기', query: '검색어', clicks: '클릭', impressions: '노출', ctr: 'CTR', position: '평균 순위', date: '날짜' }; const body = report.rows.slice(0, 20).map(row => `<tr>${keys.map(key => `<td>${escape(String(row[key]))}</td>`).join('')}</tr>`).join(''); return `<article class="panel ${name === 'trend' ? 'trend-panel' : ''}"><div class="panel-heading"><h2>${title}</h2>${status}</div><table><thead><tr>${keys.map(key => `<th>${labels[key] ?? key}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></article>`; }
 
 function renderEditor(post?: Post) {
+  currentView = 'editor';
   activePost = post;
   const value: Post = post ?? { id: '', slug: '', title: '', description: '', pubDate: today, category: 'Study', tags: [], body: '', version: 0, desiredVisibility: 'draft', status: 'draft', updatedAt: new Date().toISOString() };
   shell(`<div class="page-heading"><div><p class="eyebrow">WRITING DESK</p><h1>${post ? '글 수정' : '새 글'}</h1></div><span id="save-status" class="muted">저장되지 않음</span></div><form id="editor-form" class="editor"><label>제목<input name="title" required value="${escape(value.title)}"></label><label>설명<input name="description" value="${escape(value.description)}"></label><div class="form-row"><label>발행일<input name="pubDate" type="date" value="${value.pubDate.slice(0, 10)}"></label><label>카테고리<select name="category">${['Git','일상','project','Study','MacOS','Algorithm','uncategorized'].map(category => `<option ${category === value.category ? 'selected' : ''}>${category}</option>`).join('')}</select></label></div><label>태그<input name="tags" value="${escape(value.tags.join(', '))}" placeholder="쉼표로 구분"></label><label>본문 <textarea name="body" required>${escape(value.body)}</textarea></label><div class="editor-actions"><button type="button" id="back">목록</button><button type="submit" class="primary">저장</button><button type="button" id="publish" class="accent">${value.status === 'published' ? '초안으로 전환' : '발행'}</button></div></form><div class="preview"><p class="eyebrow">PREVIEW</p><div id="preview-body" class="preview-body"></div></div>`);

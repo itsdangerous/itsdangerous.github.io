@@ -22,3 +22,16 @@ npx tsc --noEmit
 ```
 
 Wrangler 배포 전 `wrangler.jsonc`의 D1 ID를 생성한 데이터베이스로 바꾸고, GitHub OAuth/App, Google 서비스 계정, GA4 property, Search Console property를 Worker secrets/vars로 설정해야 합니다. 비밀값은 이 저장소나 `PUBLIC_*` 변수에 넣지 않습니다.
+# 로컬 디자인 미리보기
+
+repository 루트에서 다음을 실행합니다.
+
+```bash
+cd admin
+npm install
+npm run dev
+```
+
+터미널에 표시되는 로컬 주소를 엽니다. 로그인과 Cloudflare/Google 설정 없이 샘플 통계, 글 목록, 새 글 및 편집 화면을 사용할 수 있습니다. 저장·발행 동작은 메모리의 샘플 데이터에만 반영되며 새로고침하면 초기화됩니다. 로그아웃 후에도 미리보기로 다시 진입합니다.
+
+개발환경과 배포환경은 `src/main.ts`와 `src/styles.css`를 공유합니다. 이후 디자인 문서에 따른 수정도 이 공통 UI에 적용합니다. `npm run dev`에서만 샘플 API를 사용하고, `npm run build` 및 배포에서는 실제 API를 사용하며 샘플 모듈은 번들에서 제외됩니다. `vite preview`는 운영 빌드 확인용이므로 샘플 모드가 아닙니다.
