@@ -127,6 +127,8 @@ function trendChart(rows: Array<Record<string, string | number>>) {
 }
 
 function bindTrendInteraction(rows: Array<Record<string, string | number>>) {
+  const panelHeading = document.querySelector('.trend-panel .panel-heading');
+  if (panelHeading && !panelHeading.querySelector('.analytics-link')) panelHeading.insertAdjacentHTML('beforeend', '<a class="analytics-link" href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer">Google Analytics <span aria-hidden="true">↗</span><span class="sr-only"> (새 탭)</span></a>');
   document.querySelectorAll<HTMLButtonElement>('[data-metric]').forEach(button => button.onclick = () => {
     chartMetric = button.dataset.metric!;
     const panel = button.closest('.trend-panel')!;
@@ -138,11 +140,35 @@ function bindTrendInteraction(rows: Array<Record<string, string | number>>) {
   const chart = document.querySelector<HTMLElement>('.trend-chart');
   const svg = chart?.querySelector('svg');
   if (!chart || !svg || !rows.length) return;
+  svg.querySelector('path')?.remove();
+  svg.querySelectorAll('circle').forEach(circle => circle.remove());
+  const ceiling = Math.ceil(Math.max(...rows.map(row => Number(row[chartMetric] ?? 0)), 1) / 4) * 4;
+  const present = rows.filter(row => row[chartMetric] !== undefined).length;
+  chart.insertAdjacentHTML('afterbegin', `<p class="trend-summary">${present ? `${rows.length}일 중 <strong>${present}일</strong>의 데이터가 있어요` : '조회된 데이터가 아직 없어요'}</p>`);
+  const note = chart.querySelector('.chart-note');
+  if (note) note.textContent = '빈 날짜는 조회된 데이터 없음 · 0은 기준선에 표시 · 오늘 수치는 집계 중';
+  rows.forEach((row, index) => {
+    if (row[chartMetric] === undefined) return;
+    const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const height = Math.max(2, Number(row[chartMetric]) / ceiling * 176);
+    bar.setAttribute('class', 'trend-bar');
+    bar.dataset.index = String(index);
+    bar.setAttribute('y', String(200 - height));
+    bar.setAttribute('height', String(height));
+    bar.setAttribute('rx', '3');
+    svg.appendChild(bar);
+  });
   let plotWidth = 800;
   const layout = () => {
     plotWidth = svg.getBoundingClientRect().width || 800;
     const remap = (x: number) => 38 + (x - 48) / 728 * (plotWidth - 50);
     svg.setAttribute('viewBox', `0 0 ${plotWidth} 240`);
+    svg.querySelectorAll<SVGRectElement>('.trend-bar').forEach(bar => {
+      const slot = (plotWidth - 50) / rows.length;
+      const width = Math.min(32, Math.max(1, slot * .65));
+      bar.setAttribute('x', String(38 + (Number(bar.dataset.index) + .5) * slot - width / 2));
+      bar.setAttribute('width', String(width));
+    });
     svg.querySelectorAll<SVGElement>('line:not(.trend-guide), circle, text').forEach(node => {
       for (const attribute of ['x', 'x1', 'x2', 'cx']) {
         const value = node.getAttribute(attribute); if (value === null) continue;
@@ -165,7 +191,7 @@ function bindTrendInteraction(rows: Array<Record<string, string | number>>) {
   tooltip.hidden = true;
   chart.appendChild(tooltip);
   svg.setAttribute('tabindex', '0');
-  svg.setAttribute('aria-label', '일별 페이지뷰. 좌우 방향키로 날짜를 선택하고 Escape로 닫습니다.');
+  svg.setAttribute('aria-label', `일별 ${chartMetric === 'screenPageViews' ? '페이지뷰' : chartMetric === 'totalUsers' ? '방문자' : '세션'} 막대그래프. 좌우 방향키로 날짜를 선택하고 Escape로 닫습니다.`);
   svg.setAttribute('aria-describedby', tooltip.id);
   const guide = document.createElementNS('http://www.w3.org/2000/svg', 'line');
   guide.setAttribute('class', 'trend-guide');
@@ -177,16 +203,19 @@ function bindTrendInteraction(rows: Array<Record<string, string | number>>) {
     chartSelection = selected;
     const row = rows[selected];
     const date = String(row.date ?? '').replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
-    tooltip.innerHTML = `<strong>${escape(date)}</strong>${[['screenPageViews', '페이지뷰'], ['totalUsers', '방문자'], ['sessions', '세션']].map(([key, label]) => `<div><span>${label}</span><b>${row[key] === undefined ? '데ータなし'.replace('データなし', '데이터 없음') : Number(row[key]).toLocaleString()}</b></div>`).join('')}`;
+    const metrics = [['screenPageViews', '페이지뷰'], ['totalUsers', '방문자'], ['sessions', '세션']];
+    const hasValues = metrics.some(([key]) => row[key] !== undefined);
+    tooltip.innerHTML = `<strong>${escape(date.slice(5).replace('-', '월 '))}일</strong>${hasValues ? metrics.map(([key, label]) => `<div class="${key === chartMetric ? 'selected-metric' : ''}"><span>${label}</span><b>${row[key] === undefined ? '—' : Number(row[key]).toLocaleString()}</b></div>`).join('') : '<span class="trend-empty">조회된 데이터 없음</span>'}`;
     tooltip.hidden = false;
-    const ratio = selected / Math.max(rows.length - 1, 1);
+    const ratio = (selected + .5) / rows.length;
     const x = 38 + ratio * (plotWidth - 50);
-    const desired = ratio > .6 ? x - tooltip.offsetWidth - 12 : x + 12;
+    const desired = x - tooltip.offsetWidth / 2;
     tooltip.style.left = `${Math.max(0, Math.min(chart.clientWidth - tooltip.offsetWidth, desired))}px`;
     guide.setAttribute('x1', String(x)); guide.setAttribute('x2', String(x)); guide.style.display = '';
+    svg.querySelectorAll<SVGRectElement>('.trend-bar').forEach(bar => bar.classList.toggle('selected-point', Number(bar.dataset.index) === selected));
   };
-  const hide = () => { tooltip.hidden = true; guide.style.display = 'none'; };
-  const point = (event: PointerEvent) => { chartInteractionAt = Date.now(); const rect = svg.getBoundingClientRect(); show(Math.round((event.clientX - rect.left - 38) / (plotWidth - 50) * (rows.length - 1))); };
+  const hide = () => { tooltip.hidden = true; guide.style.display = 'none'; svg.querySelectorAll('.selected-point').forEach(circle => circle.classList.remove('selected-point')); };
+  const point = (event: PointerEvent) => { chartInteractionAt = Date.now(); const rect = svg.getBoundingClientRect(); show(Math.floor((event.clientX - rect.left - 38) / (plotWidth - 50) * rows.length)); };
   svg.addEventListener('pointermove', point);
   svg.addEventListener('pointerdown', point);
   svg.addEventListener('pointerleave', hide);

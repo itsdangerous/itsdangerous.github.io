@@ -15,13 +15,38 @@
 
 ## 로컬 확인
 
+admin 디렉터리에서 `make help`로 전체 명령을 볼 수 있습니다. 최초 설치와 배포 빌드는 루트의 공유 Markdown 의존성도 필요하므로 `make install`이 루트와 admin 양쪽을 설치합니다.
+
 ```bash
-npm install
-npm run build
-npx tsc --noEmit
+cd admin
+make help
+make install
+make check
 ```
 
-Wrangler 배포 전 `wrangler.jsonc`의 D1 ID를 생성한 데이터베이스로 바꾸고, GitHub OAuth/App, Google 서비스 계정, GA4 property, Search Console property를 Worker secrets/vars로 설정해야 합니다. 비밀값은 이 저장소나 `PUBLIC_*` 변수에 넣지 않습니다.
+개발 서버는 다음처럼 실행합니다.
+
+```bash
+make dev
+```
+
+Wrangler 배포는 빌드까지 자동으로 수행합니다. 로컬에서는 먼저 `npx wrangler login`으로 로그인하거나, CI에서는 `CLOUDFLARE_API_TOKEN`을 설정한 뒤 실행하세요.
+
+```bash
+npx wrangler login
+make deploy
+```
+
+CI/API 토큰 방식은 다음과 같습니다.
+
+```bash
+export CLOUDFLARE_API_TOKEN='your-token'
+make deploy
+```
+
+배포 전 `wrangler.jsonc`의 D1 ID를 생성한 데이터베이스로 바꾸고, GitHub OAuth/App, Google 서비스 계정, GA4 property, Search Console property를 Worker secrets/vars로 설정해야 합니다. 비밀값은 이 저장소나 `PUBLIC_*` 변수에 넣지 않습니다.
+
+`wrangler.jsonc`에는 `keep_vars: true`가 설정되어 있어 Cloudflare Dashboard에서 등록한 일반 Variables를 Wrangler 배포가 덮어쓰지 않도록 했습니다. Variables를 코드로 관리하려면 Dashboard 설정을 `vars`에 옮겨 저장소를 단일 기준으로 사용해야 합니다.
 # 로컬 디자인 미리보기
 
 공개 사이트와 동일한 개발 서버를 사용하려면 저장소 루트에서 `npm run dev` 실행 후 `http://localhost:4321/admin/`을 엽니다. Markdown 렌더러를 공유하므로 저장소 루트의 의존성도 설치되어 있어야 합니다.

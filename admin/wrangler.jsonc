@@ -3,6 +3,18 @@
   "name": "itsdangerous-admin",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-08",
+  "keep_vars": true,
+  "vars": {
+    "ADMIN_URL": "https://itsdangerous-admin.tmdrbsla123.workers.dev/admin/",
+    "GA4_HOSTNAME": "itsdangerous.github.io",
+    "GA4_PROPERTY_ID": "552453352",
+    "GITHUB_ALLOWED_USER_ID": "76903093",
+    "GITHUB_APP_ID": "4870716",
+    "GITHUB_CLIENT_ID": "Ov23liqipTKpOESSIxhD",
+    "GITHUB_INSTALLATION_ID": "160010465",
+    "GITHUB_REPO": "itsdangerous/itsdangerous.github.io",
+    "SEARCH_CONSOLE_PROPERTY": "https://itsdangerous.github.io/"
+  },
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",
