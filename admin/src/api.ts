@@ -14,7 +14,7 @@ export const liveApi = {
   discard: (post: Post, csrfToken: string) => request<void>(`/api/posts/${encodeURIComponent(post.id)}`, { method: 'DELETE', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ expectedVersion: post.version }) }),
   session: () => request<{ user: { id: number; login: string }; csrfToken: string }>('/api/session'),
   posts: (visibility = 'all') => request<{ items: Post[]; nextCursor?: string }>(`/api/posts?visibility=${visibility}`),
-  importPosts: (csrfToken: string) => request<{ imported: number; unchanged: number }>('/api/posts/import', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }),
+  importPosts: (csrfToken: string) => request<{ imported: number; unchanged: number; failed: number }>('/api/posts/import', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } }),
   post: (id: string) => request<Post>(`/api/posts/${encodeURIComponent(id)}`),
   create: (input: PostInput, csrfToken: string) => request<Post>('/api/posts', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify(input) }),
   save: (post: Post, csrfToken: string) => request<{ version: number; savedAt: string }>(`/api/posts/${encodeURIComponent(post.id)}`, { method: 'PUT', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ ...post, expectedVersion: post.version }) }),

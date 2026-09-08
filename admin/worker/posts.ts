@@ -43,6 +43,45 @@ export async function getPost(request: Request, env: Env, id: string) { const au
 export async function createPost(request: Request, env: Env) { const auth = await requireMutation(request, env); if ('response' in auth) return auth.response; const input = await request.json().catch(() => null) as any; if (!validInput(input)) return error('VALIDATION_FAILED', '글 메타데이터 또는 본문이 올바르지 않습니다.', 422); const id = crypto.randomUUID(); const slug = slugify(input.title); const timestamp = new Date().toISOString(); await env.DB.prepare('INSERT INTO posts (id, slug, category, title, description, pub_date, tags_json, body, version, desired_visibility, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)').bind(id, slug, input.category, input.title, input.description, input.pubDate, JSON.stringify(input.tags), input.body, 'draft', timestamp).run(); const result = await env.DB.prepare('SELECT * FROM posts WHERE id = ?').bind(id).first(); return json(row(result), 201); }
 export async function updatePost(request: Request, env: Env, id: string) { const auth = await requireMutation(request, env); if ('response' in auth) return auth.response; const input = await request.json().catch(() => null) as any; if (!validInput(input) || !Number.isInteger(input.expectedVersion)) return error('VALIDATION_FAILED', '글 데이터 또는 버전이 올바르지 않습니다.', 422); const result = await env.DB.prepare('UPDATE posts SET title=?, description=?, pub_date=?, category=?, tags_json=?, body=?, version=version+1, updated_at=? WHERE id=? AND version=?').bind(input.title, input.description, input.pubDate, input.category, JSON.stringify(input.tags), input.body, new Date().toISOString(), id, input.expectedVersion).run(); if (!result.meta.changes) return error('VERSION_CONFLICT', '다른 저장 결과가 있어 다시 불러와야 합니다.', 409); const post = await env.DB.prepare('SELECT version, updated_at FROM posts WHERE id=?').bind(id).first<{ version: number; updated_at: string }>(); return json({ version: post?.version, savedAt: post?.updated_at }); }
 
-export async function importPosts(request: Request, env: Env) { const auth = await requireMutation(request, env); if ('response' in auth) return auth.response; try { const { owner, repo } = (() => { const value = env.GITHUB_REPO ?? ''; const [owner, repo] = value.split('/'); return { owner, repo }; })(); if (!owner || !repo) return error('ADMIN_NOT_CONFIGURED', 'GitHub repo가 설정되지 않았습니다.', 503); const response = await githubRequest(env, `/repos/${owner}/${repo}/git/trees/main?recursive=1`); if (!response.ok) return error('GITHUB_READ_FAILED', 'GitHub 파일 목록을 불러오지 못했습니다.', 502); const tree = await response.json() as { tree: Array<{ path: string; type: string }> }; let imported = 0; let unchanged = 0; for (const item of tree.tree.filter(item => item.type === 'blob' && /^src\/domains\/blog\/content\/posts\/.*\.md$/.test(item.path))) { const file = await getRepoFile(env, item.path.replace(/^src\/domains\/blog\/content\/posts\//, 'src/domains/blog/content/posts/')); if (!file) continue; const bytes = Uint8Array.from(atob(file.content.replace(/\s/g, '')), char => char.charCodeAt(0)); const content = new TextDecoder().decode(bytes); const parsed = parseMarkdown(content); if (!parsed || !parsed.title) continue; const slug = item.path.split('/').pop()!.replace(/\.md$/, ''); const id = crypto.randomUUID(); const timestamp = new Date().toISOString(); const result = await env.DB.prepare('INSERT OR IGNORE INTO posts (id, slug, category, title, description, pub_date, tags_json, body, version, desired_visibility, repo_path, base_blob_sha, published_version, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 1, ?)').bind(id, slug, parsed.category, parsed.title, parsed.description, parsed.pubDate, JSON.stringify(parsed.tags), parsed.body, parsed.draft ? 'draft' : 'published', item.path, file.sha, timestamp).run(); if (result.meta.changes) imported++; else unchanged++; } return json({ imported, unchanged, conflicts: 0 }); } catch (cause) { console.error('GitHub post import failed', cause instanceof Error ? cause.message : 'unknown error'); return error('GITHUB_IMPORT_FAILED', 'GitHub 글을 동기화하지 못했습니다.', 502); } }
+export async function importPosts(request: Request, env: Env) {
+  const auth = await requireMutation(request, env);
+  if ('response' in auth) return auth.response;
+  try {
+    const { owner, repo } = (() => {
+      const value = env.GITHUB_REPO ?? '';
+      const [owner, repo] = value.split('/');
+      return { owner, repo };
+    })();
+    if (!owner || !repo) return error('ADMIN_NOT_CONFIGURED', 'GitHub repo가 설정되지 않았습니다.', 503);
+    const response = await githubRequest(env, `/repos/${owner}/${repo}/git/trees/main?recursive=1`);
+    if (!response.ok) return error('GITHUB_READ_FAILED', `GitHub 파일 목록을 불러오지 못했습니다. (${response.status})`, 502);
+    const tree = await response.json() as { tree: Array<{ path: string; type: string }> };
+    let imported = 0;
+    let unchanged = 0;
+    let failed = 0;
+    for (const item of tree.tree.filter(item => item.type === 'blob' && /^src\/domains\/blog\/content\/posts\/.*\.md$/.test(item.path))) {
+      try {
+        const file = await getRepoFile(env, item.path.replace(/^src\/domains\/blog\/content\/posts\//, 'src/domains/blog/content/posts/'));
+        if (!file) { failed++; continue; }
+        const bytes = Uint8Array.from(atob(file.content.replace(/\s/g, '')), char => char.charCodeAt(0));
+        const content = new TextDecoder().decode(bytes);
+        const parsed = parseMarkdown(content);
+        if (!parsed || !parsed.title) { failed++; continue; }
+        const slug = item.path.split('/').pop()!.replace(/\.md$/, '');
+        const id = crypto.randomUUID();
+        const timestamp = new Date().toISOString();
+        const result = await env.DB.prepare('INSERT OR IGNORE INTO posts (id, slug, category, title, description, pub_date, tags_json, body, version, desired_visibility, repo_path, base_blob_sha, published_version, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 1, ?)').bind(id, slug, parsed.category, parsed.title, parsed.description, parsed.pubDate, JSON.stringify(parsed.tags), parsed.body, parsed.draft ? 'draft' : 'published', item.path, file.sha, timestamp).run();
+        if (result.meta.changes) imported++; else unchanged++;
+      } catch (cause) {
+        failed++;
+        console.error('GitHub post import item failed', item.path, cause instanceof Error ? cause.message : 'unknown error');
+      }
+    }
+    return json({ imported, unchanged, failed, conflicts: 0 });
+  } catch (cause) {
+    console.error('GitHub post import failed', cause instanceof Error ? cause.message : 'unknown error');
+    return error('GITHUB_IMPORT_FAILED', 'GitHub 글을 동기화하지 못했습니다.', 502);
+  }
+}
 
 export async function publishPost(request: Request, env: Env, id: string, unpublish = false) { const auth = await requireMutation(request, env); if ('response' in auth) return auth.response; const input = await request.json().catch(() => ({})) as any; const post = await env.DB.prepare('SELECT * FROM posts WHERE id=?').bind(id).first<any>(); if (!post) return error('NOT_FOUND', '글을 찾을 수 없습니다.', 404); if (input.expectedVersion !== post.version) return error('VERSION_CONFLICT', '발행 전 글을 다시 불러와야 합니다.', 409); if (!post.repo_path) post.repo_path = `src/domains/blog/content/posts/${post.category}/${post.slug}.md`; const source = frontmatter({ title: post.title, description: post.description, pubDate: post.pub_date, category: post.category, tags: JSON.parse(post.tags_json), body: post.body }, unpublish); try { const result = await putRepoFile(env, post.repo_path, source, post.base_blob_sha ?? undefined, `${unpublish ? 'chore' : 'feat'}: ${unpublish ? 'unpublish' : 'publish'} ${post.slug} [admin:${id}]`); await env.DB.prepare('UPDATE posts SET desired_visibility=?, repo_path=?, base_blob_sha=?, published_version=?, updated_at=? WHERE id=?').bind(unpublish ? 'draft' : 'published', post.repo_path, result.commit.sha, post.version, new Date().toISOString(), id).run(); return json({ operationId: id, state: 'committed', commitSha: result.commit.sha }, 202); } catch { return error('PUBLICATION_FAILED', 'GitHub 발행에 실패했습니다. 작업본은 보존되었습니다.', 502); } }
