@@ -59,9 +59,9 @@ yabai -m query --displays | jq -r \
 
 `x` 값이 작을수록 왼쪽 화면이다. 예를 들어 왼쪽 모니터가 `x=-1920`, 메인 모니터가 `x=0`, 오른쪽 모니터가 `x=1920`이라면 `west/east`가 기대한 대로 동작한다.
 
-## 3. 1편의 Space 단축키를 `Ctrl + \[` / `\]`로 옮기기
+## 3. 1편의 Space 단축키를 `Ctrl + [` / `Ctrl + ]`로 옮기기
 
-1편에서는 `Ctrl + ←/→`를 Space 전환에 사용했다. 이 글에서는 그 두 키를 모니터 이동에 쓰므로, 먼저 기존 Space 단축키를 `Ctrl + \[`와 `Ctrl + \]`로 옮긴다.
+1편에서는 `Ctrl + ←/→`를 Space 전환에 사용했다. 이 글에서는 그 두 키를 모니터 이동에 쓰므로, 먼저 기존 Space 단축키를 `Ctrl + [`와 `Ctrl + ]`로 옮긴다.
 
 ```bash
 vim ~/.config/skhd/skhdrc
@@ -82,7 +82,7 @@ ctrl - 0x21 : ~/.config/yabai/focus-space-on-current-display.sh prev
 ctrl - 0x1E : ~/.config/yabai/focus-space-on-current-display.sh next
 ```
 
-`0x21`은 `\[` 키, `0x1E`는 `\]` 키의 macOS 키코드다. `0x1e`처럼 소문자 `e`를 쓰면 skhd 파서가 실패할 수 있으므로 대문자로 쓴다.
+`0x21`은 `[` 키, `0x1E`는 `]` 키의 macOS 키코드다. `0x1e`처럼 소문자 `e`를 쓰면 skhd 파서가 실패할 수 있으므로 대문자로 쓴다.
 
 ## 4. skhd에 모니터 이동 단축키 등록
 
