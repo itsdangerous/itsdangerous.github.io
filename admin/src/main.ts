@@ -6,6 +6,8 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 let csrfToken = '';
 let activePost: Post | undefined;
 let currentView = 'analytics';
+let theme = (localStorage.getItem('admin-theme') as 'light' | 'dark' | null) ?? 'light';
+document.documentElement.dataset.theme = theme;
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const today = new Date().toISOString().slice(0, 10);
@@ -14,9 +16,10 @@ const analyticsNames = ['overview', 'trend', 'posts', 'sources', 'countries', 'd
 const analyticsTitles: Record<string, string> = { overview: '요약', trend: '일별 추이', posts: '인기 페이지', sources: '유입 경로', countries: '지역', devices: '기기', search: '검색어' };
 
 function shell(content: string) {
-  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand">itsdangerous · 서재 관리</a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
+  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>itsdangerous<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => renderView(button.dataset.view!));
   document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
+  document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('admin-theme', theme); document.documentElement.dataset.theme = theme; shell(content); };
   document.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await api.logout(csrfToken); location.reload(); };
 }
 
