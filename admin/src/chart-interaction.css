@@ -1,0 +1,18 @@
+@media (min-width: 721px) {
+  .admin-shell > header { left: 0; }
+}
+.trend-chart { position: relative; }
+.trend-chart > svg { cursor: crosshair; touch-action: pan-y; }
+.trend-chart > svg:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 8px; }
+.trend-tooltip {
+  position: absolute; top: 10px; left: 0; z-index: 2;
+  width: min(184px, 100%); padding: 14px; border-radius: 14px;
+  color: #30354a; background: #fff; border: 1px solid var(--line);
+  box-shadow: 0 8px 28px #11182720; pointer-events: none;
+  font-size: 12px; line-height: 1.8;
+}
+.trend-tooltip strong { display: block; margin-bottom: 6px; }
+.trend-tooltip div { display: flex; justify-content: space-between; gap: 12px; }
+.trend-tooltip b { font-variant-numeric: tabular-nums; }
+.trend-chart .trend-guide { stroke: var(--accent); stroke-dasharray: 4 4; pointer-events: none; }
+html[data-theme='dark'] .trend-tooltip { background: #202b42; color: #edf0fb; }

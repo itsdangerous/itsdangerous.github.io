@@ -1,6 +1,7 @@
 import { api } from './api';
 import type { Post, ReportResponse } from './contracts';
 import './styles.css';
+import './chart-interaction.css';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 let csrfToken = '';
@@ -19,7 +20,7 @@ function shell(content: string) {
   app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>itsdangerous<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => renderView(button.dataset.view!));
   document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
-  document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('admin-theme', theme); document.documentElement.dataset.theme = theme; shell(content); };
+  document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('admin-theme', theme); document.documentElement.dataset.theme = theme; document.querySelector('#theme-toggle')!.textContent = theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'; };
   document.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { await api.logout(csrfToken); location.reload(); };
 }
 
@@ -52,6 +53,8 @@ async function renderAnalytics(start = monthAgo, end = today) {
   const cards = ['totalUsers', 'screenPageViews', 'sessions'].map(key => `<article class="metric"><span>${key === 'totalUsers' ? '방문자' : key === 'screenPageViews' ? '페이지뷰' : '세션'}</span><strong>${overview?.totals[key] ?? '—'}</strong></article>`).join('');
   shell(`<div class="page-heading"><div><p class="eyebrow">OBSERVATORY</p><h1>사이트 통계</h1><p class="muted">GA4 및 Search Console 데이터를 한눈에 확인합니다.</p></div><div class="analytics-controls"><select id="period-preset"><option value="30">최근 30일</option><option value="7">최근 7일</option><option value="90">최근 90일</option><option value="365">최근 1년</option><option value="custom">직접 선택</option></select><input id="period-start" type="date" value="${start}"><span>—</span><input id="period-end" type="date" value="${end}"><button class="primary" id="period-apply">조회</button></div></div><div class="metrics">${cards}</div><div class="report-grid">${reports.map((result, index) => { const name = analyticsNames[index]; if (result.status === 'rejected') return `<article class="panel"><h2>${analyticsTitles[name]}</h2><p class="muted">통계를 불러오지 못했습니다.</p></article>`; return reportPanel(name, result.value); }).join('')}</div>`);
   const preset = document.querySelector('#period-preset') as unknown as HTMLSelectElement;
+  const trend = reports[1];
+  if (trend.status === 'fulfilled') bindTrendInteraction(trend.value.rows);
   const startInput = document.querySelector('#period-start') as unknown as HTMLInputElement;
   const endInput = document.querySelector('#period-end') as unknown as HTMLInputElement;
   preset.value = start === new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10) ? '7' : start === new Date(Date.now() - 89 * 86400000).toISOString().slice(0, 10) ? '90' : start === new Date(Date.now() - 364 * 86400000).toISOString().slice(0, 10) ? '365' : start === monthAgo ? '30' : 'custom';
@@ -62,6 +65,53 @@ async function renderAnalytics(start = monthAgo, end = today) {
 function reportPanel(name: string, report: ReportResponse) { const title = analyticsTitles[name]; const status = `<span class="source ${report.status}">${report.status === 'ok' ? '연결됨' : report.status === 'unconfigured' ? '설정 필요' : '조회 불가'}</span>`; if (name === 'overview' && report.status === 'ok') return `<article class="panel"><div class="panel-heading"><h2>${title}</h2>${status}</div><div class="overview-list">${Object.entries(report.totals).map(([key, value]) => `<div><span>${key === 'totalUsers' ? '방문자' : key === 'screenPageViews' ? '페이지뷰' : key}</span><strong>${value.toLocaleString()}</strong></div>`).join('')}</div></article>`; if (!report.rows.length) return `<article class="panel"><div class="panel-heading"><h2>${title}</h2>${status}</div><p class="muted">${report.warnings[0] ?? '수집된 데이터가 없습니다.'}</p></article>`; if (name === 'trend') return `<article class="panel trend-panel"><div class="panel-heading"><div><h2>${title}</h2><p class="muted">페이지뷰와 방문자 흐름</p></div>${status}</div>${trendChart(report.rows)}</article>`; const keys = Object.keys(report.rows[0]); const labels: Record<string, string> = { pagePath: '페이지', screenPageViews: '페이지뷰', totalUsers: '방문자', sessions: '세션', sessionSourceMedium: '유입 경로', country: '국가', city: '도시', deviceCategory: '기기', query: '검색어', clicks: '클릭', impressions: '노출', ctr: 'CTR', position: '평균 순위', date: '날짜' }; const body = report.rows.slice(0, 20).map(row => `<tr>${keys.map(key => `<td>${escape(String(row[key]))}</td>`).join('')}</tr>`).join(''); return `<article class="panel"><div class="panel-heading"><h2>${title}</h2>${status}</div><table><thead><tr>${keys.map(key => `<th>${labels[key] ?? key}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></article>`; }
 
 function trendChart(rows: Array<Record<string, string | number>>) { const values = rows.map(row => Number(row.screenPageViews ?? 0)); const max = Math.max(...values, 1); const width = 800; const height = 230; const points = values.map((value, index) => `${(index / Math.max(values.length - 1, 1)) * width},${height - (value / max) * 175 - 20}`).join(' '); const area = `0,${height} ${points} ${width},${height}`; const labels = rows.filter((_, index) => index === 0 || index === rows.length - 1 || index === Math.floor(rows.length / 2)).map(row => escape(String(row.date ?? ''))).join(' · '); return `<div class="trend-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="일별 페이지뷰 추이" preserveAspectRatio="none"><defs><linearGradient id="trend-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9b8df2" stop-opacity=".34"/><stop offset="1" stop-color="#9b8df2" stop-opacity="0"/></linearGradient></defs><line x1="0" y1="55" x2="800" y2="55"/><line x1="0" y1="115" x2="800" y2="115"/><line x1="0" y1="175" x2="800" y2="175"/><polygon points="${area}" fill="url(#trend-fill)"/><polyline points="${points}" fill="none" stroke="#7564e8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${values.map((value, index) => `<circle cx="${(index / Math.max(values.length - 1, 1)) * width}" cy="${height - (value / max) * 175 - 20}" r="${index === values.length - 1 ? 5 : 3}"/>`).join('')}</svg><div class="trend-labels"><span>${labels}</span><strong>페이지뷰 ${Math.max(values.reduce((sum, value) => sum + value, 0), 0).toLocaleString()}</strong></div></div>`; }
+
+function bindTrendInteraction(rows: Array<Record<string, string | number>>) {
+  const chart = document.querySelector<HTMLElement>('.trend-chart');
+  const svg = chart?.querySelector('svg');
+  if (!chart || !svg || !rows.length) return;
+  const tooltip = document.createElement('div');
+  tooltip.className = 'trend-tooltip';
+  tooltip.id = 'trend-tooltip';
+  tooltip.setAttribute('role', 'status');
+  tooltip.setAttribute('aria-live', 'polite');
+  tooltip.hidden = true;
+  chart.appendChild(tooltip);
+  svg.setAttribute('tabindex', '0');
+  svg.setAttribute('aria-label', '일별 페이지뷰. 좌우 방향키로 날짜를 선택하고 Escape로 닫습니다.');
+  svg.setAttribute('aria-describedby', tooltip.id);
+  const guide = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  guide.setAttribute('class', 'trend-guide');
+  guide.setAttribute('y1', '0'); guide.setAttribute('y2', '230');
+  guide.style.display = 'none'; svg.appendChild(guide);
+  let selected = 0;
+  const show = (index: number) => {
+    selected = Math.max(0, Math.min(rows.length - 1, index));
+    const row = rows[selected];
+    const date = String(row.date ?? '').replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
+    tooltip.innerHTML = `<strong>${escape(date)}</strong>${[['screenPageViews', '페이지뷰'], ['totalUsers', '방문자'], ['sessions', '세션']].map(([key, label]) => `<div><span>${label}</span><b>${Number(row[key] ?? 0).toLocaleString()}</b></div>`).join('')}`;
+    tooltip.hidden = false;
+    const ratio = selected / Math.max(rows.length - 1, 1);
+    const x = ratio * svg.getBoundingClientRect().width;
+    const desired = ratio > .6 ? x - tooltip.offsetWidth - 12 : x + 12;
+    tooltip.style.left = `${Math.max(0, Math.min(chart.clientWidth - tooltip.offsetWidth, desired))}px`;
+    guide.setAttribute('x1', String(ratio * 800)); guide.setAttribute('x2', String(ratio * 800)); guide.style.display = '';
+  };
+  const hide = () => { tooltip.hidden = true; guide.style.display = 'none'; };
+  const point = (event: PointerEvent) => { const rect = svg.getBoundingClientRect(); show(Math.round((event.clientX - rect.left) / rect.width * (rows.length - 1))); };
+  svg.addEventListener('pointermove', point);
+  svg.addEventListener('pointerdown', point);
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('focus', () => show(selected));
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('keydown', event => {
+    if (event.key === 'Escape') hide();
+    else if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      show(event.key === 'Home' ? 0 : event.key === 'End' ? rows.length - 1 : selected + (event.key === 'ArrowRight' ? 1 : -1));
+    }
+  });
+}
 
 function renderEditor(post?: Post) {
   currentView = 'editor';
