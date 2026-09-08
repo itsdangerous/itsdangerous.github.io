@@ -1,7 +1,8 @@
 import { error, json } from './security';
+import type { ScheduledController, ExecutionContext } from '@cloudflare/workers-types/index';
 import type { Env } from './types';
 import { beginGithub, githubCallback, logout, sessionResponse } from './auth';
-import { createPost, getPost, importPosts, listPosts, publishPost, updatePost } from './posts';
+import { createPost, discardPost, getPost, importPosts, listPosts, publishPost, updatePost } from './posts';
 import { analyticsReport } from './analytics';
 
 const configError = () => error('ADMIN_NOT_CONFIGURED', '관리자 Worker의 OAuth와 저장소 설정이 아직 완료되지 않았습니다.', 503);
@@ -19,6 +20,7 @@ export default {
       if (url.pathname === '/api/posts' && request.method === 'POST') return await createPost(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       if (url.pathname === '/api/posts/import' && request.method === 'POST') return await importPosts(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       const postMatch = url.pathname.match(/^\/api\/posts\/([^/]+)$/);
+      if (postMatch && request.method === 'DELETE') return discardPost(request, env, decodeURIComponent(postMatch[1]));
       if (postMatch && request.method === 'GET') return await getPost(request, env, decodeURIComponent(postMatch[1])) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       if (postMatch && request.method === 'PUT') return await updatePost(request, env, decodeURIComponent(postMatch[1])) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       const publishMatch = url.pathname.match(/^\/api\/posts\/([^/]+)\/(publish|unpublish)$/);

@@ -15,8 +15,16 @@ const find = (id: string) => {
   if (!post) throw new Error('글을 찾을 수 없습니다.');
   return post;
 };
+const snapshots = new Map(posts.filter(post => post.desiredVisibility === 'published').map(post => [post.id, structuredClone(post)]));
 
 export const previewApi: typeof liveApi = {
+  async discard(input) {
+    const post = find(input.id);
+    if (post.version !== input.version) throw new Error('다른 저장 결과가 있어 다시 불러와야 합니다.');
+    const snapshot = snapshots.get(post.id);
+    if (snapshot) Object.assign(post, structuredClone(snapshot), { version:post.version + 1, status:snapshot.desiredVisibility, updatedAt:now() });
+    else posts.splice(posts.indexOf(post), 1);
+  },
   async session() { return { user: { id: 0, login: 'local-preview' }, csrfToken: 'preview-only' }; },
   async posts(visibility = 'all') { return { items: structuredClone(posts.filter(post => visibility === 'all' || post.desiredVisibility === visibility)) }; },
   async post(id) { return structuredClone(find(id)); },
@@ -35,6 +43,7 @@ export const previewApi: typeof liveApi = {
     const post = find(input.id);
     post.desiredVisibility = unpublish ? 'draft' : 'published';
     post.status = post.desiredVisibility;
+    snapshots.set(post.id, structuredClone(post));
     return { operationId: crypto.randomUUID(), state: 'committed' };
   },
   async logout() {},

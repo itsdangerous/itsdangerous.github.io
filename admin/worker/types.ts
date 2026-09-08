@@ -1,8 +1,8 @@
-/// <reference types="@cloudflare/workers-types" />
+import type { D1Database } from '@cloudflare/workers-types/index';
 
 export interface Env {
   DB: D1Database;
-  ASSETS: Fetcher;
+  ASSETS: { fetch(request: Request): Promise<Response> };
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
   GITHUB_ALLOWED_USER_ID?: string;

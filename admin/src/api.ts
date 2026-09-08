@@ -11,6 +11,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const liveApi = {
+  discard: (post: Post, csrfToken: string) => request<void>(`/api/posts/${encodeURIComponent(post.id)}`, { method: 'DELETE', headers: { 'X-CSRF-Token': csrfToken }, body: JSON.stringify({ expectedVersion: post.version }) }),
   session: () => request<{ user: { id: number; login: string }; csrfToken: string }>('/api/session'),
   posts: (visibility = 'all') => request<{ items: Post[]; nextCursor?: string }>(`/api/posts?visibility=${visibility}`),
   post: (id: string) => request<Post>(`/api/posts/${encodeURIComponent(id)}`),
