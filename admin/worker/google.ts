@@ -1,7 +1,7 @@
 import type { Env } from './types';
 
 const b64url = (value: ArrayBuffer | string) => { const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : new Uint8Array(value); let output = ''; for (const byte of bytes) output += String.fromCharCode(byte); return btoa(output).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', ''); };
-const derFromPem = (pem: string) => { const body = pem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, ''); const binary = atob(body); return Uint8Array.from(binary, char => char.charCodeAt(0)); };
+const derFromPem = (pem: string) => { const normalized = pem.replaceAll('\\n', '\n').replaceAll('\\r', '\r'); const body = normalized.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s/g, ''); const binary = atob(body); return Uint8Array.from(binary, char => char.charCodeAt(0)); };
 
 async function serviceAccountToken(env: Env, scope: string) {
   if (!env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY) throw new Error('Google service account is not configured');
