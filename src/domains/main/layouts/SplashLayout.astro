@@ -1,6 +1,7 @@
 ---
 import PageLoader from '../../../shared/components/PageLoader.astro';
 import ScrollProgress from '../../../shared/components/ScrollProgress.astro';
+import Analytics from '../../../shared/components/Analytics.astro';
 
 interface Props {
   title: string;
@@ -26,6 +27,7 @@ const { title, description } = Astro.props;
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <title>{title}</title>
+    <Analytics />
   </head>
   <body class="splash-page">
     <PageLoader />

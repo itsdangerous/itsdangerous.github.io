@@ -7,8 +7,8 @@ const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
     <script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
     <script define:vars={{ measurementId }}>
       window.dataLayer = window.dataLayer || [];
-      function gtag(...args) {
-        window.dataLayer.push(args);
+      function gtag() {
+        window.dataLayer.push(arguments);
       }
       gtag('js', new Date());
       gtag('config', measurementId);
