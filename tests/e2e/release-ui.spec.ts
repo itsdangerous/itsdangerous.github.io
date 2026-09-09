@@ -33,7 +33,7 @@ test('article comments use the canonical page key without login', async ({ page 
   await expect(page.locator('[data-comments]')).toHaveAttribute('data-page', '/blog/posts/git-reset-vs-git-revert/');
   await expect(page.locator('[data-compose]')).toBeVisible();
   await expect(page.locator('[data-post-like-count]')).toHaveText('3');
-  await expect(page.locator('[data-compose] [name=nickname]')).toHaveValue(/^[^-]+-[^-]+-\d+$/);
+  await expect(page.locator('[data-compose] [name=nickname]')).toHaveValue(/^[a-z]{6}$/);
   await expect(page.locator('[data-reload]')).toHaveCount(0);
   await expect(page.locator('[data-compose] [name=password]')).toHaveAttribute('autocomplete', 'off');
 });
