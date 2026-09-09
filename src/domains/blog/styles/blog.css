@@ -949,6 +949,12 @@
   display: none;
 }
 
+.article__comments {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-top: clamp(1.5rem, 4vw, 2.5rem);
+  border-top: 1px solid color-mix(in srgb, var(--color-accent) 48%, var(--color-border));
+}
+
 .table-of-contents__desktop {
   display: block;
   position: sticky;

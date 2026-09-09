@@ -4,12 +4,14 @@ import type { Env } from './types';
 import { beginGithub, githubCallback, logout, sessionResponse } from './auth';
 import { createPost, discardPost, getPost, importPosts, listPosts, publishPost, updatePost } from './posts';
 import { analyticsReport } from './analytics';
+import { commentsApi } from './comments';
 
 const configError = () => error('ADMIN_NOT_CONFIGURED', '관리자 Worker의 OAuth와 저장소 설정이 아직 완료되지 않았습니다.', 503);
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === '/api/comments' || url.pathname.startsWith('/api/comments/')) return commentsApi(request, env);
     if (url.pathname === '/auth/github') return beginGithub(request, env);
     if (url.pathname === '/auth/callback') return githubCallback(request, env);
     if (url.pathname.startsWith('/api/')) {
@@ -41,5 +43,7 @@ export default {
     if (url.pathname.startsWith('/admin/')) return env.ASSETS?.fetch(request) ?? configError();
     return env.ASSETS?.fetch(request) ?? json({ ok: true });
   },
-  async scheduled(_event: ScheduledController, _env: Env, _ctx: ExecutionContext) { /* publication reconciliation is enabled after GitHub App configuration */ },
+  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
+    if (env.DB) ctx.waitUntil(env.DB.prepare('DELETE FROM comment_rate_limits WHERE expires_at < ?').bind(Math.floor(Date.now() / 1000)).run());
+  },
 };

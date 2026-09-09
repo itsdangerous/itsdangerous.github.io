@@ -183,7 +183,7 @@ describe('blog routes', () => {
     expect(globalStyles).toContain('.shell {\n  width: min(calc(100% - 2rem), var(--content-width));');
     expect(globalStyles).toContain('.site-footer {\n  width: min(calc(100% - 2rem), var(--content-width));\n  margin: 0 auto;');
     expect(globalStyles).toContain('.site-content:has(.article-shell) > .site-footer {');
-    expect(globalStyles).toContain('margin-left: max(0px, calc((100% - 2.5rem - var(--space-8) - var(--space-4) - var(--content-width)) / 2));');
+    expect(globalStyles).toMatch(/margin-left:\s*max\(\s*0px,\s*calc\(\s*\(\s*100%\s*-\s*2\.5rem\s*-\s*var\(--space-8\)\s*-\s*var\(--space-4\)\s*-\s*var\(--content-width\)\s*\)\s*\/\s*2\s*\)\s*\)/);
   });
 
   it('layers the manuscript-paper texture into the site background without changing theme colors', () => {

@@ -48,27 +48,21 @@ npm test -- --run
 npm run test:e2e
 ```
 
-## Giscus와 GA4 설정
+## 댓글과 GA4 설정
 
 다음 값은 브라우저에 공개되는 배포 설정이므로 GitHub repository variables에 등록합니다. 소스 코드나 GitHub Secrets에 넣지 않습니다.
 
 | Variable | 용도 |
 | --- | --- |
 | `PUBLIC_GA_MEASUREMENT_ID` | GA4 Measurement ID. 비워 두면 분석 스크립트를 로드하지 않습니다. |
-| `PUBLIC_GISCUS_REPO` | Giscus를 연결한 `owner/repository`입니다. |
-| `PUBLIC_GISCUS_REPO_ID` | Giscus 설정 화면에서 받은 repository ID입니다. |
-| `PUBLIC_GISCUS_COMMENTS_CATEGORY` | 게시물 댓글에 사용할 GitHub Discussions category 이름입니다. |
-| `PUBLIC_GISCUS_COMMENTS_CATEGORY_ID` | 게시물 댓글 category의 Giscus ID입니다. |
-| `PUBLIC_GISCUS_GUESTBOOK_CATEGORY` | 방명록에 사용할 GitHub Discussions category 이름입니다. |
-| `PUBLIC_GISCUS_GUESTBOOK_CATEGORY_ID` | 방명록 category의 Giscus ID입니다. |
-| `PUBLIC_GUESTBOOK_DISCUSSION_NUMBER` | 방명록에 고정할 양의 GitHub Discussion 번호입니다. |
+| `PUBLIC_COMMENTS_API_URL` | 댓글 Worker의 origin. 기본값은 기존 관리자 Worker 주소입니다. |
 | `PUBLIC_ADMIN_URL` | 별도 관리자 Worker의 HTTPS 주소입니다. 비워 두면 `/admin/` 설정 안내가 표시됩니다. |
 
 ## 관리자 기반
 
 `admin/`에는 본인 전용 관리자 UI와 Cloudflare Worker/D1의 초기 기반이 있습니다. `admin/wrangler.jsonc`의 D1 ID와 Worker secrets를 설정한 뒤 배포해야 로그인, 글 저장, GitHub 발행, GA4 및 Search Console 통계 API가 활성화됩니다. 현재 공개 Astro 빌드는 관리자 초안 본문을 포함하지 않으며 `/publication-manifest.json`에는 공개 글만 포함합니다.
 
-Giscus 앱을 repository에 설치하고 Discussions를 활성화한 후, Giscus 설정 화면에서 repository/category ID를 복사합니다. 게시물 댓글은 `Comments` category의 URL별 Discussion을 쓰고, 방명록은 `Guestbook` category의 고정 Discussion 번호를 씁니다. 값이 없거나 유효하지 않으면 댓글 영역은 안전한 안내문만 표시됩니다.
+댓글과 방명록은 Worker/D1에 저장합니다. GitHub 로그인은 필요 없으며 닉네임, 댓글별 비밀번호(4~128자), 공개 범위, 본문으로 등록합니다. 비공개 댓글은 비밀번호를 아는 사람만 내용을 볼 수 있고, 비밀번호를 아는 사람은 닉네임과 본문을 수정하거나 댓글을 삭제할 수 있습니다. 좋아요는 브라우저 식별자별로 등록·취소하며 실제 사람당 한 번을 보장하지 않습니다. 기존 Giscus 연결은 제거했습니다. 배포 순서와 비밀번호용 secret 설정은 `admin/COMMENTS.md`를 참고하세요.
 
 ## GitHub Pages 배포와 확인
 
@@ -79,4 +73,4 @@ GitHub repository의 **Settings → Pages**에서 source를 **GitHub Actions**�
 - `https://itsdangerous.github.io/rss.xml`과 `https://itsdangerous.github.io/sitemap-index.xml`이 열리는지
 - `/robots.txt`, `/favicon.svg`, `pagefind/`가 빌드 산출물에 포함되는지
 - 데스크톱/모바일 레이아웃, 테마 저장, 검색 결과 이동, TOC, 댓글 컨테이너와 방명록 경로가 정상인지
-- Giscus의 실제 GitHub 로그인/댓글 작성은 배포된 사이트에서 한 번 수동으로 확인하는지
+- 댓글 등록·수정·삭제·좋아요와 방명록이 운영 Worker에서 정상 처리되는지

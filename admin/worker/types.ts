@@ -16,4 +16,6 @@ export interface Env {
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?: string;
   SEARCH_CONSOLE_PROPERTY?: string;
   ADMIN_URL?: string;
+  COMMENTS_ORIGINS?: string;
+  COMMENTS_SECRET?: string;
 }

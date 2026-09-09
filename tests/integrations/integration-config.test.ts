@@ -2,40 +2,47 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 describe('external integrations', () => {
-  it('keeps credentials out of source and documents required config', () => {
-    const source = readFileSync('src/shared/components/GiscusComments.astro', 'utf8');
+  it('keeps the comment secret on the Worker side', () => {
+    const component = readFileSync('src/shared/components/Comments.astro', 'utf8');
+    const client = readFileSync('src/shared/scripts/comments.ts', 'utf8');
 
-    expect(source).toContain('PUBLIC_GISCUS_REPO');
-    expect(source).toContain('PUBLIC_GISCUS_REPO_ID');
-    expect(readFileSync('src/domains/blog/layouts/PostLayout.astro', 'utf8')).toContain('PUBLIC_GISCUS_COMMENTS_CATEGORY');
-    expect(readFileSync('src/domains/blog/layouts/PostLayout.astro', 'utf8')).toContain('PUBLIC_GISCUS_COMMENTS_CATEGORY_ID');
-    expect(source).not.toContain('G-123');
+    expect(component).toContain('PUBLIC_COMMENTS_API_URL');
+    expect(component + client).not.toContain('COMMENTS_SECRET');
+    expect(component + client).not.toContain('giscus.app');
   });
 
-  it('maps articles by pathname and keeps the guestbook on its configured discussion', () => {
+  it('keeps post comments and guestbook on distinct page keys', () => {
     const postLayout = readFileSync('src/domains/blog/layouts/PostLayout.astro', 'utf8');
     const guestbook = readFileSync('src/pages/guestbook.astro', 'utf8');
 
-    expect(postLayout).toContain('mapping="pathname"');
-    expect(postLayout).toContain('category={commentsCategory}');
-    expect(guestbook).toContain('PUBLIC_GUESTBOOK_DISCUSSION_NUMBER');
-    expect(guestbook).toContain('mapping="specific"');
-    expect(guestbook).toContain('discussionNumber={discussionNumber}');
-    expect(guestbook).toContain('category={guestbookCategory}');
-    expect(readFileSync('src/shared/components/GiscusComments.astro', 'utf8')).toContain(
-      "const giscusMapping = mapping === 'specific' ? 'number' : mapping;",
-    );
-    expect(readFileSync('src/shared/components/GiscusComments.astro', 'utf8')).toContain('data-mapping={giscusMapping}');
-    expect(readFileSync('src/shared/components/GiscusComments.astro', 'utf8')).toContain("root.dataset.mapping === 'number'");
+    expect(postLayout).toContain('<Comments page={`/blog/posts/${slug}/`} />');
+    expect(guestbook).toContain('<Comments page="/guestbook/" guestbook />');
   });
 
-  it('propagates theme changes, provides a discussion fallback, and keeps GA4 opt-in', () => {
-    const giscus = readFileSync('src/shared/components/GiscusComments.astro', 'utf8');
+  it('offers the same public or private comment controls on both surfaces', () => {
+    const component = readFileSync('src/shared/components/Comments.astro', 'utf8');
+    const worker = readFileSync('admin/worker/comments.ts', 'utf8');
+
+    expect(component).toContain('name="visibility"');
+    expect(component).toContain('minlength="4"');
+    expect(worker).toContain("value === 'public' || value === 'private'");
+    expect(worker).toContain("CASE WHEN c.visibility='private' THEN NULL");
+  });
+
+  it('keeps replies scoped to one parent comment', () => {
+    const worker = readFileSync('admin/worker/comments.ts', 'utf8');
+    const client = readFileSync('src/shared/scripts/comments.ts', 'utf8');
+    const migration = readFileSync('admin/worker/migrations/0004_comment_replies.sql', 'utf8');
+
+    expect(migration).toContain('parent_id');
+    expect(worker).toContain('parent.parent_id');
+    expect(client).toContain('data-action="reply"');
+    expect(client).toContain('parentId: item.id');
+  });
+
+  it('keeps GA4 opt-in', () => {
     const analytics = readFileSync('src/shared/components/Analytics.astro', 'utf8');
 
-    expect(giscus).toContain('getTheme(document.documentElement.dataset.theme).giscusTheme');
-    expect(giscus).toContain("window.addEventListener('themechange', updateGiscusTheme)");
-    expect(giscus).toContain('https://github.com/${repo}/discussions');
     expect(analytics).toContain('PUBLIC_GA_MEASUREMENT_ID');
     expect(analytics).toContain('{measurementId && (');
     expect(analytics).not.toContain('G-123');

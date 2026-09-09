@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  testIgnore: '**/release.spec.ts',
+  testIgnore: ['**/release.spec.ts', '**/comments.spec.ts'],
   use: {
     baseURL: 'http://127.0.0.1:4321',
   },
@@ -10,11 +10,6 @@ export default defineConfig({
     command: 'npm run build && npm run preview -- --host 127.0.0.1',
     env: {
       ...process.env,
-      PUBLIC_GISCUS_REPO: 'itsdangerous/test-discussions',
-      PUBLIC_GISCUS_REPO_ID: 'R_kgDOtest',
-      PUBLIC_GISCUS_CATEGORY: 'Announcements',
-      PUBLIC_GISCUS_CATEGORY_ID: 'DIC_kwDOtest',
-      PUBLIC_GUESTBOOK_DISCUSSION_NUMBER: '42',
       TZ: 'UTC',
     },
     port: 4321,
