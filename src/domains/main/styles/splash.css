@@ -200,6 +200,10 @@
   gap: 0.55rem;
 }
 
+.book-splash__admin[hidden] {
+  display: none;
+}
+
 .book-splash__admin a {
   display: grid;
   width: 2.35rem;
