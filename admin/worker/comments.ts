@@ -16,6 +16,19 @@ export async function adminComments(request: Request, env: Env) {
   return new Response(`<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>전체 댓글 · 서재 관리</title>${style}<body><main class="admin-page"><div class="topbar"><a class="brand" href="/admin/">itsdangerous<small>서재 관리</small></a><a class="back" href="/admin/">관리 화면으로 돌아가기</a></div><div class="heading"><div><p class="eyebrow">COMMENT MANAGEMENT</p><h1>전체 댓글</h1><p>공개·비공개 댓글을 한곳에서 확인하고 게시글에 바로 답글을 남깁니다.</p></div><span class="count">${total?.total ?? 0}개</span></div><section class="comment-list">${cards || '<p>등록된 댓글이 없습니다.</p>'}</section><nav class="pager">${pager}</nav></main>${script}</body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Security-Policy': "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; frame-ancestors 'none'" } });
 }
 
+export async function adminCommentsJson(request: Request, env: Env) {
+  const auth = await requireSession(request, env);
+  if ('response' in auth) return auth.response!;
+  const url = new URL(request.url);
+  const offset = Math.max(0, Math.floor(Number(url.searchParams.get('offset')) || 0));
+  const rows = await env.DB.prepare(`SELECT c.id, c.page, c.parent_id AS parentId, c.nickname, c.body, c.visibility, c.created_at AS createdAt,
+    COALESCE(p.title, CASE WHEN c.page='/guestbook/' THEN '방명록' ELSE c.page END) AS postTitle
+    FROM comments c LEFT JOIN posts p ON c.page='/blog/posts/' || p.slug || '/'
+    ORDER BY c.created_at DESC, c.id DESC LIMIT 200 OFFSET ?`).bind(offset).all();
+  const total = await env.DB.prepare('SELECT COUNT(*) AS total FROM comments').first<{ total: number }>();
+  return json({ items: rows.results, total: total?.total ?? 0, offset, next: rows.results.length === 200 ? offset + 200 : null, baseUrl: env.BLOG_URL ?? 'https://itsdangerous.github.io/' });
+}
+
 export async function adminCommentReply(request: Request, env: Env) {
   const auth = await requireMutation(request, env);
   if ('response' in auth) return auth.response!;

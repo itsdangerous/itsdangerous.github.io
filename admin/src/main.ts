@@ -36,7 +36,7 @@ function shell(content: string, background = false) {
     for (const selector of ['.metrics', '.report-grid']) document.querySelector(selector)!.replaceWith(template.content.querySelector(selector)!);
     return;
   }
-  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>itsdangerous<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><a href="/admin/comments" target="_blank" rel="noopener">전체 댓글</a><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
+  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>itsdangerous<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button data-view="comments">전체 댓글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => renderView(button.dataset.view!));
   document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
   document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('admin-theme', theme); document.documentElement.dataset.theme = theme; document.querySelector('#theme-toggle')!.textContent = theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'; };
@@ -102,6 +102,14 @@ async function renderPosts() {
       document.querySelector('#sync-status')!.textContent = error instanceof Error ? error.message : '동기화 실패';
     }
   };
+}
+
+async function renderComments() {
+  if (!await flushEditor()) return;
+  currentView = 'comments';
+  const result = await api.comments();
+  const formatDate = (value: string) => new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+  shell(`<div class="page-heading"><div><p class="eyebrow">COMMENT MANAGEMENT</p><h1>전체 댓글</h1><p class="muted">댓글을 확인하고 해당 글에서 바로 이어서 관리하세요.</p></div><a class="secondary link-button" href="${escape(result.baseUrl)}" target="_blank" rel="noopener">사이트 열기</a></div><p class="comment-admin-summary">전체 ${result.total}개</p><section class="comment-admin-list" aria-label="전체 댓글 목록">${result.items.map(item => `<article class="comment-admin-row"><div class="comment-admin-row__body"><div class="comment-admin-row__title"><a href="${escape(result.baseUrl.replace(/\/$/, '') + item.page)}" target="_blank" rel="noopener">${escape(item.postTitle)}</a><span class="comment-admin-badge comment-admin-badge--${item.visibility}">${item.visibility === 'private' ? '비공개' : '공개'}</span>${item.parentId ? '<span class="comment-admin-reply">대댓글</span>' : ''}</div><p>${escape(item.body)}</p></div><div class="comment-admin-row__meta"><strong>${escape(item.nickname)}</strong><time>${escape(formatDate(item.createdAt))}</time></div></article>`).join('') || '<p class="empty">등록된 댓글이 없습니다.</p>'}</section>`);
 }
 
 async function renderAnalytics(start?: string, end?: string, background = false) {
@@ -349,6 +357,6 @@ async function flushEditor() {
 
 window.addEventListener('beforeunload', event => { if (editorDirty && currentView === 'editor') { event.preventDefault(); event.returnValue = ''; } });
 
-async function renderView(view: string) { if (!await flushEditor()) return; try { if (view === 'analytics') await renderAnalytics(); else if (view === 'editor') renderEditor(); else await renderPosts(); } catch { shell('<div class="login"><h1>관리자 연결이 필요합니다</h1><p>Worker 인증이 설정되면 GitHub 계정으로 로그인할 수 있습니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></div>'); } }
+async function renderView(view: string) { if (!await flushEditor()) return; try { if (view === 'analytics') await renderAnalytics(); else if (view === 'editor') renderEditor(); else if (view === 'comments') await renderComments(); else await renderPosts(); } catch { shell('<div class="login"><h1>관리자 연결이 필요합니다</h1><p>Worker 인증이 설정되면 GitHub 계정으로 로그인할 수 있습니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></div>'); } }
 
-api.session().then(session => { csrfToken = session.csrfToken; renderAnalytics(); }).catch(() => { app.innerHTML = '<main class="login"><p class="eyebrow">PRIVATE ARCHIVE</p><h1>관리자 서재</h1><p>본인 GitHub 계정으로 로그인해 글과 통계를 관리합니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></main>'; });
+api.session().then(session => { csrfToken = session.csrfToken; void (new URLSearchParams(location.search).get('view') === 'comments' ? renderComments() : renderAnalytics()); }).catch(() => { app.innerHTML = '<main class="login"><p class="eyebrow">PRIVATE ARCHIVE</p><h1>관리자 서재</h1><p>본인 GitHub 계정으로 로그인해 글과 통계를 관리합니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></main>'; });

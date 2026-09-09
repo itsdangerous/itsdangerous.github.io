@@ -27,6 +27,7 @@ export const previewApi: typeof liveApi = {
   },
   async session() { return { user: { id: 0, login: 'local-preview' }, csrfToken: 'preview-only' }; },
   async posts(visibility = 'all') { return { items: structuredClone(posts.filter(post => visibility === 'all' || post.desiredVisibility === visibility)) }; },
+  async comments() { return { items: [], total: 0, baseUrl: 'https://itsdangerous.github.io' }; },
   async importPosts() { return { imported: 0, unchanged: posts.length, failed: 0 }; },
   async post(id) { return structuredClone(find(id)); },
   async create(input) {

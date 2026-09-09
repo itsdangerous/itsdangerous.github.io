@@ -66,6 +66,19 @@ select[hidden] { display: none !important; }
 .preview-prose a { color:#7564bd; text-decoration:underline; }.preview-prose hr { border:0; border-top:1px solid #a8a19a55; margin:28px 0; }
 .danger-button { color:#b84354; margin-left:auto; }
 .page-actions { display:flex; align-items:center; gap:8px; }
+.comment-admin-summary { margin: -12px 0 18px; color: var(--muted); font-size: 12px; }
+.comment-admin-list { display:grid; gap:10px; }
+.comment-admin-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center; padding:20px 22px; border:1px solid var(--line); border-radius:16px; background:var(--surface, #fff); box-shadow:0 4px 20px #30354a03; }
+.comment-admin-row__title { display:flex; align-items:center; gap:8px; min-width:0; }
+.comment-admin-row__title a { min-width:0; overflow:hidden; color:inherit; font-size:14px; font-weight:650; text-decoration:none; text-overflow:ellipsis; white-space:nowrap; }
+.comment-admin-row__title a:hover { color:var(--accent); }
+.comment-admin-row__body p { display:-webkit-box; margin:9px 0 0; overflow:hidden; color:var(--muted); font-size:13px; line-height:1.65; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.comment-admin-row__meta { display:grid; min-width:130px; gap:5px; text-align:right; }
+.comment-admin-row__meta strong { font-size:12px; font-weight:600; }
+.comment-admin-row__meta time { color:var(--muted); font-size:11px; white-space:nowrap; }
+.comment-admin-badge,.comment-admin-reply { padding:4px 8px; border-radius:999px; font-size:10px; font-weight:650; white-space:nowrap; }
+.comment-admin-badge--public { color:#439e7f; background:#eaf8f1; }.comment-admin-badge--private { color:#bc935b; background:#fff3e6; }.comment-admin-reply { color:#7564e8; background:#efecff; }
+html[data-theme='dark'] .comment-admin-row { background:#192235; border-color:var(--line); }.comment-admin-row__body p { overflow-wrap:anywhere; }
 .page-actions .secondary { min-height:44px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:transparent; color:inherit; font:inherit; cursor:pointer; }
 .page-actions .secondary:hover { background:#8874ee12; border-color:#8874ee; }
 .page-actions button:disabled { opacity:.6; cursor:wait; }
@@ -97,6 +110,7 @@ html[data-theme='dark'] .danger-button { color:#f09ca8; }
   .analytics-controls .date-control input, .date-control input { width:auto; font-size:12px; }
   .date-control .calendar-trigger { min-width:36px; }
   .trend-chart svg text { font-size:11px; }
+  .comment-admin-row { grid-template-columns:1fr; gap:12px; padding:16px; }.comment-admin-row__meta { display:flex; align-items:center; justify-content:space-between; text-align:left; }.comment-admin-row__title { flex-wrap:wrap; }.comment-admin-row__title a { flex-basis:100%; }
   .editor-actions { flex-wrap:wrap; }
   .editor-actions .danger-button { flex:1 0 100%; margin-left:0; }
 }
