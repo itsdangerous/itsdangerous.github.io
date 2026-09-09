@@ -20,7 +20,8 @@ function sessionCors(request: Request, response: Response) {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === '/admin/comments' && request.method === 'GET') return Response.redirect(new URL('/admin/?view=comments', request.url), 302);
+    if (url.pathname === '/admin/comments' && request.method === 'GET') return Response.redirect(new URL('/admin/comments/', request.url), 302);
+    if (['/admin/posts', '/admin/editor'].includes(url.pathname) && request.method === 'GET') return Response.redirect(new URL(`${url.pathname}/`, request.url), 302);
     if (url.pathname === '/api/admin/comments' && request.method === 'GET') return adminCommentsJson(request, env);
     if (url.pathname === '/admin/comments/reply' && request.method === 'POST') return adminCommentReply(request, env);
     if (url.pathname === '/api/comments' || url.pathname.startsWith('/api/comments/')) return commentsApi(request, env);
@@ -49,7 +50,7 @@ export default {
       if (analyticsMatch && request.method === 'GET') return await analyticsReport(request, env, analyticsMatch[1]) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       return error('NOT_FOUND', 'API 경로를 찾을 수 없습니다.', 404);
     }
-    if (url.pathname === '/admin' || url.pathname === '/admin/') {
+    if (['/admin', '/admin/', '/admin/posts/', '/admin/editor/', '/admin/comments/'].includes(url.pathname)) {
       return env.ASSETS?.fetch(new Request(new URL('/index.html', request.url), request)) ?? configError();
     }
     if (url.pathname.startsWith('/admin/')) return env.ASSETS?.fetch(request) ?? configError();
