@@ -73,6 +73,9 @@ const publicColumns = `c.id, c.page, c.parent_id AS parentId, CASE WHEN c.visibi
   CASE WHEN c.visibility='private' THEN NULL ELSE c.body END AS body, c.visibility, c.version, c.created_at AS createdAt, c.updated_at AS updatedAt,
   (SELECT COUNT(*) FROM comment_likes l WHERE l.comment_id=c.id) AS likes,
   EXISTS(SELECT 1 FROM comment_likes l WHERE l.comment_id=c.id AND l.visitor_hash=?) AS liked`;
+const adminColumns = `c.id, c.page, c.parent_id AS parentId, c.nickname, c.body, c.visibility, c.version, c.created_at AS createdAt, c.updated_at AS updatedAt,
+  (SELECT COUNT(*) FROM comment_likes l WHERE l.comment_id=c.id) AS likes,
+  EXISTS(SELECT 1 FROM comment_likes l WHERE l.comment_id=c.id AND l.visitor_hash=?) AS liked`;
 
 async function handle(request: Request, env: Env): Promise<Response> {
   if (!env.DB || !env.COMMENTS_SECRET) return error('COMMENTS_UNAVAILABLE', '댓글 연결을 준비하고 있습니다. 잠시 후 다시 방문해 주세요.', 503);
@@ -94,6 +97,9 @@ async function handle(request: Request, env: Env): Promise<Response> {
     return json(await env.DB.prepare('SELECT COUNT(*) AS likes, EXISTS(SELECT 1 FROM post_likes WHERE page=? AND visitor_hash=?) AS liked FROM post_likes WHERE page=?').bind(page, visitorHash, page).first());
   }
   if (url.pathname === '/api/comments' && request.method === 'GET') {
+    const session = await requireSession(request, env);
+    const isAdmin = 'record' in session;
+    const columns = isAdmin ? adminColumns : publicColumns;
     const page = url.searchParams.get('page');
     if (!validPage(page)) return error('INVALID_PAGE', '댓글 페이지가 올바르지 않습니다.', 400);
     const after = url.searchParams.get('after');
@@ -103,18 +109,18 @@ async function handle(request: Request, env: Env): Promise<Response> {
       cursor = await env.DB.prepare('SELECT id, created_at FROM comments WHERE id=? AND page=? AND parent_id IS NULL').bind(after, page).first();
       if (!cursor) return error('INVALID_CURSOR', '목록이 변경되었습니다. 새로 불러와 주세요.', 409);
     }
-    const rows = await env.DB.prepare(`SELECT ${publicColumns} FROM comments c WHERE page=? AND c.parent_id IS NULL
+    const rows = await env.DB.prepare(`SELECT ${columns} FROM comments c WHERE page=? AND c.parent_id IS NULL
       ${cursor ? 'AND (c.created_at, c.id) < (?, ?)' : ''} ORDER BY c.created_at DESC, c.id DESC LIMIT 21`)
       .bind(visitorHash, page, ...(cursor ? [cursor.created_at, cursor.id] : [])).all();
     const total = await env.DB.prepare('SELECT COUNT(*) AS total FROM comments WHERE page=?').bind(page).first<{ total: number }>();
     const roots = rows.results.slice(0, 20) as Array<{ id: string }>;
     const placeholders = roots.map(() => '?').join(', ');
     const replies = roots.length
-      ? await env.DB.prepare(`SELECT ${publicColumns} FROM comments c WHERE c.parent_id IN (${placeholders}) ORDER BY c.created_at ASC, c.id ASC`)
+      ? await env.DB.prepare(`SELECT ${columns} FROM comments c WHERE c.parent_id IN (${placeholders}) ORDER BY c.created_at ASC, c.id ASC`)
         .bind(visitorHash, ...roots.map(root => root.id)).all()
       : { results: [] };
     const items = [...roots, ...replies.results];
-    return json({ items, total: total?.total ?? 0, next: rows.results.length > 20 ? roots[19].id : null });
+    return json({ items, total: total?.total ?? 0, next: rows.results.length > 20 ? roots[19].id : null, admin: isAdmin });
   }
 
   const match = url.pathname.match(/^\/api\/comments\/([0-9a-f-]+)(\/(like|reveal))?$/i);
@@ -214,6 +220,7 @@ export async function commentsApi(request: Request, env: Env) {
   headers.set('Cache-Control', 'no-store');
   if (origin) {
     headers.set('Access-Control-Allow-Origin', origin);
+    headers.set('Access-Control-Allow-Credentials', 'true');
     headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, PUT, OPTIONS');
     headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Comment-Visitor');
   }

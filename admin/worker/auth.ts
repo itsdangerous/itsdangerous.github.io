@@ -33,7 +33,7 @@ export async function githubCallback(request: Request, env: Env) {
   if (!user.id || String(user.id) !== env.GITHUB_ALLOWED_USER_ID) return error('FORBIDDEN', '허용된 관리자 계정이 아닙니다.', 403);
   const session = randomToken(); const csrf = randomToken(); const expires = new Date(Date.now() + 8 * 3600000);
   await env.DB.prepare('INSERT INTO sessions (token_hash, github_user_id, github_login, csrf_hash, expires_at) VALUES (?, ?, ?, ?, ?)').bind(await sha256(session), user.id, user.login ?? '', await sha256(csrf), iso(expires)).run();
-  const headers = new Headers({ Location: env.ADMIN_URL ?? '/admin/' }); headers.append('Set-Cookie', `${SESSION_COOKIE}=${session}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800`); return new Response(null, { status: 302, headers });
+  const headers = new Headers({ Location: env.ADMIN_URL ?? '/admin/' }); headers.append('Set-Cookie', `${SESSION_COOKIE}=${session}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=28800`); return new Response(null, { status: 302, headers });
 }
 
 export async function requireSession(request: Request, env: Env) {

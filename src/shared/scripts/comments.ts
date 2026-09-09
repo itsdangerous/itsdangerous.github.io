@@ -45,7 +45,7 @@ export function initializeComments() {
       const timer = window.setTimeout(() => controller.abort(), 15_000);
       try {
         const response = await fetch(`${api}/api/comments${path}`, {
-          method, mode: 'cors', credentials: 'omit', signal: controller.signal,
+          method, mode: 'cors', credentials: 'include', signal: controller.signal,
           headers: { 'X-Comment-Visitor': getVisitor(), ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}) },
           ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
         });
