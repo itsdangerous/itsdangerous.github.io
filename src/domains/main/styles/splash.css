@@ -190,6 +190,49 @@
   outline-offset: 0.4rem;
 }
 
+.book-splash__admin {
+  position: absolute;
+  right: clamp(2rem, 6vw, 5rem);
+  bottom: clamp(2rem, 5vw, 3.9rem);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.book-splash__admin a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgb(199 167 90 / 45%);
+  border-radius: 999px;
+  color: var(--cover-muted);
+  font-family: 'Noto Serif KR', Georgia, serif;
+  font-size: 0.72rem;
+  text-decoration: none;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.book-splash__admin-login {
+  color: var(--cover-ink) !important;
+  background: var(--cover-gold);
+  border-color: var(--cover-gold) !important;
+}
+
+.book-splash__admin a:hover,
+.book-splash__admin a:focus-visible {
+  color: var(--cover-gold-bright);
+  border-color: var(--cover-gold-bright);
+  background: rgb(199 167 90 / 12%);
+}
+
+.book-splash__admin-login:hover,
+.book-splash__admin-login:focus-visible {
+  color: var(--cover-ink) !important;
+  background: var(--cover-gold-bright) !important;
+}
+
 @media (max-width: 640px) {
   .book-splash {
     grid-template-columns: minmax(0, 1fr);
@@ -233,5 +276,12 @@
 
   .book-splash__chapters a + a::before {
     display: none;
+  }
+
+  .book-splash__admin {
+    right: 2rem;
+    bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 }
