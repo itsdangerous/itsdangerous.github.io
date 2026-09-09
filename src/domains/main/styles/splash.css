@@ -212,6 +212,10 @@
   transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
 }
 
+.book-splash__admin a[hidden] {
+  display: none;
+}
+
 .book-splash__admin svg {
   width: 1.05rem;
   height: 1.05rem;

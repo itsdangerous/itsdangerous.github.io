@@ -6,6 +6,7 @@
   "keep_vars": true,
   "vars": {
     "ADMIN_URL": "https://itsdangerous-admin.tmdrbsla123.workers.dev/admin/",
+    "BLOG_URL": "https://itsdangerous.github.io/",
     "GA4_HOSTNAME": "itsdangerous.github.io",
     "GA4_PROPERTY_ID": "552453352",
     "GITHUB_ALLOWED_USER_ID": "76903093",

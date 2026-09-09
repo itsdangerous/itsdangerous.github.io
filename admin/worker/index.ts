@@ -7,6 +7,15 @@ import { analyticsReport } from './analytics';
 import { commentsApi, adminCommentReply, adminComments } from './comments';
 
 const configError = () => error('ADMIN_NOT_CONFIGURED', '관리자 Worker의 OAuth와 저장소 설정이 아직 완료되지 않았습니다.', 503);
+function sessionCors(request: Request, response: Response) {
+  const origin = request.headers.get('Origin');
+  if (origin !== 'https://itsdangerous.github.io') return response;
+  const headers = new Headers(response.headers);
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Credentials', 'true');
+  headers.set('Vary', 'Origin');
+  return new Response(response.body, { status: response.status, headers });
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -18,7 +27,7 @@ export default {
     if (url.pathname === '/auth/callback') return githubCallback(request, env);
     if (url.pathname.startsWith('/api/')) {
       if (!env.DB) return configError();
-      if (url.pathname === '/api/session' && request.method === 'GET') return await sessionResponse(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
+      if (url.pathname === '/api/session' && request.method === 'GET') return sessionCors(request, await sessionResponse(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500));
       if (url.pathname === '/api/logout' && request.method === 'POST') return await logout(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       if (url.pathname === '/api/posts' && request.method === 'GET') return await listPosts(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
       if (url.pathname === '/api/posts' && request.method === 'POST') return await createPost(request, env) ?? error('INTERNAL_ERROR', '관리자 응답을 생성하지 못했습니다.', 500);
