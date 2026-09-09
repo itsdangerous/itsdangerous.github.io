@@ -4,8 +4,11 @@
 .comments [hidden] { display: none !important; }
 .post-like-area { text-align: center; margin: 0 0 2.5rem; }
 .comments [data-post-like] { display: inline-flex; flex-direction: column; align-items: center; gap: .4rem; color: var(--comment-brass); padding: .75rem; }
-[data-post-like] svg { width: 2rem; height: 2rem; fill: transparent; stroke: currentColor; stroke-width: 1.5; transition: fill 150ms ease; }
-[data-post-like][aria-pressed='true'] svg { fill: currentColor; }
+.post-like-heart { position: relative; display: block; width: 2.35rem; height: 2.35rem; }
+.post-like-heart img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 .08rem .12rem rgb(0 0 0 / 28%)); transition: opacity 140ms ease, transform 140ms ease; }
+.post-like-heart__filled { opacity: 0; transform: scale(.92); }
+[data-post-like][aria-pressed='true'] .post-like-heart__empty { opacity: 0; transform: scale(.92); }
+[data-post-like][aria-pressed='true'] .post-like-heart__filled { opacity: 1; transform: scale(1); }
 [data-post-like-status] { font-size: .75rem; }
 .comments-heading { display: block; }
 .comments .comments-eyebrow { margin: 0 0 .35rem; color: var(--comment-brass); letter-spacing: .2em; font: .66rem var(--font-ui); }

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 describe('external integrations', () => {
@@ -17,6 +17,17 @@ describe('external integrations', () => {
 
     expect(postLayout).toContain('<Comments page={`/blog/posts/${slug}/`} />');
     expect(guestbook).toContain('<Comments page="/guestbook/" guestbook />');
+  });
+
+  it('uses matching embroidered assets for both post-like states', () => {
+    const component = readFileSync('src/shared/components/Comments.astro', 'utf8');
+    const styles = readFileSync('src/shared/styles/comments.css', 'utf8');
+
+    expect(existsSync('public/images/heart-embroidered-empty.webp')).toBe(true);
+    expect(existsSync('public/images/heart-embroidered-filled.webp')).toBe(true);
+    expect(component).toContain('heart-embroidered-empty.webp');
+    expect(component).toContain('heart-embroidered-filled.webp');
+    expect(styles).toContain("[data-post-like][aria-pressed='true']");
   });
 
   it('offers the same public or private comment controls on both surfaces', () => {

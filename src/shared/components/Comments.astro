@@ -6,7 +6,7 @@ const { page, guestbook = false } = Astro.props;
 const api = import.meta.env.PUBLIC_COMMENTS_API_URL?.trim() || 'https://itsdangerous-admin.tmdrbsla123.workers.dev';
 ---
 <section class="comments" data-comments data-api={api} data-page={page} data-pagefind-ignore aria-label={guestbook ? '방명록 남기기' : '댓글'}>
-  {!guestbook && <div class="post-like-area"><button type="button" data-post-like aria-label="글 좋아요" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21S3 15.5 3 8.5a4.5 4.5 0 0 1 9-1 4.5 4.5 0 0 1 9 1C21 15.5 12 21 12 21Z" /></svg><span data-post-like-count>0</span></button><p data-post-like-status role="status"></p></div>}
+  {!guestbook && <div class="post-like-area"><button type="button" data-post-like aria-label="글 좋아요" aria-pressed="false"><span class="post-like-heart" aria-hidden="true"><img class="post-like-heart__empty" src="/images/heart-embroidered-empty.webp" alt="" width="256" height="256" /><img class="post-like-heart__filled" src="/images/heart-embroidered-filled.webp" alt="" width="256" height="256" /></span><span data-post-like-count>0</span></button><p data-post-like-status role="status"></p></div>}
   <div class="comments-heading">
     <div><p class="comments-eyebrow">{guestbook ? 'GUESTBOOK' : 'MARGINALIA'}</p><h2>{guestbook ? '다녀간 자리' : '댓글'} <span data-count></span></h2></div>
   </div>
