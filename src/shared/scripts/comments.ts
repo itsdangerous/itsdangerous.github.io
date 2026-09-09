@@ -6,6 +6,12 @@ interface CommentList { items: Comment[]; total: number; next: string | null }
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 const visitorKey = 'itsdangerous-comment-visitor';
+function randomNickname() {
+  const traits = ['차분한', '명랑한', '용감한', '다정한', '호기심많은'];
+  const names = ['여우', '고래', '수달', '참새', '고양이'];
+  const values = crypto.getRandomValues(new Uint32Array(3));
+  return `${traits[values[0] % traits.length]}-${names[values[1] % names.length]}-${values[2] % 10000}`;
+}
 let memoryVisitor: string | undefined;
 function getVisitor() {
   if (memoryVisitor) return memoryVisitor;
@@ -28,7 +34,7 @@ export function initializeComments() {
     const compose = root.querySelector<HTMLFormElement>('[data-compose]')!;
     const composeStatus = root.querySelector<HTMLElement>('[data-compose-status]')!;
     const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
-    const reload = root.querySelector<HTMLButtonElement>('[data-reload]')!;
+    (compose.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
     let next: string | null = null;
     let loading = false;
     const items = new Map<string, Comment>();
@@ -74,7 +80,7 @@ export function initializeComments() {
     }
     async function load(append = false) {
       if (loading) return;
-      loading = true; more.disabled = true; reload.disabled = true;
+      loading = true; more.disabled = true;
       message(listStatus, '댓글을 불러오고 있습니다.');
       try {
         const result = await request<CommentList>(`?page=${encodeURIComponent(page)}${append && next ? `&after=${next}` : ''}`);
@@ -82,10 +88,9 @@ export function initializeComments() {
         render(result.items);
         next = result.next; more.hidden = !next;
         root.querySelector('[data-count]')!.textContent = result.total ? String(result.total) : '';
-        root.querySelector('[data-total]')!.textContent = `(${result.total})`;
         message(listStatus, result.total ? '' : '아직 남겨진 이야기가 없습니다. 첫 이야기를 들려주세요.');
       } catch (cause) { message(listStatus, (cause as Error).message, true); }
-      finally { loading = false; more.disabled = false; reload.disabled = false; }
+      finally { loading = false; more.disabled = false; }
     }
     compose.addEventListener('submit', async event => {
       event.preventDefault();
@@ -97,6 +102,7 @@ export function initializeComments() {
         await request('', 'POST', { ...data, page });
         (compose.elements.namedItem('body') as HTMLTextAreaElement).value = '';
         (compose.elements.namedItem('password') as HTMLInputElement).value = '';
+        (compose.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
         message(composeStatus, '댓글을 남겼습니다.');
         await load();
       } catch (cause) { message(composeStatus, (cause as Error).message, true); }
@@ -113,17 +119,17 @@ export function initializeComments() {
         const status = node.querySelector<HTMLElement>('[data-entry-status]')!;
         try {
           const result = await request<Comment>(`/${item.id}/like`, 'PUT', { liked: !item.liked });
-          items.set(item.id, result);
+          items.set(item.id, result.visibility === 'private' && result.version === item.version ? { ...result, nickname: item.nickname, body: item.body } : result);
           const replacement = entry(result).querySelector<HTMLButtonElement>('[data-action=like]')!;
           button.replaceWith(replacement); replacement.focus({ preventScroll: true });
           message(status, '');
         } catch (cause) { message(status, (cause as Error).message, true); button.disabled = false; }
         return;
       }
-      if (action === 'reveal') {
+      if (action === 'reveal' || (action === 'edit' && item.visibility === 'private' && !item.body)) {
         list.querySelectorAll('.comment-editor').forEach(editor => editor.remove());
         const form = document.createElement('form'); form.className = 'comment-editor editorial-surface';
-        form.innerHTML = '<label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="작성할 때 정한 비밀번호"></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">내용 보기</button></div>';
+        form.innerHTML = '<label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="비밀번호"></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">내용 보기</button></div>';
         node.append(form); form.querySelector<HTMLInputElement>('[name=password]')!.focus({ preventScroll: true });
         form.querySelector('[data-cancel]')!.addEventListener('click', () => form.remove());
         form.addEventListener('submit', async event => {
@@ -137,6 +143,7 @@ export function initializeComments() {
             const replies = node.querySelector('[data-replies]');
             if (replies) replacement.querySelector('[data-replies]')!.replaceWith(replies);
             node.replaceWith(replacement);
+            if (action === 'edit') replacement.querySelector<HTMLButtonElement>('[data-action=edit]')!.click();
           } catch (cause) { message(status, (cause as Error).message, true); submit.disabled = false; }
         });
         return;
@@ -144,7 +151,8 @@ export function initializeComments() {
       if (action === 'reply') {
         list.querySelectorAll('.comment-editor').forEach(editor => editor.remove());
         const form = document.createElement('form'); form.className = 'comment-editor editorial-surface'; form.setAttribute('aria-label', '답글 작성');
-        form.innerHTML = '<div class="comment-fields"><label>닉네임<input name="nickname" required maxlength="30" autocomplete="nickname"></label><label>비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="new-password"></label></div><fieldset class="comment-visibility"><legend>공개 범위</legend><label><input name="visibility" type="radio" value="public" checked> 공개</label><label><input name="visibility" type="radio" value="private"> 비공개</label></fieldset><label>답글<textarea name="body" required maxlength="3000" rows="3"></textarea></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">답글 남기기</button></div>';
+        form.innerHTML = '<div class="comment-fields"><label>닉네임<input name="nickname" required maxlength="30" autocomplete="nickname"></label><label>비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" data-lpignore="true" data-1p-ignore></label></div><fieldset class="comment-visibility"><legend>공개 범위</legend><label><input name="visibility" type="radio" value="public" checked> 공개</label><label><input name="visibility" type="radio" value="private"> 비공개</label></fieldset><label>답글<textarea name="body" required maxlength="3000" rows="3"></textarea></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>';
+        (form.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
         node.append(form); form.querySelector<HTMLInputElement>('[name=nickname]')!.focus({ preventScroll: true });
         form.querySelector('[data-cancel]')!.addEventListener('click', () => form.remove());
         form.addEventListener('submit', async event => {
@@ -162,8 +170,8 @@ export function initializeComments() {
       const form = document.createElement('form'); form.className = 'comment-editor editorial-surface';
       form.setAttribute('aria-label', action === 'edit' ? '댓글 수정' : '댓글 삭제');
       form.innerHTML = `${action === 'edit' ? `<label>닉네임<input name="nickname" required maxlength="30" value="${escapeHtml(item.nickname ?? '')}"></label><label>댓글<textarea name="body" required maxlength="3000" rows="4">${escapeHtml(item.body ?? '')}</textarea></label>` : '<p>이 댓글을 삭제할까요? 삭제한 댓글은 복구할 수 없습니다.</p>'}
-        <label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="작성할 때 정한 비밀번호"></label>
-        <p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">${action === 'edit' ? '수정 저장' : '댓글 삭제'}</button></div>`;
+        <label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="비밀번호"></label>
+        <p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>`;
       node.append(form);
       const close = () => { form.remove(); button.focus({ preventScroll: true }); };
       form.querySelector('[data-cancel]')!.addEventListener('click', close);
@@ -181,12 +189,29 @@ export function initializeComments() {
           await request(`/${item.id}`, action === 'edit' ? 'PATCH' : 'DELETE', { ...data, version: item.version });
           form.remove();
           message(composeStatus, action === 'edit' ? '댓글을 수정했습니다.' : '댓글을 삭제했습니다.');
-          await load(); reload.focus({ preventScroll: true });
+          await load(); compose.querySelector<HTMLInputElement>('[name=nickname]')!.focus({ preventScroll: true });
         } catch (cause) { message(status, (cause as Error).message, true); submit.disabled = false; }
       });
     });
     more.addEventListener('click', () => void load(true));
-    reload.addEventListener('click', () => void load());
+    const postLike = root.querySelector<HTMLButtonElement>('[data-post-like]');
+    if (postLike) {
+      const status = root.querySelector<HTMLElement>('[data-post-like-status]')!;
+      const update = (result: { likes: number; liked: number | boolean }) => {
+        postLike.setAttribute('aria-pressed', String(Boolean(result.liked)));
+        postLike.setAttribute('aria-label', `글 좋아요 ${result.likes}개`);
+        root.querySelector('[data-post-like-count]')!.textContent = String(result.likes);
+      };
+      const path = `/post-like?page=${encodeURIComponent(page)}`;
+      postLike.disabled = true;
+      void request<{ likes: number; liked: number }>(path).then(update).catch(() => message(status, '좋아요를 불러오지 못했습니다.')).finally(() => { postLike.disabled = false; });
+      postLike.addEventListener('click', async () => {
+        postLike.disabled = true;
+        try { update(await request(path, 'PUT', { liked: postLike.getAttribute('aria-pressed') !== 'true' })); message(status, ''); }
+        catch (cause) { message(status, (cause as Error).message, true); }
+        finally { postLike.disabled = false; }
+      });
+    }
     void load();
   });
 }

@@ -1,5 +1,15 @@
 import { error, json } from './security';
 import type { Env } from './types';
+import { requireSession } from './auth';
+
+export async function adminComments(request: Request, env: Env) {
+  const auth = await requireSession(request, env);
+  if ('response' in auth) return auth.response!;
+  const offset = Math.max(0, Math.floor(Number(new URL(request.url).searchParams.get('offset')) || 0));
+  const rows = await env.DB.prepare('SELECT page, nickname, body, created_at FROM comments WHERE visibility=? ORDER BY created_at DESC, id DESC LIMIT 200 OFFSET ?').bind('private', offset).all();
+  const escape = (value: unknown) => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
+  return new Response(`<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>비공개 댓글</title><style>body{max-width:800px;margin:3rem auto;padding:0 1.5rem;background:#f4f0e7;color:#302c26;font:16px/1.7 system-ui}a{color:#80623b}article{padding:1rem 0;border-bottom:1px solid #d6cbb9}h2{font-size:1rem}p{font-size:.85rem;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}</style><body><a href="/admin/">서재 관리</a><h1>비공개 댓글</h1>${rows.results.map(row => `<article><h2>${escape(row.nickname)}</h2><p>${escape(row.page)} · ${escape(row.created_at)}</p><pre>${escape(row.body)}</pre></article>`).join('') || '<p>비공개 댓글이 없습니다.</p>'}${offset ? `<a href="?offset=${Math.max(0, offset - 200)}">이전</a> ` : ''}${rows.results.length === 200 ? `<a href="?offset=${offset + 200}">다음</a>` : ''}</body></html>`, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'" } });
+}
 
 const encoder = new TextEncoder();
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -51,6 +61,19 @@ async function handle(request: Request, env: Env): Promise<Response> {
   const visitor = request.headers.get('X-Comment-Visitor');
   if (visitor && !uuid.test(visitor)) return error('INVALID_VISITOR', '브라우저 식별자가 올바르지 않습니다.', 400);
   const visitorHash = visitor ? await keyedHash(`visitor:${visitor}`, env.COMMENTS_SECRET) : '';
+  if (url.pathname === '/api/comments/post-like') {
+    const page = url.searchParams.get('page');
+    if (!validPage(page) || !page.startsWith('/blog/posts/')) return error('INVALID_PAGE', '글 주소를 확인해 주세요.', 400);
+    if (request.method === 'PUT') {
+      if (!visitor) return error('INVALID_VISITOR', '브라우저 식별자가 필요합니다.', 400);
+      if (!await rateLimit(env, request.headers.get('CF-Connecting-IP') ?? 'local', 'post-likes', 60)) return error('RATE_LIMITED', '잠시 후 다시 시도해 주세요.', 429);
+      let input;
+      try { input = await request.json() as { liked?: boolean }; } catch { return error('INVALID_INPUT', '요청을 확인해 주세요.', 400); }
+      if (!input || typeof input.liked !== 'boolean') return error('INVALID_INPUT', '요청을 확인해 주세요.', 422);
+      await (input.liked ? env.DB.prepare('INSERT OR IGNORE INTO post_likes VALUES (?, ?)') : env.DB.prepare('DELETE FROM post_likes WHERE page=? AND visitor_hash=?')).bind(page, visitorHash).run();
+    } else if (request.method !== 'GET') return error('NOT_FOUND', '경로를 확인해 주세요.', 404);
+    return json(await env.DB.prepare('SELECT COUNT(*) AS likes, EXISTS(SELECT 1 FROM post_likes WHERE page=? AND visitor_hash=?) AS liked FROM post_likes WHERE page=?').bind(page, visitorHash, page).first());
+  }
   if (url.pathname === '/api/comments' && request.method === 'GET') {
     const page = url.searchParams.get('page');
     if (!validPage(page)) return error('INVALID_PAGE', '댓글 페이지가 올바르지 않습니다.', 400);
@@ -149,10 +172,10 @@ async function handle(request: Request, env: Env): Promise<Response> {
   }
   const result = remove
     ? (await env.DB.batch([
-        env.DB.prepare('DELETE FROM comment_likes WHERE comment_id IN (SELECT id FROM comments WHERE id=? OR parent_id=?)').bind(id, id),
-        env.DB.prepare('DELETE FROM comments WHERE parent_id=?').bind(id),
+        env.DB.prepare('DELETE FROM comment_likes WHERE comment_id IN (SELECT id FROM comments WHERE id=? OR parent_id=?) AND EXISTS (SELECT 1 FROM comments WHERE id=? AND version=?)').bind(id, id, id, input.version),
+        env.DB.prepare('DELETE FROM comments WHERE parent_id=? AND EXISTS (SELECT 1 FROM comments WHERE id=? AND version=?)').bind(id, id, input.version),
         env.DB.prepare('DELETE FROM comments WHERE id=? AND version=?').bind(id, input.version),
-      ]))[1]
+      ]))[2]
     : await env.DB.prepare('UPDATE comments SET nickname=?, body=?, updated_at=?, version=version+1 WHERE id=? AND version=?')
       .bind((input.nickname as string).trim(), (input.body as string).trim(), new Date().toISOString(), id, input.version).run();
   if (!result.meta.changes) return error('VERSION_CONFLICT', '댓글이 변경되었습니다. 새로 불러온 뒤 다시 시도해 주세요.', 409);

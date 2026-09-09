@@ -2,6 +2,11 @@
 [data-theme='light'] .comments { --comment-brass: #80623b; }
 .comments *, .comments *::before { box-sizing: border-box; }
 .comments [hidden] { display: none !important; }
+.post-like-area { text-align: center; margin: 0 0 2.5rem; }
+.comments [data-post-like] { display: inline-flex; flex-direction: column; align-items: center; gap: .4rem; color: var(--comment-brass); padding: .75rem; }
+[data-post-like] svg { width: 2rem; height: 2rem; fill: transparent; stroke: currentColor; stroke-width: 1.5; transition: fill 150ms ease; }
+[data-post-like][aria-pressed='true'] svg { fill: currentColor; }
+[data-post-like-status] { font-size: .75rem; }
 .comments-heading { display: block; }
 .comments .comments-eyebrow { margin: 0 0 .35rem; color: var(--comment-brass); letter-spacing: .2em; font: .66rem var(--font-ui); }
 .comments h2 { margin: 0; font: 500 clamp(1.15rem, 2.5vw, 1.4rem)/1.4 var(--font-prose); }

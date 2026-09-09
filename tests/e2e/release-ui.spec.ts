@@ -26,11 +26,16 @@ test('Pagefind search results navigate to the matching article', async ({ page }
 });
 
 test('article comments use the canonical page key without login', async ({ page }) => {
+  await page.route('**/api/comments/post-like?**', route => route.fulfill({ json: { likes: 3, liked: false } }));
   await page.route('**/api/comments?**', route => route.fulfill({ json: { items: [], total: 0, next: null } }));
   await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   await expect(page.locator('[data-comments]')).toHaveAttribute('data-page', '/blog/posts/git-reset-vs-git-revert/');
   await expect(page.locator('[data-compose]')).toBeVisible();
+  await expect(page.locator('[data-post-like-count]')).toHaveText('3');
+  await expect(page.locator('[data-compose] [name=nickname]')).toHaveValue(/^[^-]+-[^-]+-\d+$/);
+  await expect(page.locator('[data-reload]')).toHaveCount(0);
+  await expect(page.locator('[data-compose] [name=password]')).toHaveAttribute('autocomplete', 'off');
 });
 
 test('guestbook has a separate anonymous comment page', async ({ page }) => {
@@ -40,5 +45,6 @@ test('guestbook has a separate anonymous comment page', async ({ page }) => {
   await expect(page).toHaveURL('/guestbook/');
   await expect(page.getByRole('heading', { name: '방명록' })).toBeVisible();
   await expect(page.locator('[data-comments]')).toHaveAttribute('data-page', '/guestbook/');
-  await expect(page.getByRole('button', { name: '인사 남기기' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '완료', exact: true })).toBeVisible();
+  await expect(page.locator('[data-post-like]')).toHaveCount(0);
 });
