@@ -69,10 +69,10 @@ select[hidden] { display: none !important; }
 .comment-admin-summary { margin: -12px 0 18px; color: var(--muted); font-size: 12px; }
 .comment-admin-list { display:grid; gap:10px; }
 .comment-admin-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center; padding:20px 22px; border:1px solid var(--line); border-radius:16px; background:var(--surface, #fff); box-shadow:0 4px 20px #30354a03; }
-.comment-admin-row__title { display:flex; align-items:center; gap:8px; min-width:0; }
-.comment-admin-row__title a { min-width:0; overflow:hidden; color:inherit; font-size:14px; font-weight:650; text-decoration:none; text-overflow:ellipsis; white-space:nowrap; }
-.comment-admin-row__title a:hover { color:var(--accent); }
-.comment-admin-row__body p { display:-webkit-box; margin:9px 0 0; overflow:hidden; color:var(--muted); font-size:13px; line-height:1.65; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.comment-admin-body { display:-webkit-box; margin:0; overflow:hidden; color:inherit; font-size:14px; font-weight:500; line-height:1.75; -webkit-box-orient:vertical; -webkit-line-clamp:3; }
+.comment-admin-context { display:flex; align-items:center; gap:8px; min-width:0; margin-top:10px; }
+.comment-admin-context a { min-width:0; overflow:hidden; color:var(--muted); font-size:11px; text-decoration:none; text-overflow:ellipsis; white-space:nowrap; }
+.comment-admin-context a:hover { color:var(--accent); text-decoration:underline; }
 .comment-admin-row__meta { display:grid; min-width:130px; gap:5px; text-align:right; }
 .comment-admin-row__meta strong { font-size:12px; font-weight:600; }
 .comment-admin-row__meta time { color:var(--muted); font-size:11px; white-space:nowrap; }
@@ -110,7 +110,7 @@ html[data-theme='dark'] .danger-button { color:#f09ca8; }
   .analytics-controls .date-control input, .date-control input { width:auto; font-size:12px; }
   .date-control .calendar-trigger { min-width:36px; }
   .trend-chart svg text { font-size:11px; }
-  .comment-admin-row { grid-template-columns:1fr; gap:12px; padding:16px; }.comment-admin-row__meta { display:flex; align-items:center; justify-content:space-between; text-align:left; }.comment-admin-row__title { flex-wrap:wrap; }.comment-admin-row__title a { flex-basis:100%; }
+  .comment-admin-row { grid-template-columns:1fr; gap:12px; padding:16px; }.comment-admin-row__meta { display:flex; align-items:center; justify-content:space-between; text-align:left; }
   .editor-actions { flex-wrap:wrap; }
   .editor-actions .danger-button { flex:1 0 100%; margin-left:0; }
 }
