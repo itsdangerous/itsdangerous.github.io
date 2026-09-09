@@ -51,7 +51,7 @@ export default {
       return error('NOT_FOUND', 'API 경로를 찾을 수 없습니다.', 404);
     }
     if (['/admin', '/admin/', '/admin/posts/', '/admin/editor/', '/admin/comments/'].includes(url.pathname)) {
-      return env.ASSETS?.fetch(new Request(new URL('/index.html', request.url), request)) ?? configError();
+      return env.ASSETS?.fetch(new Request(new URL('/', request.url), request)) ?? configError();
     }
     if (url.pathname.startsWith('/admin/')) return env.ASSETS?.fetch(request) ?? configError();
     return env.ASSETS?.fetch(request) ?? json({ ok: true });
