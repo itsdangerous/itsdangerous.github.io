@@ -1,0 +1,63 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  robots?: string;
+  schemaType?: 'WebSite' | 'WebPage' | 'Article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  imagePath?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = '/',
+  robots = 'index, follow',
+  schemaType = 'WebPage',
+  publishedTime,
+  modifiedTime,
+  imagePath = '/images/splash-crest-embroidered.webp',
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://itsdangerous.github.io');
+const canonicalUrl = new URL(canonicalPath, siteUrl);
+const imageUrl = new URL(imagePath, siteUrl);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': schemaType,
+  name: title,
+  description,
+  url: canonicalUrl.href,
+  ...(schemaType === 'Article'
+    ? {
+        headline: title,
+        image: imageUrl.href,
+        author: { '@type': 'Person', name: 'itsdangerous' },
+        publisher: { '@type': 'Person', name: 'itsdangerous' },
+        ...(publishedTime ? { datePublished: publishedTime.toISOString() } : {}),
+        ...(modifiedTime ? { dateModified: modifiedTime.toISOString() } : {}),
+      }
+    : {}),
+};
+const jsonLd = JSON.stringify(schema).replace(/</g, '\\u003c');
+---
+
+<meta name="description" content={description} />
+<meta name="robots" content={robots} />
+<link rel="canonical" href={canonicalUrl} />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:site_name" content="itsdangerous" />
+<meta property="og:type" content={schemaType === 'Article' ? 'article' : 'website'} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={imageUrl} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+{schemaType === 'Article' && publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{schemaType === 'Article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
+<script type="application/ld+json" set:html={jsonLd}></script>

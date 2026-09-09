@@ -11,7 +11,11 @@ export default defineConfig({
       exclude: ['shiki', '@shikijs/engine-oniguruma', '@shikijs/langs'],
     },
   },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/admin/') && !page.includes('/blog/search/'),
+    }),
+  ],
   markdown: {
     remarkPlugins: [remarkDirective, remarkCallouts],
   },

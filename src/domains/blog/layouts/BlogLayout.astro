@@ -7,12 +7,24 @@ interface Props {
   title: string;
   description?: string;
   canonicalPath?: string;
+  robots?: string;
+  schemaType?: 'WebSite' | 'WebPage' | 'Article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
 }
 
-const { title, description, canonicalPath } = Astro.props;
+const { title, description, canonicalPath, robots, schemaType, publishedTime, modifiedTime } = Astro.props;
 ---
 
-<SiteLayout title={title} description={description} canonicalPath={canonicalPath}>
+<SiteLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  robots={robots}
+  schemaType={schemaType}
+  publishedTime={publishedTime}
+  modifiedTime={modifiedTime}
+>
   <slot name="head" slot="head" />
   <slot />
   <slot name="body-end" slot="body-end" />

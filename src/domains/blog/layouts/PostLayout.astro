@@ -26,6 +26,8 @@ const slug = getPostSlug(post);
   title={`${post.data.title} — itsdangerous`}
   description={post.data.description}
   canonicalPath={`/blog/posts/${slug}/`}
+  schemaType="Article"
+  publishedTime={post.data.pubDate}
 >
   <main class="article-shell" data-toc-collapsed>
     <div class="article__toc-bar" data-toc-topbar>
