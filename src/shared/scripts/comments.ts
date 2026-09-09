@@ -7,9 +7,11 @@ interface CommentList { items: Comment[]; total: number; next: string | null }
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 const visitorKey = 'itsdangerous-comment-visitor';
 function randomNickname() {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-  const values = crypto.getRandomValues(new Uint32Array(6));
-  return Array.from(values, value => alphabet[value % alphabet.length]).join('');
+  const subjects = ['매일', '가끔', '몰래', '오늘도', '언제나', '새벽마다'];
+  const actions = ['똥만먹는', '잠만자는', '길을잃은', '춤을추는', '책을읽는', '구름을쫓는'];
+  const animals = ['개구리', '고양이', '오리', '너구리', '두더지', '문어'];
+  const values = crypto.getRandomValues(new Uint32Array(3));
+  return `${subjects[values[0] % subjects.length]}${actions[values[1] % actions.length]}${animals[values[2] % animals.length]}`;
 }
 let memoryVisitor: string | undefined;
 function getVisitor() {
