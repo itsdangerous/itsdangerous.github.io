@@ -1,11 +1,11 @@
 ---
 title: "내일의 내가 오늘 밤마다 전화를 건다 — 3화. 열 시 십육 분"
 description: "토요일 밤, 수연이 문을 두드렸다. 나는 현관 안쪽에서 시간을 확인했다."
-pubDate: 2026-09-10T13:42:00.000Z
+pubDate: 2026-09-05T21:00:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
 slug: "tomorrow-calls-003"
-draft: true
+draft: false
 ---
 
 아침에 수연에게 전화를 걸었다.

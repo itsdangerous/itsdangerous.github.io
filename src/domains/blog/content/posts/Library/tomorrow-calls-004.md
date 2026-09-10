@@ -1,11 +1,11 @@
 ---
 title: "내일의 내가 오늘 밤마다 전화를 건다 — 4화. 없어지는 쪽"
 description: "이번에는 내가 전화를 걸었다. 어제의 나에게 한 문장을 전하자, 냉장고 소리가 멎었다."
-pubDate: 2026-09-10T13:43:00.000Z
+pubDate: 2026-09-08T20:30:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
 slug: "tomorrow-calls-004"
-draft: true
+draft: false
 ---
 
 “갑자기 뭔 소리야.”
