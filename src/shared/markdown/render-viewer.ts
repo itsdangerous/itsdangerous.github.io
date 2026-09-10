@@ -10,6 +10,7 @@ import rehypeStringify from 'rehype-stringify';
 import DOMPurify from 'dompurify';
 import { bundledLanguages, codeToHtml } from 'shiki';
 import remarkCallouts from './remark-callouts.js';
+import remarkKoreanEmphasis from './remark-korean-emphasis.js';
 
 const processor = unified()
   .use(remarkParse)
@@ -18,6 +19,7 @@ const processor = unified()
   .use(remarkSmartypants)
   .use(remarkDirective)
   .use(remarkCallouts)
+  .use(remarkKoreanEmphasis)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
   .use(rehypeStringify);

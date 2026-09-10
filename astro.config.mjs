@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import remarkDirective from 'remark-directive';
 import remarkCallouts from './src/shared/markdown/remark-callouts.js';
+import remarkKoreanEmphasis from './src/shared/markdown/remark-korean-emphasis.js';
 
 export default defineConfig({
   site: 'https://extransload.github.io',
@@ -17,6 +18,6 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [remarkDirective, remarkCallouts],
+    remarkPlugins: [remarkDirective, remarkCallouts, remarkKoreanEmphasis],
   },
 });
