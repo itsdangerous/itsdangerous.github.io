@@ -48,10 +48,12 @@ describe('blog routes', () => {
     expect(rootPage).not.toContain('book-splash__chapter-index');
     expect(rootPage).toContain('<a href="/works/">');
     expect(rootPage).toContain('<a href="/playroom/">');
-    expect(rootPage).toContain('<a href="/about/">');
+    expect(rootPage).toContain('href="/about/"');
     expect(rootPage).toContain('<a href="/works/">Works</a>');
     expect(rootPage).toContain('<a href="/playroom/">Playroom</a>');
     expect(rootPage).toContain('<a href="/about/">About</a>');
+    expect(rootPage).toContain('href="/guestbook/"');
+    expect(rootPage).toContain('book-splash__chapters--secondary');
     expect(rootPage).not.toContain('Personal Archive');
     expect(rootPage).not.toContain('Vol. I');
     expect(rootPage.indexOf('class="book-splash__crest"')).toBeLessThan(rootPage.indexOf('class="book-splash__center"'));
@@ -63,6 +65,7 @@ describe('blog routes', () => {
 
     expect(header).toContain('<a href="/blog/"');
     expect(header).toContain('<span>Home</span>');
+    expect(header).not.toContain('href="/guestbook/"');
     expect(header).toContain('<a href="/blog/posts/"');
     expect(header).toContain('<span>Posts</span>');
     expect(header).not.toContain('<a href="/"');

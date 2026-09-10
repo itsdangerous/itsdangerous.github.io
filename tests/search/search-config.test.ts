@@ -39,6 +39,19 @@ describe('Pagefind', () => {
     expect(modal).toContain('showImages: false');
   });
 
+  it('uses an enter icon instead of a platform shortcut label in both search controls', () => {
+    const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
+    const home = readFileSync('src/pages/blog/index.astro', 'utf8');
+    const searchButton = readFileSync('src/shared/components/SearchButton.astro', 'utf8');
+
+    expect(home).toContain('home-search__enter-icon');
+    expect(home).not.toContain('home-search__shortcut-key');
+    expect(modal).not.toContain('macPlatform');
+    expect(searchButton).toContain('site-header__control-hint');
+    expect(searchButton).not.toContain('⌘ K');
+    expect(searchButton).not.toContain('Ctrl K');
+  });
+
   it('opens the modal with the home query when the home search form is submitted', () => {
     const modal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
 

@@ -12,17 +12,10 @@ const { variant = 'control' } = Astro.props;
       <span>Search</span>
     </button>
   ) : (
-    <button type="button" data-search-open aria-label="검색 열기">
+    <button class="site-header__control-button" type="button" data-search-open aria-label="검색 열기">
       <img data-search-icon="dark" src="/images/search-eye-dark-embroidered.png" alt="" width="28" height="28" />
       <img data-search-icon="light" src="/images/search-eye-light-embroidered.png" alt="" width="28" height="28" />
-      <kbd data-search-shortcut>⌘ K</kbd>
+      <span class="site-header__control-hint" aria-hidden="true">검색 열기</span>
     </button>
   )
 }
-
-<script>
-  const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
-  document.querySelectorAll<HTMLElement>('[data-search-shortcut]').forEach((label) => {
-    label.textContent = macPlatform ? '⌘ K' : 'Ctrl K';
-  });
-</script>

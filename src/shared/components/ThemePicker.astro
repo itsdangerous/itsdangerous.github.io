@@ -1,7 +1,8 @@
-<button type="button" role="switch" aria-label="라이트 테마로 전환" aria-checked="false" data-theme-toggle>
+<button class="site-header__control-button" type="button" role="switch" aria-label="라이트 테마로 전환" aria-checked="false" data-theme-toggle>
   <span class="sr-only">테마 변경</span>
   <img data-theme-icon="sun" src="/images/theme-sun.png" alt="" width="28" height="28" />
   <img data-theme-icon="moon" src="/images/theme-moon-dark.png" alt="" width="28" height="28" />
+  <span class="site-header__control-hint" aria-hidden="true">라이트 테마로 전환</span>
 </button>
 
 <script>
@@ -11,7 +12,9 @@
     const isLight = document.documentElement.dataset.theme === 'light';
     if (toggle) {
       toggle.setAttribute('aria-checked', String(isLight));
-      toggle.setAttribute('aria-label', isLight ? '다크 테마로 전환' : '라이트 테마로 전환');
+      const label = isLight ? '다크 테마로 전환' : '라이트 테마로 전환';
+      toggle.setAttribute('aria-label', label);
+      toggle.querySelector('.site-header__control-hint')!.textContent = label;
     }
   };
   if (toggle) {

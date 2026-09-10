@@ -1,7 +1,3 @@
----
-import ThemePicker from './ThemePicker.astro';
----
-
 <div class="feature-bundle" data-feature-bundle>
   <button
     class="feature-bundle__toggle"
@@ -15,24 +11,15 @@ import ThemePicker from './ThemePicker.astro';
     <span aria-hidden="true">✦</span>
   </button>
   <div class="feature-bundle__panel" id="feature-bundle-panel" data-feature-panel hidden>
-    <div class="feature-bundle__controls">
-      <ThemePicker />
-      <button type="button" class="feature-bundle__tool-link" data-focus-mode aria-pressed="false" aria-label="집중해서 보기" title="집중해서 보기">
-        <svg class="feature-bundle__book-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path d="M11 5H6a1 1 0 0 0-1 1v5m16-6h5a1 1 0 0 1 1 1v5M5 21v5a1 1 0 0 0 1 1h5m10 0h5a1 1 0 0 0 1-1v-5M12 12h8m-8 4h8m-8 4h5" />
-        </svg>
-      </button>
-      <a class="feature-bundle__tool-link" href="/tools/markdown-viewer/?home=1" aria-label="Markdown Viewer" title="Markdown Viewer 홈 열기">
-        <svg class="feature-bundle__book-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path class="feature-bundle__book-cover" d="M3 8.5c4.5-1.8 8.7-1 13 1.8 4.3-2.8 8.5-3.6 13-1.8v17c-4.7-1.5-8.9-.8-13 1.5-4.1-2.3-8.3-3-13-1.5z" />
-          <path class="feature-bundle__book-pages" d="M5 6.5c4-.5 7.7.8 11 3.3 3.3-2.5 7-3.8 11-3.3v16c-4-.5-7.7.8-11 3.3-3.3-2.5-7-3.8-11-3.3z" />
-          <path d="M16 10v15M8 12l4.5 1.6M8 16l4.5 1.6M8 20l4.5 1.6M19.5 16.6l4.5-1.4M19.5 20.6l4.5-1.4" />
-          <path class="feature-bundle__book-ribbon" d="M21 7.5V13l2-1.5 2 .5V6.8" />
-        </svg>
-      </a>
-    </div>
+    <p class="feature-bundle__message">To be Continue</p>
   </div>
 </div>
+
+<button type="button" class="focus-mode-exit" data-focus-exit aria-label="집중 보기 종료" title="집중 보기 종료">
+  <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <path d="M11 5H6a1 1 0 0 0-1 1v5m16-6h5a1 1 0 0 1 1 1v5M5 21v5a1 1 0 0 0 1 1h5m10 0h5a1 1 0 0 0 1-1v-5M12 12h8m-8 4h8m-8 4h5" />
+  </svg>
+</button>
 
 <p class="focus-mode-notice" role="status" aria-live="polite" data-focus-notice hidden></p>
 
@@ -43,7 +30,8 @@ import ThemePicker from './ThemePicker.astro';
 
   if (bundle && toggle && panel && !toggle.dataset.bound) {
     let isOpen = false;
-    const focusButton = bundle.querySelector<HTMLButtonElement>('[data-focus-mode]');
+    const focusButton = document.querySelector<HTMLButtonElement>('[data-focus-mode]');
+    const focusExit = document.querySelector<HTMLButtonElement>('[data-focus-exit]');
     const notice = document.querySelector<HTMLElement>('[data-focus-notice]');
     let focusAnimation: Animation | undefined;
     let noticeAnimation: Animation | undefined;
@@ -52,7 +40,8 @@ import ThemePicker from './ThemePicker.astro';
       focusButton?.setAttribute('aria-pressed', String(enabled));
       const label = enabled ? '집중 보기 종료 (Esc)' : '집중해서 보기';
       focusButton?.setAttribute('aria-label', label);
-      focusButton?.setAttribute('title', label);
+      const focusHint = focusButton?.querySelector('.site-header__control-hint');
+      if (focusHint) focusHint.textContent = label;
       setOpen(false);
       toggle.focus({ preventScroll: true });
       window.dispatchEvent(new Event('resize'));
@@ -79,6 +68,7 @@ import ThemePicker from './ThemePicker.astro';
     focusButton?.addEventListener('click', () => {
       setFocusMode(!document.documentElement.hasAttribute('data-focus-mode'));
     });
+    focusExit?.addEventListener('click', () => setFocusMode(false));
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && document.documentElement.hasAttribute('data-focus-mode')) {
         setFocusMode(false);
@@ -88,7 +78,6 @@ import ThemePicker from './ThemePicker.astro';
     let dragged = false;
     let drag: { id: number; x: number; y: number; left: number; top: number } | undefined;
     const inset = 12;
-    const hasActiveTool = () => Boolean(panel.querySelector('[aria-pressed="true"]'));
     const placePanel = () => {
       if (panel.hidden) return;
       const rect = bundle.getBoundingClientRect();
@@ -120,23 +109,6 @@ import ThemePicker from './ThemePicker.astro';
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const folded = { clipPath: leftward ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)' };
       const unfolded = { clipPath: 'inset(0 0 0 0)' };
-      if (open) {
-        const items = [...panel.querySelectorAll<HTMLElement>('.feature-bundle__controls > button, .feature-bundle__controls > a')];
-        if (leftward) items.reverse();
-        items.forEach((item, index) => {
-          item.getAnimations().forEach(effect => effect.cancel());
-          item.animate([
-            { opacity: 0, transform: reducedMotion ? 'none' : `translateX(${leftward ? 24 : -24}px)` },
-            { opacity: 1, transform: 'translateX(0)' },
-          ], {
-            duration: reducedMotion ? 160 : 320,
-            delay: reducedMotion ? index * 35 : 70 + index * 100,
-            fill: 'backwards',
-            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-          });
-        });
-      }
-      if (!open && hasActiveTool()) return;
       const openingFrames = reducedMotion ? [
         { ...folded, transform: 'translateX(0)', offset: 0 },
         { ...unfolded, transform: `translateX(${leftward ? -6 : 6}px)`, offset: 0.7 },
@@ -151,7 +123,7 @@ import ThemePicker from './ThemePicker.astro';
         duration: reducedMotion ? 260 : open ? 720 : 240,
         easing: open && !reducedMotion ? 'linear' : 'cubic-bezier(0.4, 0, 0.2, 1)',
       });
-      animation.onfinish = () => { panel.hidden = !isOpen && !hasActiveTool(); };
+      animation.onfinish = () => { panel.hidden = !isOpen; };
     };
 
     toggle.addEventListener('pointerdown', (event) => {

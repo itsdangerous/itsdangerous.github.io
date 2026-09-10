@@ -26,11 +26,6 @@
   let homePagefind: { triggerSearch: (term: string) => void } | undefined;
   let modalPagefind: { triggerSearch: (term: string) => void } | undefined;
 
-  const macPlatform = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
-  document.querySelectorAll<HTMLElement>('.home-search__shortcut-key').forEach((key) => {
-    key.textContent = macPlatform ? '⌘' : 'Ctrl';
-  });
-
   const initializeHomeSearch = async () => {
     if (!homeSearchResults || homeInitialized) return;
     homeInitialized = true;

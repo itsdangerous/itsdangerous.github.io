@@ -39,7 +39,10 @@ const adminOrigin = adminUrl?.replace(/\/+$/, '').replace(/\/admin$/, '') || '';
           <a href="/blog/">Journal</a>
           <a href="/works/">Works</a>
           <a href="/playroom/">Playroom</a>
+        </nav>
+        <nav class="book-splash__chapters book-splash__chapters--secondary" aria-label="추가 사이트 공간">
           <a href="/about/">About</a>
+          <a href="/guestbook/">Guestbook</a>
         </nav>
       </div>
       {adminUrl && <div class="book-splash__admin" aria-label="관리자 메뉴" data-admin-controls hidden>

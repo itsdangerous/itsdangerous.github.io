@@ -4,9 +4,14 @@ test('sealed-volume splash keeps its chapter navigation inside the mobile viewpo
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
-  const chapters = page.locator('.book-splash__chapters');
+  const chapters = page.locator('.book-splash__chapters').first();
+  const secondaryChapters = page.locator('.book-splash__chapters--secondary');
   await expect(chapters).toBeVisible();
+  await expect(secondaryChapters).toBeVisible();
   expect(await chapters.evaluate((element) => (
+    element.getBoundingClientRect().bottom <= window.innerHeight
+  ))).toBe(true);
+  expect(await secondaryChapters.evaluate((element) => (
     element.getBoundingClientRect().bottom <= window.innerHeight
   ))).toBe(true);
 });
@@ -14,12 +19,65 @@ test('sealed-volume splash keeps its chapter navigation inside the mobile viewpo
 test('root splash links to each independent site space', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.locator('.book-splash__chapters a')).toHaveCount(4);
+  await expect(page.locator('.book-splash__chapters a')).toHaveCount(5);
   await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/works/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/playroom/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters')).toContainText('Journal');
+  await expect(page.locator('.book-splash__chapters a[href="/guestbook/"]')).toBeVisible();
+  await expect(page.locator('.book-splash__chapters--secondary a')).toHaveCount(2);
+  await expect(page.locator('.book-splash__chapters:not(.book-splash__chapters--secondary) a')).toHaveCount(3);
+  await expect(page.locator('.book-splash__chapters').first()).toContainText('Journal');
+});
+
+test('splash secondary links stay small and stacked at the lower left', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  const secondary = page.locator('.book-splash__chapters--secondary');
+  const face = page.locator('.book-splash__face');
+  const secondaryBox = await secondary.boundingBox();
+  const faceBox = await face.boundingBox();
+  expect(secondaryBox).not.toBeNull();
+  expect(faceBox).not.toBeNull();
+  expect(secondaryBox!.x).toBeLessThan(faceBox!.x + 140);
+  expect(await secondary.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
+  expect(await secondary.locator('a').first().evaluate((element) => getComputedStyle(element).fontSize)).toBe('14px');
+
+  const [aboutBox, guestbookBox] = await Promise.all([
+    secondary.locator('a[href="/about/"]').boundingBox(),
+    secondary.locator('a[href="/guestbook/"]').boundingBox(),
+  ]);
+  expect(aboutBox).not.toBeNull();
+  expect(guestbookBox).not.toBeNull();
+  expect(aboutBox!.y).toBeLessThan(guestbookBox!.y);
+
+  await expect(secondary.locator('.book-splash__chapter-hint')).toHaveCount(0);
+});
+
+test('sidebar reading icons show collapse-style tooltips on hover and focus', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/blog/');
+
+  const controls = page.locator('.site-header__controls');
+  const themeToggle = controls.locator('[data-theme-toggle]');
+  const focusToggle = controls.locator('[data-focus-mode]');
+  const searchButton = controls.locator('[data-search-open]');
+
+  await expect(themeToggle.locator('.site-header__control-hint')).toHaveText('라이트 테마로 전환');
+  await expect(focusToggle.locator('.site-header__control-hint')).toHaveText('집중해서 보기');
+  await expect(searchButton.locator('.site-header__control-hint')).toHaveText('검색 열기');
+  await expect(themeToggle.locator('.site-header__control-hint')).toBeHidden();
+  await themeToggle.hover();
+  await expect(themeToggle.locator('.site-header__control-hint')).toBeVisible();
+  expect(await themeToggle.evaluate((element) => getComputedStyle(element).filter)).toBe('none');
+  expect(await themeToggle.locator('.site-header__control-hint').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { filter: style.filter, textShadow: style.textShadow };
+  })).toEqual({ filter: 'none', textShadow: 'none' });
+  await focusToggle.focus();
+  await expect(focusToggle.locator('.site-header__control-hint')).toBeVisible();
+  expect(await focusToggle.evaluate((element) => getComputedStyle(element).filter)).toBe('none');
 });
 
 test('independent spaces show a standalone coming soon page', async ({ page }) => {
@@ -36,6 +94,7 @@ test('blog sidebar home and posts links stay inside the blog', async ({ page }) 
 
   await expect(page.locator('.site-header nav a[href="/blog/"] span')).toHaveText('Home');
   await expect(page.locator('.site-header nav a[href="/blog/posts/"] span')).toHaveText('Posts');
+  await expect(page.locator('.site-header nav a[href="/guestbook/"]')).toHaveCount(0);
 
   await page.goto('/blog/posts/');
   await expect(page.locator('.site-header nav a[href="/blog/"]')).not.toHaveClass(/is-current/);
@@ -130,36 +189,62 @@ test('short pages fill at least the viewport height', async ({ page }) => {
   }
 });
 
-test('sidebar search matches the primary navigation while feature controls stay compact', async ({ page }) => {
+test('sidebar keeps tools and reading controls in their intended locations', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/blog/');
 
-  const controls = page.locator('.feature-bundle__controls');
+  const sidebar = page.locator('.site-header');
+  const controls = sidebar.locator('.site-header__controls');
+  const themeToggle = controls.locator('[data-theme-toggle]');
+  const focusToggle = controls.locator('[data-focus-mode]');
+  const searchButton = controls.locator('[data-search-open]');
+
+  await expect(sidebar.locator('nav a[href="/blog/tools/markdown-viewer/?home=1"]')).toHaveText('Markdown Viewer');
+  await expect(sidebar.locator('nav a[href="/guestbook/"]')).toHaveCount(0);
+  await expect(controls).toBeVisible();
+  await expect(searchButton.locator('[data-search-icon="dark"]')).toBeVisible();
+  await expect(searchButton.locator('.site-header__control-hint')).toHaveText('검색 열기');
+  await expect(searchButton.locator('kbd')).toHaveCount(0);
+  await expect(themeToggle).toBeVisible();
+  await expect(themeToggle.locator('.site-header__control-hint')).toHaveText('라이트 테마로 전환');
+  await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
+  await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeHidden();
+  await expect(focusToggle).toBeVisible();
+  await expect(focusToggle.locator('.site-header__control-hint')).toHaveText('집중해서 보기');
+  await expect(controls).toHaveCSS('justify-content', 'space-between');
+
+  const [sidebarBottom, controlsBottom] = await Promise.all([
+    sidebar.boundingBox(),
+    controls.boundingBox(),
+  ]);
+  expect(sidebarBottom).not.toBeNull();
+  expect(controlsBottom).not.toBeNull();
+  expect(controlsBottom!.y + controlsBottom!.height).toBeGreaterThan(sidebarBottom!.y + sidebarBottom!.height - 120);
+
+  const [searchBox, themeBox, focusBox] = await Promise.all([
+    searchButton.boundingBox(),
+    themeToggle.boundingBox(),
+    focusToggle.boundingBox(),
+  ]);
+  expect(searchBox).not.toBeNull();
+  expect(themeBox).not.toBeNull();
+  expect(focusBox).not.toBeNull();
+  expect(themeBox!.x).toBeLessThan(focusBox!.x);
+  expect(focusBox!.x).toBeLessThan(searchBox!.x);
+
   await page.locator('[data-feature-toggle]').click();
   await expect(page.locator('[data-feature-panel]')).toBeVisible();
   await expect(page.locator('[data-feature-toggle]')).toHaveAttribute('aria-expanded', 'true');
-  const themeToggle = controls.locator('[data-theme-toggle]');
-  const searchButton = page.locator('.site-header nav [data-search-open]');
-  const [themeBox, searchBox] = await Promise.all([themeToggle.boundingBox(), searchButton.boundingBox()]);
-
-  expect(themeBox).not.toBeNull();
-  expect(searchBox).not.toBeNull();
-  expect(searchBox!.width).toBeGreaterThan(80);
-  await expect(controls).toHaveCSS('display', 'flex');
-  await expect(controls).toHaveCSS('justify-content', 'flex-start');
-  await expect(themeToggle).not.toHaveAttribute('class');
-  await expect(searchButton).not.toHaveAttribute('class');
+  await expect(page.locator('[data-feature-panel]')).toHaveText('To be Continue');
+  await expect(page.locator('[data-feature-panel] [data-theme-toggle]')).toHaveCount(0);
+  await expect(page.locator('[data-feature-panel] [data-focus-mode]')).toHaveCount(0);
   await expect(themeToggle.locator('img[data-theme-icon="sun"]')).toHaveAttribute('src', '/images/theme-sun.png');
   await expect(themeToggle.locator('img[data-theme-icon="moon"]')).toHaveAttribute('src', '/images/theme-moon-dark.png');
   expect(await themeToggle.locator('img[data-theme-icon="moon"]').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
-  await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeVisible();
-  await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeHidden();
-  await expect(searchButton.locator('span')).toHaveText('Search');
-  await expect(searchButton.locator('svg')).toHaveCount(0);
-  await expect(searchButton).toHaveCSS('font-family', /Cormorant/);
+  await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeHidden();
+  await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
   await expect(themeToggle.locator('[data-theme-icon="moon"]')).toHaveCSS('width', '28px');
-  await expect(searchButton).toHaveCSS('border-top-width', '0px');
-  await expect(searchButton).toHaveCSS('background-image', 'none');
+  await expect(searchButton.locator('[data-search-icon="dark"]')).toHaveAttribute('src', '/images/search-eye-dark-embroidered.png');
 
   await searchButton.click();
   await expect(page.locator('[data-search-modal]')).toBeVisible();
@@ -171,9 +256,31 @@ test('sidebar search matches the primary navigation while feature controls stay 
   await themeToggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await expect(themeToggle).toHaveAttribute('aria-checked', 'true');
-  await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeHidden();
-  await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeVisible();
-  await expect(searchButton.locator('span')).toBeVisible();
+  await expect(themeToggle.locator('.site-header__control-hint')).toHaveText('다크 테마로 전환');
+  await expect(themeToggle.locator('[data-theme-icon="moon"]')).toBeVisible();
+  await expect(themeToggle.locator('[data-theme-icon="sun"]')).toBeHidden();
+  await expect(searchButton.locator('[data-search-icon="light"]')).toBeVisible();
+});
+
+test('focus mode keeps a lower-left exit control visible', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/blog/posts/macos-space/');
+
+  await page.locator('[data-focus-mode]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-focus-mode', '');
+  await expect(page.locator('.site-header')).toBeHidden();
+
+  const exitButton = page.locator('[data-focus-exit]');
+  await expect(exitButton).toBeVisible();
+  await expect(exitButton).toHaveAttribute('title', '집중 보기 종료');
+  const exitBox = await exitButton.boundingBox();
+  expect(exitBox).not.toBeNull();
+  expect(exitBox!.x).toBeLessThan(48);
+  expect(exitBox!.y).toBeGreaterThan(780);
+
+  await exitButton.click();
+  await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode');
+  await expect(page.locator('.site-header')).toBeVisible();
 });
 
 test('home search opens the modal with the typed query', async ({ page }) => {

@@ -1,5 +1,6 @@
 ---
 import SearchButton from './SearchButton.astro';
+import ThemePicker from './ThemePicker.astro';
 
 const pathname = Astro.url.pathname;
 const isCurrent = (href: string) => href === '/blog/'
@@ -26,9 +27,19 @@ const isCurrent = (href: string) => href === '/blog/'
       <a href="/blog/" class:list={{ 'is-current': isCurrent('/blog/') }}><span>Home</span></a>
       <a href="/blog/posts/" class:list={{ 'is-current': isCurrent('/blog/posts/') }}><span>Posts</span></a>
       <a href="/blog/categories/" class:list={{ 'is-current': isCurrent('/blog/categories/') }}><span>Categories</span></a>
-      <a href="/guestbook/" class:list={{ 'is-current': isCurrent('/guestbook/') }}><span>Guestbook</span></a>
-      <SearchButton variant="navigation" />
+      <a href="/blog/tools/markdown-viewer/?home=1"><span>Markdown Viewer</span></a>
     </nav>
+    <div class="site-header__controls" aria-label="읽기 도구">
+      <ThemePicker />
+      <button type="button" class="site-header__focus-toggle site-header__control-button" data-focus-mode aria-pressed="false" aria-label="집중해서 보기">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M11 5H6a1 1 0 0 0-1 1v5m16-6h5a1 1 0 0 1 1 1v5M5 21v5a1 1 0 0 0 1 1h5m10 0h5a1 1 0 0 0 1-1v-5M12 12h8m-8 4h8m-8 4h5" />
+        </svg>
+        <span class="sr-only">집중해서 보기</span>
+        <span class="site-header__control-hint" aria-hidden="true">집중해서 보기</span>
+      </button>
+      <SearchButton />
+    </div>
   </div>
 </header>
 
