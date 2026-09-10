@@ -229,9 +229,10 @@ describe('blog routes', () => {
     const searchModal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
 
     expect(searchModal).toContain("[data-theme='light'] .search-modal__dialog");
-    expect(searchModal).toContain("[data-theme='light'] .search-modal::before");
-    expect(searchModal).toContain("background-image: url('/article-manuscript-paper-texture.webp');");
-    expect(searchModal).toContain('background: url(\'/splash-leather-cover-texture.webp\') center / cover no-repeat;');
+    expect(searchModal).not.toContain('.search-modal::before');
+    expect(searchModal).not.toContain("url('/article-manuscript-paper-texture.webp')");
+    expect(searchModal).not.toContain("url('/splash-leather-cover-texture.webp')");
+    expect(searchModal).toContain('background-color: var(--color-surface);');
     expect(searchModal).toContain('background-blend-mode: normal;');
   });
 
