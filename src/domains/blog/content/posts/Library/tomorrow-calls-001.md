@@ -4,7 +4,7 @@ description: "밤 11시 17분, 내 번호로 전화가 왔다. 상대는 내일 
 pubDate: 2026-09-10T13:40:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
-slug: "tomorrow-calls-one"
+slug: "tomorrow-calls-001"
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: "이번에는 내가 전화를 걸었다. 어제의 나에게 한 �
 pubDate: 2026-09-10T13:43:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
-slug: "tomorrow-calls-four"
+slug: "tomorrow-calls-004"
 draft: true
 ---
 

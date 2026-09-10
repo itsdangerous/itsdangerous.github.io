@@ -4,7 +4,7 @@ description: "전화는 매일 같은 시각에 왔다. 조언은 유용했고, 
 pubDate: 2026-09-10T13:41:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
-slug: "tomorrow-calls-two"
+slug: "tomorrow-calls-002"
 draft: false
 ---
 

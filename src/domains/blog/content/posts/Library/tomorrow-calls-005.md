@@ -4,7 +4,7 @@ description: "전화가 다시 울렸다. 받기 버튼에 손가락을 올리�
 pubDate: 2026-09-10T13:44:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
-slug: "tomorrow-calls-five"
+slug: "tomorrow-calls-005"
 draft: true
 ---
 

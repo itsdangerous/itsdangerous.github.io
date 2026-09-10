@@ -36,6 +36,6 @@ describe('post content', () => {
     expect(posts.every((post: { data: { pubDate: unknown } }) => post.data.pubDate instanceof Date)).toBe(true);
     const slugs: string[] = posts.map((post: { id: string }) => getPostSlug(post));
     expect(new Set(slugs).size).toBe(posts.length);
-    expect(slugs.every((slug) => /^[a-z]+(?:-[a-z]+)*$/.test(slug))).toBe(true);
+    expect(slugs.every((slug) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))).toBe(true);
   });
 });

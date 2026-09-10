@@ -4,7 +4,7 @@ description: "토요일 밤, 수연이 문을 두드렸다. 나는 현관 안쪽
 pubDate: 2026-09-10T13:42:00.000Z
 category: "Library"
 tags: ["소설", "미스터리", "내일의 내가 오늘 밤마다 전화를 건다"]
-slug: "tomorrow-calls-three"
+slug: "tomorrow-calls-003"
 draft: true
 ---
 
