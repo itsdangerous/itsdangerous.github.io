@@ -15,12 +15,11 @@ import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnha
     </div>
     <article class="article">
       <header class="article__header markdown-viewer__header">
-        <p class="eyebrow">Tools</p>
         <h1>Markdown Viewer</h1>
-        <p class="article__description">Markdown 파일을 이곳에 끌어다 놓으면 블로그 스타일로 펼쳐집니다.</p>
       </header>
-      <input type="file" accept=".md,.markdown,text/markdown" data-file-input hidden />
-      <section class="markdown-viewer__dropzone" data-dropzone aria-label="Markdown 파일 놓기">
+      <input id="markdown-file-input" class="markdown-viewer__file-input" type="file" accept=".md,.markdown,text/markdown" data-file-input />
+      <section class="markdown-viewer__dropzone" data-dropzone aria-label="Markdown 파일 놓기" aria-describedby="markdown-viewer-help">
+        <p id="markdown-viewer-help" class="markdown-viewer__help">Markdown 파일을 이곳에 끌어다 놓으면 블로그 스타일로 펼쳐집니다.</p>
         <p>Markdown 파일을 끌어다 놓으세요</p>
         <span>또는</span>
         <button type="button" class="markdown-viewer__choose" data-choose-file>파일 선택</button>
@@ -224,12 +223,17 @@ import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnha
     }
   };
 
+  const openFilePicker = () => {
+    if (!input) return;
+    if ('showPicker' in input && typeof input.showPicker === 'function') input.showPicker();
+    else input.click();
+  };
   input?.addEventListener('change', () => {
     void renderFile(input.files?.[0]);
     input.value = '';
   });
   viewer?.querySelectorAll<HTMLButtonElement>('[data-choose-file]').forEach(button => {
-    button.addEventListener('click', () => input?.click());
+    button.addEventListener('click', openFilePicker);
   });
   let dragDepth = 0;
   const resetViewer = (navigate = true) => {
@@ -268,19 +272,19 @@ import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnha
       tocTopToggle?.setAttribute('aria-expanded', 'false');
     }
   });
-  viewer?.addEventListener('dragenter', (event) => {
+  dropzone?.addEventListener('dragenter', (event) => {
     if (!event.dataTransfer?.types.includes('Files')) return;
     event.preventDefault();
     dragDepth++;
     viewer.dataset.dragging = 'true';
   });
-  viewer?.addEventListener('dragover', (event) => {
+  dropzone?.addEventListener('dragover', (event) => {
     if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
   });
-  viewer?.addEventListener('dragleave', () => {
+  dropzone?.addEventListener('dragleave', () => {
     if (--dragDepth <= 0) { dragDepth = 0; delete viewer.dataset.dragging; }
   });
-  viewer?.addEventListener('drop', (event) => {
+  dropzone?.addEventListener('drop', (event) => {
     if (!event.dataTransfer?.types.includes('Files')) return;
     event.preventDefault();
     dragDepth = 0;

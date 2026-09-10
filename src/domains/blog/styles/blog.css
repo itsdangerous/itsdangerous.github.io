@@ -234,7 +234,8 @@
   word-break: break-word;
 }
 
-.markdown-viewer__header { margin-bottom: 2rem; }
+.markdown-viewer__header { margin-bottom: 2rem; text-align: center; }
+.markdown-viewer__header h1 { margin-bottom: 0; }
 .markdown-viewer[data-toc-empty] > .article {
   width: min(var(--content-width), calc(100% - 2rem));
   margin-inline: auto;
@@ -256,6 +257,16 @@
   color: var(--color-text-muted);
   text-align: center;
 }
+.markdown-viewer__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.markdown-viewer__help { max-width: 34rem; margin: 0 0 .4rem; color: var(--color-text); line-height: 1.7; text-align: center; }
 .markdown-viewer[data-dragging] .markdown-viewer__dropzone,
 .markdown-viewer__dropzone:hover,
 .markdown-viewer__dropzone:focus-within {
