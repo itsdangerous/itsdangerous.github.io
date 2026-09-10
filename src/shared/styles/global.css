@@ -127,6 +127,7 @@ a {
 .site-header {
   --sidebar-accent: #c9ac66;
   --sidebar-accent-strong: #c9ac66;
+  container-type: inline-size;
   position: sticky;
   top: 0.5rem;
   align-self: start;
@@ -370,12 +371,22 @@ a {
 
 .site-header__brand-image {
   display: block;
-  width: min(100%, 12rem);
+  flex: 0 0 12rem;
+  width: 12rem;
+  max-width: none;
   height: auto;
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 76%))
     drop-shadow(0 2px 3px rgb(0 0 0 / 28%));
   user-select: none;
   pointer-events: none;
+}
+
+@container (max-width: 13rem) {
+  .site-header__brand-image {
+    flex-basis: calc(100cqw - 1rem);
+    width: calc(100cqw - 1rem);
+    max-width: calc(100cqw - 1rem);
+  }
 }
 
 .site-header__controls {
@@ -1350,6 +1361,11 @@ h1 span {
   .site-header__brand {
     padding-bottom: 0;
     border-bottom: 0;
+  }
+  .site-header__brand-image {
+    flex-basis: min(100%, 12rem);
+    width: min(100%, 12rem);
+    max-width: 100%;
   }
   .site-header nav {
     flex-direction: row;

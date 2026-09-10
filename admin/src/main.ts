@@ -7,6 +7,7 @@ import { enhanceControls } from './controls';
 import './workspace-ui.css';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
+app.innerHTML = '<main class="login"><p class="eyebrow">PRIVATE ARCHIVE</p><h1>관리자 연결 확인 중</h1><p>GitHub 로그인 상태를 확인하고 있습니다.</p></main>';
 let csrfToken = '';
 let activePost: Post | undefined;
 let saveInFlight: Promise<void> | undefined;
@@ -359,7 +360,7 @@ window.addEventListener('beforeunload', event => { if (editorDirty && currentVie
 
 const viewPaths: Record<string, string> = { analytics: '/admin/', posts: '/admin/posts/', editor: '/admin/editor/', comments: '/admin/comments/' };
 const viewFromPath = () => Object.entries(viewPaths).find(([, path]) => location.pathname === path)?.[0] ?? 'analytics';
-async function renderView(view: string, pushHistory = true) { if (!await flushEditor()) return; if (pushHistory && location.pathname !== viewPaths[view]) history.pushState({ view }, '', viewPaths[view]); try { if (view === 'analytics') await renderAnalytics(); else if (view === 'editor') renderEditor(); else if (view === 'comments') await renderComments(); else await renderPosts(); } catch { shell('<div class="login"><h1>관리자 연결이 필요합니다</h1><p>Worker 인증이 설정되면 GitHub 계정으로 로그인할 수 있습니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></div>'); } }
+async function renderView(view: string, pushHistory = true) { if (!await flushEditor()) return; if (pushHistory && location.pathname !== viewPaths[view]) history.pushState({ view }, '', viewPaths[view]); try { if (view === 'analytics') await renderAnalytics(); else if (view === 'editor') renderEditor(); else if (view === 'comments') await renderComments(); else await renderPosts(); } catch { shell('<div class="login"><h1>화면을 불러오지 못했습니다</h1><p>관리자 데이터 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.</p><button class="primary" type="button" id="retry-view">다시 시도</button></div>'); document.querySelector<HTMLButtonElement>('#retry-view')!.onclick = () => void renderView(view, false); } }
 
 window.addEventListener('popstate', () => { void renderView(viewFromPath(), false); });
 api.session().then(session => { csrfToken = session.csrfToken; void renderView(viewFromPath(), false); }).catch(() => { app.innerHTML = '<main class="login"><p class="eyebrow">PRIVATE ARCHIVE</p><h1>관리자 서재</h1><p>본인 GitHub 계정으로 로그인해 글과 통계를 관리합니다.</p><a class="primary link-button" href="/auth/github">GitHub로 로그인</a></main>'; });
