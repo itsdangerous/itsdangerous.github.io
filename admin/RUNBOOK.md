@@ -5,7 +5,7 @@
 이 절차를 완료하면 다음 운영 흐름을 사용할 수 있습니다.
 
 ```text
-itsdangerous.github.io/admin
+extransload.github.io/admin
         ↓
 GitHub 로그인
         ↓
@@ -72,7 +72,7 @@ https://api.github.com/users/본인사용자이름
 
 | 입력란 | 입력할 내용 |
 |---|---|
-| Application name | `itsdangerous admin` |
+| Application name | `extransload admin` |
 | Homepage URL | 관리자 Worker 주소 |
 | Authorization callback URL | `<관리자 Worker 주소>/auth/callback` |
 
@@ -90,16 +90,16 @@ D1은 관리자 화면에서 작성한 초안을 보관하는 비공개 데이�
 2. `Workers & Pages` → `Create application`을 누릅니다.
 3. 지금 보이는 `Make something new` 화면에서는 **`Start with Hello World!`**를 선택합니다.
 4. `Connect GitHub`는 공개 사이트 repository를 연결하는 메뉴이므로 이 작업에서는 선택하지 않습니다.
-5. Worker 이름을 `itsdangerous-admin`으로 정합니다.
+5. Worker 이름을 `extransload-admin`으로 정합니다.
 6. 생성 또는 배포 화면에서 Worker를 먼저 만듭니다. 이 단계에서 나오는 `workers.dev` 주소는 임시로 메모합니다.
 7. 왼쪽 메뉴에서 `Storage & databases` → `D1 SQL Database`를 엽니다.
 8. `Create database`를 누릅니다.
-9. 데이터베이스 이름을 정확히 `itsdangerous-admin`으로 입력합니다.
+9. 데이터베이스 이름을 정확히 `extransload-admin`으로 입력합니다.
 10. 생성 후 표시되는 `Database ID`를 복사합니다.
 11. 다음 파일을 엽니다.
 
 ```text
-/Users/gyu/Documents/projects/itsdangerous.github.io/admin/wrangler.jsonc
+admin/wrangler.jsonc (현재 열어 둔 저장소 기준)
 ```
 
 12. 아래 값만 Cloudflare의 실제 Database ID로 바꿉니다.
@@ -114,7 +114,7 @@ OAuth App과 GitHub App은 서로 다른 앱입니다. OAuth App은 로그인용
 
 여기서 말하는 **관리자 Worker 주소**는 Cloudflare에서 Worker를 만든 뒤 나온 `workers.dev` URL입니다. 별도로 새 주소를 만드는 것이 아닙니다.
 
-Cloudflare 대시보드에 표시된 Worker 주소 전체를 `<WORKER_URL>`에 대입합니다. 예를 들어 Worker 주소가 `https://itsdangerous-admin.example.workers.dev`라면 해당 주소를 그대로 사용합니다.
+Cloudflare 대시보드에 표시된 Worker 주소 전체를 `<WORKER_URL>`에 대입합니다. 예를 들어 Worker 주소가 `https://extransload-admin.example.workers.dev`라면 해당 주소를 그대로 사용합니다.
 
 ```text
 Homepage URL
@@ -154,7 +154,7 @@ https://github.com/settings/installations/12345678
 `GITHUB_REPO` 값은 다음 형식입니다.
 
 ```text
-소유자이름/itsdangerous.github.io
+소유자이름/extransload.github.io
 ```
 
 ## 5. Google 통계 권한 만들기
@@ -181,7 +181,7 @@ Google Search Console API
 ### 서비스 계정 만들기
 
 1. `IAM & Admin` → `Service Accounts` → `Create service account`를 누릅니다.
-2. 이름을 `itsdangerous-admin-reader`로 입력합니다.
+2. 이름을 `extransload-admin-reader`로 입력합니다.
 3. 생성된 서비스 계정을 열고 `Keys` → `Add key` → `Create new key` → `JSON`을 선택합니다.
 4. 다운로드된 JSON 파일을 안전하게 보관합니다.
 5. JSON 안의 `client_email`과 `private_key`를 나중에 사용합니다.
@@ -193,11 +193,11 @@ Google Analytics 화면에 사이트나 Property가 보이지 않는 경우에�
 1. [Google Analytics](https://analytics.google.com/)에 로그인합니다.
 2. 왼쪽 아래의 `Admin`(톱니바퀴)을 누릅니다.
 3. `Property` 열에서 `Create property`를 누릅니다.
-4. Property name에는 사이트 이름을 입력합니다. 예: `itsdangerous.github.io`
+4. Property name에는 사이트 이름을 입력합니다. 예: `extransload.github.io`
 5. Reporting time zone은 `South Korea` 또는 `Seoul`로 선택합니다.
 6. Currency는 본인이 사용할 통화로 선택하고 `Next` → `Create`를 누릅니다.
 7. 데이터 수집 방법을 묻는 화면에서 `Web`을 선택합니다.
-8. Website URL에는 `https://itsdangerous.github.io`를 입력합니다. URL 입력란에 `https://`를 중복해서 넣지 않습니다.
+8. Website URL에는 `https://extransload.github.io`를 입력합니다. URL 입력란에 `https://`를 중복해서 넣지 않습니다.
 9. Stream name에는 사이트 이름을 입력하고 `Create stream`을 누릅니다.
 10. 생성된 Web stream의 상세 화면에서 `Measurement ID`를 확인합니다. 형식은 `G-XXXXXXX`입니다.
 
@@ -207,7 +207,7 @@ Google Analytics 화면에 사이트나 Property가 보이지 않는 경우에�
 
 1. [Google Analytics](https://analytics.google.com/)에 로그인합니다.
 2. 왼쪽 아래의 `Admin`(톱니바퀴)을 누릅니다.
-3. 화면 위쪽의 `Property` 선택 상자에서 방금 만든 사이트 Property를 선택합니다. Property가 여러 개면 이름이 `itsdangerous.github.io`인 항목을 선택합니다.
+3. 화면 위쪽의 `Property` 선택 상자에서 방금 만든 사이트 Property를 선택합니다. Property가 여러 개면 이름이 `extransload.github.io`인 항목을 선택합니다.
 4. `Property access management`를 누릅니다. 화면에 따라 `Property` 열 아래에 표시됩니다.
 5. 오른쪽 위의 `+` 또는 `Add users`를 누릅니다.
 6. Google Cloud 서비스 계정 JSON의 `client_email` 값을 복사해 붙여 넣습니다. 일반 Google 계정 이메일이 아니라 `...iam.gserviceaccount.com`으로 끝나는 서비스 계정 이메일입니다.
@@ -243,7 +243,7 @@ Search Console에서 사이트가 아직 보이지 않는다면 서비스 계정
 4. 다음 주소를 끝의 `/`까지 그대로 입력합니다.
 
 ```text
-https://itsdangerous.github.io/
+https://extransload.github.io/
 ```
 
 5. `Continue`를 누릅니다.
@@ -255,7 +255,7 @@ HTML 태그를 코드에 추가하기 어렵다면 Search Console이 제시하�
 
 #### 서비스 계정 이메일 추가
 
-1. Search Console 속성 선택 상자에서 방금 등록하고 소유권 확인을 완료한 `https://itsdangerous.github.io/` 속성을 선택합니다.
+1. Search Console 속성 선택 상자에서 방금 등록하고 소유권 확인을 완료한 `https://extransload.github.io/` 속성을 선택합니다.
 2. `Settings` → `Users and permissions`로 이동합니다.
 3. `Add user`를 누릅니다.
 4. Google Cloud 서비스 계정 JSON의 `client_email`을 입력합니다. 일반 Google 계정 이메일이 아니라 `...iam.gserviceaccount.com`으로 끝나는 주소입니다.
@@ -265,7 +265,7 @@ HTML 태그를 코드에 추가하기 어렵다면 Search Console이 제시하�
 
 ## 6. Cloudflare에 값 등록
 
-Cloudflare Dashboard → `Workers & Pages` → `itsdangerous-admin` → `Settings`로 이동합니다.
+Cloudflare Dashboard → `Workers & Pages` → `extransload-admin` → `Settings`로 이동합니다.
 
 ### Variables에 등록할 값
 
@@ -285,13 +285,13 @@ ADMIN_URL
 |---|---|
 | `GITHUB_CLIENT_ID` | **GitHub OAuth App**의 `Client ID` |
 | `GITHUB_ALLOWED_USER_ID` | 1단계의 숫자 ID |
-| `GITHUB_REPO` | `소유자이름/itsdangerous.github.io` |
+| `GITHUB_REPO` | `소유자이름/extransload.github.io` |
 | `GITHUB_APP_ID` | **GitHub App**의 `App ID` 숫자 |
 | `GITHUB_INSTALLATION_ID` | GitHub App을 repository에 설치한 뒤 주소에서 확인한 `Installation ID` 숫자 |
 | `GA4_PROPERTY_ID` | GA4의 숫자 `PROPERTY ID` |
-| `GA4_HOSTNAME` | `itsdangerous.github.io` |
+| `GA4_HOSTNAME` | `extransload.github.io` |
 | `ADMIN_URL` | 관리자 Worker 주소 뒤 `/admin/` |
-| `SEARCH_CONSOLE_PROPERTY` | 이번 설정에서는 `https://itsdangerous.github.io/`를 마지막 `/`까지 그대로 입력 |
+| `SEARCH_CONSOLE_PROPERTY` | 이번 설정에서는 `https://extransload.github.io/`를 마지막 `/`까지 그대로 입력 |
 
 ### Secrets에 등록할 값
 
@@ -329,7 +329,7 @@ Private key는 내용 전체를 입력합니다. 따옴표를 추가하지 않�
 cd /Users/gyu/Documents/projects/itsdangerous.github.io/admin
 npm install
 npm run build
-npx wrangler d1 migrations apply itsdangerous-admin --remote
+npx wrangler d1 migrations apply extransload-admin --remote
 npx wrangler deploy
 ```
 
@@ -343,14 +343,14 @@ Cloudflare 로그인 화면이 나오면 본인 Cloudflare 계정으로 로그�
 4. 값은 관리자 Worker 주소 뒤에 `/admin/`을 붙여 입력합니다.
 
 ```text
-https://itsdangerous-admin.사용자계정.workers.dev/admin/
+https://extransload-admin.사용자계정.workers.dev/admin/
 ```
 
 5. 저장 후 GitHub Actions의 `Deploy to GitHub Pages`를 수동 실행합니다.
 6. 다음 주소를 열어 Worker로 이동하는지 확인합니다.
 
 ```text
-https://itsdangerous.github.io/admin/
+https://extransload.github.io/admin/
 ```
 
 ## 9. 최초 확인 순서

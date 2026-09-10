@@ -26,7 +26,7 @@ beforeEach(() => {
 });
 afterEach(() => db.close());
 async function call(path = '', method = 'GET', body?: unknown) {
-  return commentsApi(new Request(`https://worker.test/api/comments${path}`, { method, headers: { Origin: 'https://itsdangerous.github.io', 'Content-Type': 'application/json', 'X-Comment-Visitor': visitor }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }), env);
+  return commentsApi(new Request(`https://worker.test/api/comments${path}`, { method, headers: { Origin: 'https://extransload.github.io', 'Content-Type': 'application/json', 'X-Comment-Visitor': visitor }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }), env);
 }
 const input = { page, nickname: '다정한-수달-1234', password: '1234', body: '비공개 내용 <script>', visibility: 'private' };
 it('keeps post likes idempotent and independent from comment likes', async () => {

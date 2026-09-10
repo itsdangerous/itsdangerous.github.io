@@ -34,7 +34,7 @@ describe('release configuration', () => {
     expect(existsSync('public/robots.txt')).toBe(true);
     expect(existsSync('public/favicon.png')).toBe(true);
     expect(existsSync('src/pages/rss.xml.ts')).toBe(true);
-    expect(readFileSync('astro.config.mjs', 'utf8')).toContain('itsdangerous.github.io');
+    expect(readFileSync('astro.config.mjs', 'utf8')).toContain('extransload.github.io');
     expect(readFileSync('astro.config.mjs', 'utf8')).toContain('@astrojs/sitemap');
 
     const workflow = parse(readFileSync('.github/workflows/deploy.yml', 'utf8')) as PagesWorkflow;
@@ -54,7 +54,7 @@ describe('release configuration', () => {
     expect(deploy?.steps?.some((step) => step.uses === 'actions/deploy-pages@v4')).toBe(true);
 
     expect(readFileSync('public/robots.txt', 'utf8')).toContain(
-      'Sitemap: https://itsdangerous.github.io/sitemap-index.xml',
+      'Sitemap: https://extransload.github.io/sitemap-index.xml',
     );
   });
 });

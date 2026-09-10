@@ -28,12 +28,12 @@ export async function githubCallback(request: Request, env: Env) {
   const tokenResponse = await fetch('https://github.com/login/oauth/access_token', { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body: form({ client_id: env.GITHUB_CLIENT_ID, client_secret: env.GITHUB_CLIENT_SECRET, code, redirect_uri: new URL('/auth/callback', request.url).toString(), code_verifier: stored.verifier }) });
   const token = await tokenResponse.json() as { access_token?: string };
   if (!token.access_token) return error('OAUTH_TOKEN_FAILED', 'GitHub 토큰을 발급받지 못했습니다.', 502);
-  const userResponse = await fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${token.access_token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'itsdangerous-admin' } });
+  const userResponse = await fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${token.access_token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'extransload-admin' } });
   const user = await userResponse.json() as { id?: number; login?: string };
   if (!user.id || String(user.id) !== env.GITHUB_ALLOWED_USER_ID) return error('FORBIDDEN', '허용된 관리자 계정이 아닙니다.', 403);
   const session = randomToken(); const csrf = randomToken(); const expires = new Date(Date.now() + 8 * 3600000);
   await env.DB.prepare('INSERT INTO sessions (token_hash, github_user_id, github_login, csrf_hash, expires_at) VALUES (?, ?, ?, ?, ?)').bind(await sha256(session), user.id, user.login ?? '', await sha256(csrf), iso(expires)).run();
-  const headers = new Headers({ Location: env.BLOG_URL ?? 'https://itsdangerous.github.io/' }); headers.append('Set-Cookie', `${SESSION_COOKIE}=${session}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=28800`); return new Response(null, { status: 302, headers });
+  const headers = new Headers({ Location: env.BLOG_URL ?? 'https://extransload.github.io/' }); headers.append('Set-Cookie', `${SESSION_COOKIE}=${session}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=28800`); return new Response(null, { status: 302, headers });
 }
 
 export async function requireSession(request: Request, env: Env) {

@@ -13,7 +13,7 @@ let saveInFlight: Promise<void> | undefined;
 let cancelEditorTimer = () => {};
 let editorDirty = false;
 let currentView = 'analytics';
-let theme = (localStorage.getItem('admin-theme') as 'light' | 'dark' | null) ?? 'light';
+let theme = (localStorage.getItem('extransload-admin-theme') as 'light' | 'dark' | null) ?? 'light';
 document.documentElement.dataset.theme = theme;
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
@@ -36,10 +36,10 @@ function shell(content: string, background = false) {
     for (const selector of ['.metrics', '.report-grid']) document.querySelector(selector)!.replaceWith(template.content.querySelector(selector)!);
     return;
   }
-  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>itsdangerous<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button data-view="comments">전체 댓글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
+  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>Extransload<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button data-view="comments">전체 댓글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => void renderView(button.dataset.view!));
   document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
-  document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('admin-theme', theme); document.documentElement.dataset.theme = theme; document.querySelector('#theme-toggle')!.textContent = theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'; };
+  document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('extransload-admin-theme', theme); document.documentElement.dataset.theme = theme; document.querySelector('#theme-toggle')!.textContent = theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'; };
   document.querySelector<HTMLButtonElement>('#logout')!.onclick = async () => { if (!await flushEditor()) return; await api.logout(csrfToken); location.reload(); };
 }
 

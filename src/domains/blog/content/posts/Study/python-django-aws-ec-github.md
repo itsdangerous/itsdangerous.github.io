@@ -9,7 +9,7 @@ draft: false
 ---
 ```bash
 git add .
-git remote add origin https://github.com/itsdangerous/server_dev.git
+git remote add origin https://github.com/extransload/server_dev.git
 git commit -m '1st cmt'
 git push -u origin main​
 ```
@@ -23,7 +23,7 @@ server\_dev 디렉토리로 가서 다음과 같이 입력하여 깃헙 저장�
 ```bash
 git init
 git add .
-git remote add origin https://github.com/itsdangerous/server_dev.git
+git remote add origin https://github.com/extransload/server_dev.git
 git commit -m '1st cmt'
 git push -u origin main
 ```
@@ -187,7 +187,7 @@ git push -u origin main
 ```bash
 git init
 
-git remote add origin https://github.com/itsdangerous/server_dev.git
+git remote add origin https://github.com/extransload/server_dev.git
 
 git fetch
 

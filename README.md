@@ -1,4 +1,6 @@
-# itsdangerous.github.io
+# extransload.github.io
+
+브랜드 이전 후 직접 완료할 GitHub·OAuth·Google 설정은 [Extransload 이전 Runbook](EXTRANSLOAD-RUNBOOK.md)을 참고하세요. 코드 변경과 새 Cloudflare 리소스 준비 상태도 문서 첫 표에 정리되어 있습니다.
 
 개인의 글과 시선을 한 권의 책처럼 탐험하는 개인 사이트입니다. Astro로 정적 사이트를 생성하며, 게시물은 `src/domains/blog/content/posts/{category}/{slug}.md`의 Markdown으로 관리합니다.
 
@@ -68,9 +70,9 @@ npm run test:e2e
 
 `.github/workflows/deploy.yml`은 `main` push 또는 수동 실행에서 `npm ci`, `npm run build`, Pages artifact 업로드, GitHub Pages 배포를 순서대로 수행합니다. Build 단계는 repository variables를 `PUBLIC_*` 환경 변수로 전달하며, deploy job에만 `pages: write`와 `id-token: write` 권한을 부여합니다.
 
-GitHub repository의 **Settings → Pages**에서 source를 **GitHub Actions**로 설정합니다. 배포 후 `https://itsdangerous.github.io/`에서 다음을 확인합니다.
+GitHub repository의 **Settings → Pages**에서 source를 **GitHub Actions**로 설정합니다. 배포 후 `https://extransload.github.io/`에서 다음을 확인합니다.
 
-- `https://itsdangerous.github.io/rss.xml`과 `https://itsdangerous.github.io/sitemap-index.xml`이 열리는지
+- `https://extransload.github.io/rss.xml`과 `https://extransload.github.io/sitemap-index.xml`이 열리는지
 - `/robots.txt`, `/favicon.svg`, `pagefind/`가 빌드 산출물에 포함되는지
 - 데스크톱/모바일 레이아웃, 테마 저장, 검색 결과 이동, TOC, 댓글 컨테이너와 방명록 경로가 정상인지
 - 댓글 등록·수정·삭제·좋아요와 방명록이 운영 Worker에서 정상 처리되는지

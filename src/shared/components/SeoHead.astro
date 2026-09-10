@@ -21,7 +21,7 @@ const {
   imagePath = '/images/splash-crest-embroidered.webp',
 } = Astro.props;
 
-const siteUrl = Astro.site ?? new URL('https://itsdangerous.github.io');
+const siteUrl = Astro.site ?? new URL('https://extransload.github.io');
 const canonicalUrl = new URL(canonicalPath, siteUrl);
 const imageUrl = new URL(imagePath, siteUrl);
 const schema = {
@@ -34,8 +34,8 @@ const schema = {
     ? {
         headline: title,
         image: imageUrl.href,
-        author: { '@type': 'Person', name: 'itsdangerous' },
-        publisher: { '@type': 'Person', name: 'itsdangerous' },
+        author: { '@type': 'Person', name: 'Extransload' },
+        publisher: { '@type': 'Person', name: 'Extransload' },
         ...(publishedTime ? { datePublished: publishedTime.toISOString() } : {}),
         ...(modifiedTime ? { dateModified: modifiedTime.toISOString() } : {}),
       }
@@ -48,7 +48,7 @@ const jsonLd = JSON.stringify(schema).replace(/</g, '\\u003c');
 <meta name="robots" content={robots} />
 <link rel="canonical" href={canonicalUrl} />
 <meta property="og:locale" content="ko_KR" />
-<meta property="og:site_name" content="itsdangerous" />
+<meta property="og:site_name" content="Extransload" />
 <meta property="og:type" content={schemaType === 'Article' ? 'article' : 'website'} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

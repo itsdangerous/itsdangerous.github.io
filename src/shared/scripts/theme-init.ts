@@ -1,6 +1,6 @@
 import { getTheme, themes } from '../themes/registry';
 
-export const THEME_STORAGE_KEY = 'blog-theme';
+export const THEME_STORAGE_KEY = 'extransload-theme';
 
 export function applyTheme(id: string | null | undefined, root: HTMLElement = document.documentElement) {
   const theme = getTheme(id);
@@ -33,11 +33,11 @@ export const earlyThemeScript = `
 export const earlySidebarScript = `
 (() => {
   try {
-    const width = Number(localStorage.getItem('itsdangerous-sidebar-width'));
+    const width = Number(localStorage.getItem('extransload-sidebar-width'));
     if (Number.isFinite(width) && width > 0) {
       document.documentElement.style.setProperty('--saved-sidebar-width', String(Math.round(width)) + 'px');
     }
-    if (localStorage.getItem('itsdangerous-sidebar-collapsed') === 'true') {
+    if (localStorage.getItem('extransload-sidebar-collapsed') === 'true') {
       document.documentElement.dataset.sidebarCollapsed = 'true';
     }
   } catch {

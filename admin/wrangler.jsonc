@@ -1,20 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "itsdangerous-admin",
+  "name": "extransload-admin",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-08",
   "keep_vars": true,
   "vars": {
-    "ADMIN_URL": "https://itsdangerous-admin.tmdrbsla123.workers.dev/admin/",
-    "BLOG_URL": "https://itsdangerous.github.io/",
-    "GA4_HOSTNAME": "itsdangerous.github.io",
+    "ADMIN_URL": "https://extransload-admin.tmdrbsla123.workers.dev/admin/",
+    "BLOG_URL": "https://extransload.github.io/",
+    "GA4_HOSTNAME": "extransload.github.io",
     "GA4_PROPERTY_ID": "552453352",
     "GITHUB_ALLOWED_USER_ID": "76903093",
     "GITHUB_APP_ID": "4870716",
     "GITHUB_CLIENT_ID": "Ov23liqipTKpOESSIxhD",
     "GITHUB_INSTALLATION_ID": "160010465",
-    "GITHUB_REPO": "itsdangerous/itsdangerous.github.io",
-    "SEARCH_CONSOLE_PROPERTY": "https://itsdangerous.github.io/"
+    "GITHUB_REPO": "extransload/extransload.github.io",
+    "SEARCH_CONSOLE_PROPERTY": "https://extransload.github.io/"
   },
   "assets": {
     "binding": "ASSETS",
@@ -25,8 +25,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "itsdangerous-admin",
-      "database_id": "fc7aac50-fb10-46da-b82b-b256e05ba1cc",
+      "database_name": "extransload-admin",
+      "database_id": "aac506ff-8c9d-4ece-b775-2a24123493a4",
       "migrations_dir": "worker/migrations",
     },
   ],

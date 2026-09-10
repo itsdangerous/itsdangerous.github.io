@@ -5,7 +5,7 @@ import '../../../../domains/blog/styles/blog.css';
 import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnhancer.astro';
 ---
 
-<SiteLayout title="Markdown Viewer — itsdangerous" description="Markdown 문서를 itsdangerous 스타일로 읽는 도구" canonicalPath="/blog/tools/markdown-viewer/">
+<SiteLayout title="Markdown Viewer — Extransload" description="Markdown 문서를 Extransload 스타일로 읽는 도구" canonicalPath="/blog/tools/markdown-viewer/">
   <main class="article-shell markdown-viewer" data-toc-collapsed data-toc-empty data-pagefind-ignore>
     <div class="article__toc-bar" data-toc-topbar>
       <button type="button" data-toc-top-toggle aria-expanded="false" aria-controls="markdown-viewer-toc-panel">
@@ -81,7 +81,7 @@ import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnha
       markdownViewer: { documentId },
     }, '');
   };
-  const databaseName = 'itsdangerous-markdown-viewer';
+  const databaseName = 'extransload-markdown-viewer';
   const storeName = 'documents';
 
   type StoredDocument = { id: string; name: string; markdown: string; openedAt: number };
@@ -108,8 +108,8 @@ import CodeShellEnhancer from '../../../../domains/blog/components/CodeShellEnha
   const documents = () => withStore('readonly', store => store.getAll()) as Promise<StoredDocument[]>;
   const saveDocument = (document: StoredDocument) => withStore('readwrite', store => store.put(document));
   const deleteDocument = (id: string) => withStore('readwrite', store => store.delete(id));
-  const activeDocument = () => localStorage.getItem('markdown-viewer-active-document');
-  const setActiveDocument = (id?: string) => id ? localStorage.setItem('markdown-viewer-active-document', id) : localStorage.removeItem('markdown-viewer-active-document');
+  const activeDocument = () => localStorage.getItem('extransload-markdown-viewer-active-document');
+  const setActiveDocument = (id?: string) => id ? localStorage.setItem('extransload-markdown-viewer-active-document', id) : localStorage.removeItem('extransload-markdown-viewer-active-document');
 
   const slugifyHeading = (text: string) => text.trim().toLowerCase()
     .replace(/[^\p{Letter}\p{Number}\s_-]/gu, '')

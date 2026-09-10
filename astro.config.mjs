@@ -4,7 +4,7 @@ import remarkDirective from 'remark-directive';
 import remarkCallouts from './src/shared/markdown/remark-callouts.js';
 
 export default defineConfig({
-  site: 'https://itsdangerous.github.io',
+  site: 'https://extransload.github.io',
   base: '/',
   vite: {
     optimizeDeps: {

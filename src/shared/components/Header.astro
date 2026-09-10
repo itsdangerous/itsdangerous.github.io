@@ -12,13 +12,13 @@ const isCurrent = (href: string) => href === '/blog/'
 
 <header class="site-header" id="site-sidebar">
   <div class="site-header__inner">
-    <a class="site-header__brand" href="/" aria-label="itsdangerous 홈">
+    <a class="site-header__brand" href="/" aria-label="Extransload 홈">
       <img
         src="/images/splash-title-embroidered.webp"
-        alt="itsdangerous"
+        alt="Extransload"
         class="site-header__brand-image"
-        width="1095"
-        height="250"
+        width="2172"
+        height="724"
         loading="eager"
         decoding="async"
       />
@@ -100,8 +100,8 @@ const isCurrent = (href: string) => href === '/blog/'
     if (!frame || !header || !toggle || !resizeHandle || toggle.dataset.bound) return;
     const desktop = window.matchMedia('(min-width: 901px)');
     let panelAnimation: Animation | undefined;
-    const sidebarWidthKey = 'itsdangerous-sidebar-width';
-    const sidebarCollapsedKey = 'itsdangerous-sidebar-collapsed';
+    const sidebarWidthKey = 'extransload-sidebar-width';
+    const sidebarCollapsedKey = 'extransload-sidebar-collapsed';
     const sidebarBounds = () => ({ min: 144, max: Math.max(216, Math.min(420, window.innerWidth - 480)) });
     const collapseThreshold = 176;
     const resetSidebarWidth = () => {

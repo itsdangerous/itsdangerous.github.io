@@ -7,9 +7,9 @@ export async function GET(context: { site: URL | undefined }) {
     .sort((left, right) => right.data.pubDate.valueOf() - left.data.pubDate.valueOf());
 
   return rss({
-    title: 'itsdangerous',
+    title: 'Extransload',
     description: '기록하고, 더 나은 답을 찾습니다.',
-    site: context.site ?? 'https://itsdangerous.github.io',
+    site: context.site ?? 'https://extransload.github.io',
     items: posts.map((post) => ({
       title: post.data.title,
       description: post.data.description,

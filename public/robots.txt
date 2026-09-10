@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://itsdangerous.github.io/sitemap-index.xml
+Sitemap: https://extransload.github.io/sitemap-index.xml

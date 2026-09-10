@@ -6,12 +6,12 @@
 
 기존 관리자 설정과 secret을 유지한다. 코드 작성만으로 운영 DB나 Worker가 바뀌지는 않는다.
 
-1. `admin/`에서 `npx wrangler d1 migrations apply itsdangerous-admin --remote`로 댓글 테이블을 추가한다. 기존 글과 세션 테이블은 변경하지 않는다.
+1. `admin/`에서 `npx wrangler d1 migrations apply extransload-admin --remote`로 댓글 테이블을 추가한다. 기존 글과 세션 테이블은 변경하지 않는다.
 2. `npx wrangler secret put COMMENTS_SECRET`에 암호학적으로 무작위인 32바이트 이상의 secret을 등록한다. 값은 출력·커밋하지 않는다. 이 값은 비밀번호 pepper와 익명 식별자 해시에 사용되므로 별도로 안전하게 보관하고, 기존 댓글이 있는 상태에서 임의 교체하지 않는다.
 3. `npm run build` 후 `npx wrangler deploy`로 Worker와 기존 관리자 assets를 함께 배포한다.
 4. 댓글 GET과 쓰기 smoke test 후 블로그를 배포한다. `PUBLIC_COMMENTS_API_URL`을 생략하면 현재 관리자 Worker 주소가 사용된다. 도메인이 바뀌면 공개 빌드 설정도 바꾼다.
 
-`COMMENTS_ORIGINS`는 쉼표로 구분한 허용 origin이다. 생략 시 `https://itsdangerous.github.io`만 허용한다. 관리자 API에는 공개 CORS를 적용하지 않는다. 운영 설정에 localhost를 넣지 않는다.
+`COMMENTS_ORIGINS`는 쉼표로 구분한 허용 origin이다. 생략 시 `https://extransload.github.io`만 허용한다. 관리자 API에는 공개 CORS를 적용하지 않는다. 운영 설정에 localhost를 넣지 않는다.
 
 secret 또는 DB 준비가 안 된 경우 댓글 API는 503을 반환하고 UI는 입력을 보존한 채 연결 오류를 안내한다. 이전 GitHub 댓글로 자동 전환하지 않는다.
 
@@ -31,4 +31,4 @@ secret 또는 DB 준비가 안 된 경우 댓글 API는 503을 반환하고 UI�
 
 저장소 루트에서 `.env.development.example`을 `.env.development.local`로, `admin/.dev.vars.example`을 `admin/.dev.vars`로 복사한다. 두 파일은 로컬 전용이며 커밋하지 않는다.
 
-그 다음 `admin/`에서 `npx wrangler d1 migrations apply itsdangerous-admin --local --config wrangler.jsonc`로 별도 local D1에 migration을 적용하고 `npx wrangler dev --local --config wrangler.jsonc --port 8788`를 실행한다. 다른 터미널에서 저장소 루트의 `npm run dev -- --host 127.0.0.1`를 실행하면, 게시글과 방명록이 `http://127.0.0.1:8788`의 local Worker를 사용한다. 실제 운영 DB·API·사용자 댓글은 건드리지 않는다.
+그 다음 `admin/`에서 `npx wrangler d1 migrations apply extransload-admin --local --config wrangler.jsonc`로 별도 local D1에 migration을 적용하고 `npx wrangler dev --local --config wrangler.jsonc --port 8788`를 실행한다. 다른 터미널에서 저장소 루트의 `npm run dev -- --host 127.0.0.1`를 실행하면, 게시글과 방명록이 `http://127.0.0.1:8788`의 local Worker를 사용한다. 실제 운영 DB·API·사용자 댓글은 건드리지 않는다.

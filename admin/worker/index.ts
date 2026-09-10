@@ -9,7 +9,7 @@ import { commentsApi, adminCommentReply, adminCommentsJson } from './comments';
 const configError = () => error('ADMIN_NOT_CONFIGURED', '관리자 Worker의 OAuth와 저장소 설정이 아직 완료되지 않았습니다.', 503);
 function sessionCors(request: Request, response: Response) {
   const origin = request.headers.get('Origin');
-  if (origin !== 'https://itsdangerous.github.io') return response;
+  if (origin !== 'https://extransload.github.io') return response;
   const headers = new Headers(response.headers);
   headers.set('Access-Control-Allow-Origin', origin);
   headers.set('Access-Control-Allow-Credentials', 'true');
