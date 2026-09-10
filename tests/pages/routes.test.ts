@@ -230,7 +230,8 @@ describe('blog routes', () => {
 
     expect(searchModal).toContain("[data-theme='light'] .search-modal__dialog");
     expect(searchModal).toContain("url('/article-manuscript-paper-texture.webp')");
-    expect(searchModal).toContain('background-attachment: scroll, fixed;');
+    expect(searchModal).toContain('background-position: center, 0 0;');
+    expect(searchModal).toContain('background-repeat: no-repeat, repeat;');
     expect(searchModal).toContain('background-blend-mode: normal, multiply;');
   });
 
