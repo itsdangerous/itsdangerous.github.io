@@ -5,6 +5,7 @@ import './chart-interaction.css';
 import { calendarDate, rollingPeriod, dailyRows } from './rolling';
 import { enhanceControls } from './controls';
 import './workspace-ui.css';
+import './exit.css';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML = '<main class="login"><p class="eyebrow">PRIVATE ARCHIVE</p><h1>관리자 연결 확인 중</h1><p>GitHub 로그인 상태를 확인하고 있습니다.</p></main>';
@@ -37,7 +38,7 @@ function shell(content: string, background = false) {
     for (const selector of ['.metrics', '.report-grid']) document.querySelector(selector)!.replaceWith(template.content.querySelector(selector)!);
     return;
   }
-  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>Extransload<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button data-view="comments">전체 댓글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav></header><section id="content">${content}</section></main>`;
+  app.innerHTML = `<main class="admin-shell"><header><a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3l2.8 8.2L27 14l-8.2 2.8L16 25l-2.8-8.2L5 14l8.2-2.8L16 3Z" fill="currentColor"/><circle cx="16" cy="14" r="3.2" fill="white"/></svg></span><span>Extransload<small>서재 관리</small></span></a><nav><button data-view="analytics">통계</button><button data-view="posts">글 관리</button><button data-view="editor">새 글</button><button data-view="comments">전체 댓글</button><button id="theme-toggle" type="button" aria-label="테마 변경">${theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'}</button><button id="logout">로그아웃</button></nav><a class="exit" href="https://extransload.github.io/" aria-label="공개 사이트로 나가기">Exit</a></header><section id="content">${content}</section></main>`;
   document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach(button => button.onclick = () => void renderView(button.dataset.view!));
   document.querySelector(`nav [data-view="${currentView}"]`)?.classList.add('active');
   document.querySelector<HTMLButtonElement>('#theme-toggle')!.onclick = () => { theme = theme === 'light' ? 'dark' : 'light'; localStorage.setItem('extransload-admin-theme', theme); document.documentElement.dataset.theme = theme; document.querySelector('#theme-toggle')!.textContent = theme === 'light' ? '☾ 다크 모드' : '☀ 라이트 모드'; };
