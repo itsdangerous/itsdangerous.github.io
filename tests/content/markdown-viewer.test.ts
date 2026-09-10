@@ -14,5 +14,7 @@ describe('Markdown Viewer input surface', () => {
     expect(source).toContain('data-dropzone aria-label="Markdown 파일 놓기"');
     expect(source).not.toContain('<p class="eyebrow">Tools</p>');
     expect(source).toContain('<h1>Markdown Viewer</h1>');
+    expect(source).not.toContain('Markdown 파일을 끌어다 놓으세요');
+    expect(source).not.toContain('<span>또는</span>');
   });
 });
