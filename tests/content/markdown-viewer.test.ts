@@ -15,6 +15,7 @@ describe('Markdown Viewer input surface', () => {
     expect(source).not.toContain('<p class="eyebrow">Tools</p>');
     expect(source).toContain('<h1>Markdown Viewer</h1>');
     expect(source).not.toContain('Markdown 파일을 끌어다 놓으세요');
-    expect(source).not.toContain('<span>또는</span>');
+    expect(source).toContain('끌어다 놓으면<br />블로그 스타일로 펼쳐집니다.');
+    expect(source).toContain('<span>또는</span>');
   });
 });
