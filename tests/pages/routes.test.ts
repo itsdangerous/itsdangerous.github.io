@@ -229,10 +229,10 @@ describe('blog routes', () => {
     const searchModal = readFileSync('src/shared/components/SearchModal.astro', 'utf8');
 
     expect(searchModal).toContain("[data-theme='light'] .search-modal__dialog");
-    expect(searchModal).toContain("url('/article-manuscript-paper-texture.webp')");
-    expect(searchModal).toContain('background-position: center, 0 0;');
-    expect(searchModal).toContain('background-repeat: no-repeat, repeat;');
-    expect(searchModal).toContain('background-blend-mode: normal, multiply;');
+    expect(searchModal).toContain("[data-theme='light'] .search-modal::before");
+    expect(searchModal).toContain("background-image: url('/article-manuscript-paper-texture.webp');");
+    expect(searchModal).toContain('background: url(\'/splash-leather-cover-texture.webp\') center / cover no-repeat;');
+    expect(searchModal).toContain('background-blend-mode: normal;');
   });
 
   it('opens the desktop TOC at its full floating width without a narrow-width transition', () => {
