@@ -203,7 +203,7 @@
 
 .article__header h1 {
   margin: var(--space-4) 0;
-  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-size: clamp(2rem, 4vw, 3rem);
 }
 
 .article__description {
