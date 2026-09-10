@@ -1,6 +1,6 @@
 import { z } from 'astro:content';
 
-const categories = ['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm', 'uncategorized'] as const;
+const categories = ['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm', 'Library', 'uncategorized'] as const;
 
 export const postSchema = z.object({
   title: z.string().min(1),
@@ -8,5 +8,6 @@ export const postSchema = z.object({
   pubDate: z.coerce.date(),
   category: z.enum(categories),
   tags: z.array(z.string()),
+  slug: z.string().min(1).optional(),
   draft: z.boolean().default(false),
 });

@@ -31,7 +31,7 @@ export async function discardPost(request: Request, env: Env, id: string) {
   } catch { return error('SOURCE_READ_FAILED', '원본을 확인하지 못해 작업본을 보존했습니다.', 502); }
 }
 
-const categories = new Set(['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm', 'uncategorized']);
+const categories = new Set(['Git', '일상', 'project', 'Study', 'MacOS', 'Algorithm', 'Library', 'uncategorized']);
 const slugify = (title: string) => title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 100) || `post-${Date.now()}`;
 const validInput = (input: any) => typeof input?.title === 'string' && input.title.trim() && typeof input?.description === 'string' && /^\d{4}-\d{2}-\d{2}/.test(input.pubDate) && categories.has(input.category) && Array.isArray(input.tags) && input.tags.every((tag: unknown) => typeof tag === 'string') && typeof input.body === 'string' && new TextEncoder().encode(input.body).byteLength <= 1048576;
 const row = (value: any) => ({ id: value.id, slug: value.slug, title: value.title, description: value.description, pubDate: value.pub_date, category: value.category, tags: JSON.parse(value.tags_json), body: value.body, version: value.version, desiredVisibility: value.desired_visibility, status: value.desired_visibility === 'published' && value.published_version !== value.version ? 'published_with_draft' : value.desired_visibility, updatedAt: value.updated_at, repoPath: value.repo_path });
