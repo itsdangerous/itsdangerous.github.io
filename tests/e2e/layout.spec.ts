@@ -1,52 +1,204 @@
 import { expect, test } from '@playwright/test';
 
-test('sealed-volume splash keeps its chapter navigation inside the mobile viewport', async ({ page }) => {
+test('splash cover and chapter navigation remain readable on narrow screens', async ({ page }) => {
+  for (const width of [320, 390, 760]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    const toc = page.getByRole('navigation', { name: '장서 목차' });
+    await expect(page.getByRole('heading', { name: 'Extransload', exact: true })).toBeVisible();
+    await expect(toc.locator('.splash-toc__cover')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: '아래로 이동' })).toBeInViewport();
+    await expect(page.locator('.book-splash__tagline')).toHaveText('기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서');
+    await expect(page.getByText('아래로, 한 장씩', { exact: true })).toHaveCount(0);
+    await expect(toc.locator('ol a')).toHaveCount(5);
+    for (const link of await toc.locator('ol a').all()) {
+      await expect(link).toBeInViewport();
+      expect(await link.evaluate((element) => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(15);
+    }
+    const guestbookCopy = page.locator('#guestbook .splash-chapter__copy');
+    expect(await guestbookCopy.evaluate((element) => getComputedStyle(element).textAlign)).toBe('center');
+    expect(await page.locator('#guestbook .splash-chapter__media').evaluate((element) => parseFloat(getComputedStyle(element).width))).toBeLessThanOrEqual(392);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
+});
+
+test('splash toc keeps all chapters grouped and hides on downward mobile scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  expect(await page.locator('.splash-toc li:nth-child(4)').evaluate((element) => getComputedStyle(element).marginTop)).toBe('0px');
+  expect(await page.locator('.book-splash__filigree').evaluate((element) => {
+    const filigree = getComputedStyle(element);
+    const toc = getComputedStyle(document.querySelector('.splash-toc')!);
+    return { filigreePosition: filigree.position, tocLeft: parseFloat(toc.left), filigreeLeft: parseFloat(filigree.left) };
+  })).toMatchObject({ filigreePosition: 'fixed' });
+  expect(await page.locator('.book-splash__frame-mask').evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+  expect(await page.locator('.book-splash__face').evaluate((element) => getComputedStyle(element).position)).toBe('sticky');
+  expect(await page.locator('.splash-toc').evaluate((element) => parseFloat(getComputedStyle(element).left))).toBeGreaterThan(
+    await page.locator('.book-splash__filigree').evaluate((element) => parseFloat(getComputedStyle(element).left)),
+  );
+  await expect(page.locator('.book-splash__crest')).toHaveCSS('opacity', '1');
+  await page.evaluate(() => window.scrollTo(0, 120));
+  await page.waitForTimeout(750);
+  const stagedCoverOpacity = await page.evaluate(() => ['.book-splash__crest', '.book-splash__center', '.book-splash__tagline', '.book-splash__scroll']
+    .map((selector) => Number(getComputedStyle(document.querySelector(selector)!).opacity)));
+  expect(stagedCoverOpacity[0]).toBeLessThan(stagedCoverOpacity[1]);
+  expect(stagedCoverOpacity[1]).toBeLessThan(stagedCoverOpacity[2]);
+  expect(stagedCoverOpacity[2]).toBeLessThanOrEqual(stagedCoverOpacity[3]);
+
+  await page.evaluate(() => window.scrollTo(0, 600));
+  await page.waitForTimeout(750);
+  for (const selector of ['.book-splash__crest', '.book-splash__center', '.book-splash__tagline', '.book-splash__scroll']) {
+    await expect(page.locator(selector)).toHaveCSS('opacity', '0');
+  }
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(750);
+  for (const selector of ['.book-splash__crest', '.book-splash__center', '.book-splash__tagline', '.book-splash__scroll']) {
+    await expect(page.locator(selector)).toHaveCSS('opacity', '1');
+  }
+
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+  const toc = page.locator('.splash-toc');
+  await expect(toc).toBeInViewport();
+  expect(await toc.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { position: style.position, top: style.top, rectTop: element.getBoundingClientRect().top };
+  })).toEqual({ position: 'fixed', top: '0px', rectTop: 0 });
 
-  const chapters = page.locator('.book-splash__chapters').first();
-  const title = page.locator('.book-splash__title');
-  await expect(chapters).toBeVisible();
-  expect(await chapters.evaluate((element) => (
-    element.getBoundingClientRect().bottom <= window.innerHeight
-  ))).toBe(true);
-  expect(await chapters.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
-  const [titleBox, primaryBox] = await Promise.all([title.boundingBox(), chapters.boundingBox()]);
-  expect(titleBox).not.toBeNull();
-  expect(primaryBox).not.toBeNull();
-  expect(titleBox!.y).toBeLessThan(primaryBox!.y);
-  const primaryLinks = await chapters.locator('a').evaluateAll((links) => links.map((link) => ({
-    top: link.getBoundingClientRect().top,
-    bottom: link.getBoundingClientRect().bottom,
-  })));
-  expect(new Set(primaryLinks.map(({ top }) => Math.round(top))).size).toBe(5);
+  await page.evaluate(() => window.scrollTo(0, 520));
+  await expect(page.locator('[data-splash]')).toHaveAttribute('data-scroll-direction', 'down');
+  await page.waitForTimeout(650);
+  expect(await toc.evaluate((element) => getComputedStyle(element).opacity)).toBe('0');
+
+  await page.evaluate(() => window.scrollTo(0, 240));
+  await expect(page.locator('[data-splash]')).toHaveAttribute('data-scroll-direction', 'up');
+  await page.waitForTimeout(650);
+  expect(await toc.evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
 });
 
-test('root splash links to each independent site space', async ({ page }) => {
+test('splash chapter spacing follows the viewport height', async ({ page }) => {
+  for (const height of [720, 900]) {
+    await page.setViewportSize({ width: 1440, height });
+    await page.goto('/');
+    const metrics = await page.evaluate(() => {
+      const journal = document.querySelector<HTMLElement>('#journal');
+      const works = document.querySelector<HTMLElement>('#works');
+      if (!journal || !works) throw new Error('Splash chapters are missing');
+      return {
+        journalHeight: journal.getBoundingClientRect().height,
+        chapterDistance: works.getBoundingClientRect().top - journal.getBoundingClientRect().top,
+      };
+    });
+    expect(Math.abs(metrics.journalHeight - height)).toBeLessThanOrEqual(2);
+    expect(Math.abs(metrics.chapterDistance - height)).toBeLessThanOrEqual(2);
+  }
+});
+
+test('splash sections link to each independent space', async ({ page }) => {
   await page.goto('/');
-
-  await expect(page.locator('.book-splash__chapters a')).toHaveCount(5);
-  await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/works/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/playroom/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/guestbook/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toHaveAttribute('aria-label', 'Journal');
+  for (const [id, href, label] of [['journal', '/blog/', 'Journal'], ['works', '/works/', 'Works'], ['playroom', '/playroom/', 'Playroom'], ['about', '/about/', 'About'], ['guestbook', '/guestbook/', 'Guestbook']]) {
+    await expect(page.locator('#' + id + ' > a')).toHaveAttribute('href', href);
+    await expect(page.locator(`#${id} .splash-chapter__title .splash-chapter__wordmark`)).toHaveAttribute('src', `/images/splash-${id}-embroidered.webp`);
+    await expect(page.locator(`#${id} .splash-sr-only`)).toHaveText(label);
+  }
+  await page.locator('#works > a').click();
+  await expect(page).toHaveURL(/\/works\/$/);
+  await expect(page.getByRole('heading', { name: 'Works', exact: true })).toBeVisible();
 });
 
-test('splash menu sits as one spaced vertical list below the title', async ({ page }) => {
+test('splash chapters keep their layout while scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const journal = page.locator('#journal');
+
+  const readLayout = () => journal.evaluate((chapter) => ({
+    mediaTransform: getComputedStyle(chapter.querySelector('.splash-chapter__media')!).transform,
+    copyTransform: getComputedStyle(chapter.querySelector('.splash-chapter__copy')!).transform,
+    detailTransform: getComputedStyle(chapter.querySelector('.splash-chapter__detail')!).transform,
+    mediaOpacity: getComputedStyle(chapter.querySelector('.splash-chapter__media')!).opacity,
+    copyOpacity: getComputedStyle(chapter.querySelector('.splash-chapter__copy')!).opacity,
+    detailOpacity: getComputedStyle(chapter.querySelector('.splash-chapter__detail')!).opacity,
+  }));
+  const initial = await readLayout();
+  expect(initial.mediaOpacity).toBe('1');
+  expect(initial.copyOpacity).toBe('1');
+  expect(initial.detailOpacity).toBe('1');
+
+  await page.evaluate(() => document.getElementById('journal')?.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await page.waitForTimeout(100);
+  expect(await readLayout()).toEqual(initial);
+});
+
+test('splash toc follows natural scrolling and anchor jumps', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const current = page.locator('.splash-toc [aria-current="location"]');
+  await expect(current).toHaveCount(0);
+  await page.getByRole('link', { name: '아래로 이동' }).click();
+  await expect(current).toHaveAttribute('href', '#journal');
+  await page.mouse.wheel(0, 900);
+  await expect(current).toHaveAttribute('href', '#works');
+  await page.locator('[data-chapter-link="guestbook"]').click();
+  await expect(current).toHaveAttribute('href', '#guestbook');
+  await expect(page.locator('.splash-toc')).toBeInViewport();
+  await page.locator('.splash-colophon a').click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  await expect(current).toHaveCount(0);
+});
+
+test('splash keeps its chapter motion enabled without a user toggle', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await expect(page.locator('[data-motion-toggle]')).toHaveCount(0);
+  await expect(page.locator('[data-splash]')).toHaveAttribute('data-motion', 'on');
+  await page.locator('[data-chapter-link="playroom"]').click();
+  const orbit = page.locator('.art-orbit');
+  await page.locator('#playroom > a').hover();
+  await expect(orbit).toHaveCSS('animation-play-state', 'running');
+});
+
+test('splash artwork keeps its motion while hovering', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
-  const primary = page.locator('.book-splash__chapters').first();
-  const links = primary.locator('a');
-  const primaryBox = await primary.boundingBox();
-  expect(primaryBox).not.toBeNull();
-  expect(await primary.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
-  const boxes = await links.evaluateAll((items) => items.map((element) => element.getBoundingClientRect().toJSON()));
-  expect(new Set(boxes.map(({ y }) => Math.round(y))).size).toBe(5);
-  expect(new Set(boxes.map(({ x, width }) => Math.round(x + width / 2))).size).toBe(1);
-  expect(await links.nth(1).evaluate((element) => getComputedStyle(element, '::before').content)).toBe('none');
+  const link = page.locator('#journal > a');
+  const object = page.locator('#journal .art-object');
+  const drifter = page.locator('#journal .art-drifter');
+  await expect(object).toHaveCSS('animation-name', 'splash-art-object-hover');
+  await expect(object).toHaveCSS('animation-iteration-count', 'infinite');
+  await expect(drifter).toHaveCSS('animation-name', 'splash-art-drifter-hover');
+
+  await link.hover();
+  await expect(object).toHaveCSS('animation-name', 'splash-art-object-hover');
+  await expect(drifter).toHaveCSS('animation-name', 'splash-art-drifter-hover');
+
+  await page.mouse.move(1, 1);
+  await expect(object).toHaveCSS('animation-name', 'splash-art-object-hover');
+  await expect(drifter).toHaveCSS('animation-name', 'splash-art-drifter-hover');
+});
+
+test('splash chapter copy swaps its description for the invitation on hover', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  const copy = page.locator('#journal .splash-chapter__copy');
+  const description = page.locator('#journal .splash-chapter__description');
+  const invitation = page.locator('#journal .splash-chapter__invitation');
+  await expect(description).toHaveText('읽고, 쓰고, 오래 남겨두고 싶은 것들.');
+  await expect(invitation).toHaveText('기록 펼치기↗');
+  await expect(invitation).toHaveCSS('opacity', '0');
+
+  await page.evaluate(() => document.getElementById('journal')?.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  await page.waitForTimeout(100);
+  await copy.hover();
+  await expect(description).toHaveCSS('opacity', '0');
+  await expect(invitation).toHaveCSS('opacity', '1');
+
+  await page.mouse.move(1, 1);
+  await expect(description).toHaveCSS('opacity', '1');
+  await expect(invitation).toHaveCSS('opacity', '0');
 });
 
 test('sidebar reading icons show collapse-style tooltips on hover and focus', async ({ page }) => {

@@ -1,0 +1,138 @@
+---
+import type { ChapterId } from '../data/splash-chapters';
+interface Props { chapter: ChapterId }
+const { chapter } = Astro.props;
+const paperId = `paper-${chapter}`;
+const foilId = `foil-${chapter}`;
+---
+
+<svg class={`chapter-art chapter-art--${chapter}`} viewBox="0 0 640 540" fill="none" aria-hidden="true">
+  <defs>
+    <pattern id={paperId} width="640" height="540" patternUnits="userSpaceOnUse">
+      <image href="/article-manuscript-paper-texture.webp" width="640" height="540" preserveAspectRatio="xMidYMid slice" />
+    </pattern>
+    <linearGradient id={foilId} x1="80" y1="60" x2="510" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8a6936" /><stop offset=".3" stop-color="#dfc98d" />
+      <stop offset=".55" stop-color="#a28040" /><stop offset=".8" stop-color="#e2ce93" /><stop offset="1" stop-color="#967039" />
+    </linearGradient>
+  </defs>
+
+  {chapter === 'journal' && <>
+    <g class="art-lines" stroke={`url(#${foilId})`} opacity=".35">
+      <circle cx="340" cy="259" r="209" /><circle cx="340" cy="259" r="216" stroke-dasharray="1 10" />
+      <path d="M106 260H75m499 0h-26M340 23v30m0 411v30" />
+    </g>
+    <g class="art-object art-book">
+      <path d="M90 153Q204 107 321 160Q434 112 551 152L549 403Q436 369 321 420Q210 371 88 408Z" fill="#191e26" stroke={`url(#${foilId})`} stroke-width="3" />
+      <path d="M99 150Q207 115 321 166Q432 118 541 151L537 393Q431 357 321 409Q206 363 99 398Z" fill="#ac9976" />
+      <path d="M107 137Q216 106 321 156Q426 109 531 137L531 382Q422 348 321 398Q216 352 107 387Z" fill={`url(#${paperId})`} />
+      <path d="M321 156V398" stroke="#806c4c" stroke-opacity=".5" stroke-width="2" />
+      <path d="M311 154V390M330 154V390" stroke="#9c8761" stroke-opacity=".2" stroke-width="6" />
+      <g stroke="#756750" stroke-opacity=".45" stroke-linecap="round">
+        {Array.from({ length: 10 }, (_, i) => <>
+          <path d={`M137 ${219 + i * 12}Q215 ${201 + i * 12} 288 ${231 + i * 12}`} />
+          <path d={`M355 ${231 + i * 12}Q426 ${203 + i * 12} 498 ${218 + i * 12}`} />
+        </>)}
+      </g>
+      <text x="139" y="202" fill="#716044" font-size="39" font-family="Georgia, serif">J</text>
+      <path d="M373 178h83m-64 8h43" stroke="#9d7c42" />
+      <path class="art-ribbon" d="M337 157Q335 309 351 422L364 410L377 423Q356 304 358 151" fill="#233c4b" stroke="#8d7950" stroke-width=".7" />
+    </g>
+    <g class="art-drifter" stroke={`url(#${foilId})`}>
+      <path d="M463 94Q489 75 528 91Q516 122 477 130L415 194Z" fill="#243642" />
+      <path d="M419 190L518 96m-45 43 3-29m12 17 2-28m-31 53 31-7" />
+    </g>
+  </>}
+
+  {chapter === 'works' && <>
+    <g class="art-object art-draft">
+      <path d="M110 103L477 72L505 432L139 465Z" fill="#a39172" opacity=".45" />
+      <path d="M122 83L489 68L510 423L143 445Z" fill={`url(#${paperId})`} />
+      <g stroke="#756346" stroke-opacity=".5" stroke-width="1">
+        <path d="M170 368V230L318 135L458 221V353Zm0-138 288-9M318 135V360M218 227V363m197-140v132M152 377l321-17M162 390l290-16" />
+        <path d="M202 213L318 154L433 202ZM231 337v-70h54v67m59-2v-70h45v67" />
+        <circle cx="318" cy="245" r="131" stroke-dasharray="3 5" />
+        <path d="M151 246h328M318 104v284M180 117l302 291M474 108 167 406" stroke-opacity=".3" />
+      </g>
+      <text x="166" y="417" fill="#776447" font-size="10" letter-spacing="3" font-family="Georgia, serif">STUDIES IN FORM</text>
+    </g>
+    <g class="art-drifter" stroke={`url(#${foilId})`} stroke-width="2">
+      <path d="M449 180L539 436L398 443Z" fill="#142837" fill-opacity=".9" />
+      <path d="M448 241 502 411 416 416Z" />
+      <path d="M467 260l11-4m-5 22 11-4m-5 22 11-4m-5 22 11-4m-5 22 11-4m-5 22 11-4" />
+      <circle cx="144" cy="190" r="18" fill="#162333" />
+      <path d="M140 207 85 352m64-145 47 144M99 316q42 28 85-1" stroke-width="4" />
+    </g>
+    <path class="art-lines" d="M75 468h487M552 75v390" stroke={`url(#${foilId})`} opacity=".3" />
+  </>}
+
+  {chapter === 'playroom' && <>
+    <g stroke={`url(#${foilId})`}>
+      <circle cx="320" cy="267" r="209" stroke-opacity=".35" />
+      <circle cx="320" cy="267" r="199" stroke-dasharray="1 9.42" stroke-width="4" />
+      <circle cx="320" cy="267" r="177" stroke-opacity=".5" />
+      <g class="art-orbit">
+        <ellipse cx="320" cy="267" rx="177" ry="69" transform="rotate(-33 320 267)" />
+        <ellipse cx="320" cy="267" rx="177" ry="69" transform="rotate(53 320 267)" stroke-opacity=".4" />
+        <circle cx="470" cy="173" r="12" fill="#c1a367" /><circle cx="169" cy="359" r="6" fill="#ddc689" />
+      </g>
+      <path d="M320 39v48m0 360v48M91 267h48m361 0h48" stroke-opacity=".65" />
+      <g class="art-stars" fill="#dbc58c">
+        <path d="m175 119 3 10 10 3-10 3-3 10-3-10-10-3 10-3Zm308 245 3 10 10 3-10 3-3 10-3-10-10-3 10-3Z" />
+        <circle cx="262" cy="132" r="2" /><circle cx="437" cy="301" r="2" /><circle cx="256" cy="405" r="2" />
+      </g>
+    </g>
+    <g class="art-object art-play-token">
+      <path d="M320 177 413 229V336L320 389L227 336V229Z" fill="#182b3a" stroke={`url(#${foilId})`} stroke-width="2" />
+      <path d="M320 177 413 229 320 282 227 229Z" fill="#9d8555" fill-opacity=".85" />
+      <path d="M227 229 320 282V389L227 336Z" fill="#2a4350" fill-opacity=".9" />
+      <path d="M413 229 320 282V389L413 336Z" fill="#10202d" fill-opacity=".88" />
+      <g fill="#e2ce93">
+        <circle cx="320" cy="217" r="7" />
+        <circle cx="287" cy="235" r="6" /><circle cx="353" cy="235" r="6" />
+        <circle cx="287" cy="322" r="6" /><circle cx="353" cy="322" r="6" />
+        <circle cx="320" cy="350" r="7" />
+      </g>
+      <path d="M320 198v48m-28-32 28 16 28-16M252 244l68 39 68-39M252 320l68 39 68-39" stroke="#e2ce93" stroke-opacity=".55" stroke-width="1" />
+    </g>
+    <g fill="#a99564" font-family="Georgia, serif" font-size="12" text-anchor="middle">
+      <text x="320" y="27">N</text><text x="320" y="520">S</text><text x="68" y="271">W</text><text x="572" y="271">E</text>
+    </g>
+  </>}
+
+  {chapter === 'about' && <>
+    <g class="art-object art-exlibris">
+      <path d="M161 64L477 80L462 461L145 445Z" fill="#c1ae88" opacity=".35" />
+      <path d="M164 55L480 71L462 450L146 434Z" fill={`url(#${paperId})`} />
+      <path d="M183 77L458 91L443 426L168 411Z" stroke="#8c754c" stroke-width=".8" />
+      <path d="M190 84L451 98L436 419L175 404Z" stroke="#8c754c" stroke-width=".6" />
+      <text x="318" y="147" text-anchor="middle" fill="#796441" font-size="17" font-family="Georgia, serif" letter-spacing="5">EX LIBRIS</text>
+      <image href="/images/splash-crest-embroidered-back.webp" x="219" y="174" width="185" height="185" />
+      <text x="311" y="392" text-anchor="middle" fill="#66573e" font-size="21" font-family="Georgia, serif">Extransload</text>
+    </g>
+    <g class="art-drifter" stroke={`url(#${foilId})`} stroke-width="1.4">
+      <path d="M113 450Q175 344 112 197m32 159q-55-14-59-59 38 2 59 59Zm-5-51q30-45 13-74-27 21-13 74Zm-12-47q-40-6-47-37 26-4 47 37ZM482 425q-32-114 51-216m-49 168q48-22 49-66-38 11-49 66Zm17-60q-22-45-2-72 26 29 2 72Z" />
+    </g>
+  </>}
+
+  {chapter === 'guestbook' && <>
+    <g class="art-object art-letter">
+      <path d="M139 157L470 122L493 351L161 386Z" fill={`url(#${paperId})`} stroke="#a3916a" stroke-width=".7" />
+      <g stroke="#887655" stroke-opacity=".55" stroke-linecap="round">
+        <path d="m186 205 225-24m-221 44 188-20m-184 42 212-22m-207 44 171-18" />
+        <path d="M351 290q10-17 17-3t12-5q10 6 23-5" />
+      </g>
+      <text x="181" y="188" fill="#897247" font-family="Georgia, serif" font-size="23" font-style="italic">Dear visitor,</text>
+    </g>
+    <g class="art-envelope">
+      <path d="M101 260L538 260L528 451L115 451Z" fill="#b7a37d" />
+      <path d="M101 260L317 390L538 260L528 451L115 451Z" fill={`url(#${paperId})`} stroke="#a08c64" />
+      <path d="M115 451L271 346m257 105L366 345" stroke="#ad9973" stroke-width="1" />
+      <path d="M113 277L317 407L524 277" stroke="#ac9470" stroke-opacity=".35" />
+      <circle cx="318" cy="393" r="26" fill="#76613a" />
+      <circle cx="318" cy="393" r="22" stroke="#cdb77c" stroke-width="1" />
+      <image href="/images/heart-embroidered-filled.webp" x="302" y="378" width="32" height="30" />
+    </g>
+    <path class="art-lines" d="M88 153q-19-36 16-54t47 26q16 25-22 54M533 144q53 8 32 60" stroke={`url(#${foilId})`} stroke-dasharray="2 6" opacity=".6" />
+  </>}
+</svg>

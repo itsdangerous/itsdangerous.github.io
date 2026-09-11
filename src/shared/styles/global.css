@@ -369,24 +369,19 @@ a {
   border-bottom: 1px solid var(--color-border);
 }
 
-.site-header__brand-image {
+.site-header__brand-glyph {
   display: block;
-  flex: 0 0 12rem;
-  width: 12rem;
-  max-width: none;
   height: auto;
-  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 76%))
-    drop-shadow(0 2px 3px rgb(0 0 0 / 28%));
+  width: min(100%, 12rem);
+  max-width: 100%;
+  justify-content: center;
+  font-size: clamp(0.9rem, 5.8cqw, 1.25rem);
   user-select: none;
   pointer-events: none;
 }
 
 @container (max-width: 13rem) {
-  .site-header__brand-image {
-    flex-basis: calc(100cqw - 1rem);
-    width: calc(100cqw - 1rem);
-    max-width: calc(100cqw - 1rem);
-  }
+  .site-header__brand-glyph { font-size: clamp(0.85rem, 5.8cqw, 1.1rem); }
 }
 
 .site-header__controls {
@@ -1361,11 +1356,6 @@ h1 span {
   .site-header__brand {
     padding-bottom: 0;
     border-bottom: 0;
-  }
-  .site-header__brand-image {
-    flex-basis: min(100%, 12rem);
-    width: min(100%, 12rem);
-    max-width: 100%;
   }
   .site-header nav {
     flex-direction: row;

@@ -1,15 +1,33 @@
 ---
 import SplashLayout from '../domains/main/layouts/SplashLayout.astro';
 import '../domains/main/styles/splash.css';
-import BookCrest from '../domains/main/components/BookCrest.astro';
+import SplashArtwork from '../domains/main/components/SplashArtwork.astro';
+import { splashChapters } from '../domains/main/data/splash-chapters';
 const adminUrl = import.meta.env.PUBLIC_ADMIN_URL?.trim();
 const adminOrigin = adminUrl?.replace(/\/+$/, '').replace(/\/admin$/, '') || '';
-const glyphRuns = (label: string) => label.split(' ').map((word) => word.split('').map((letter) => `/images/glyphs/${letter}.webp`));
 ---
 
 <SplashLayout title="Extransload" description="기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서">
-  <main class="book-splash">
-    <section class="book-splash__face" aria-labelledby="splash-title">
+  <main class="book-splash" data-splash>
+    <div class="book-splash__frame-mask" aria-hidden="true">
+      <span class="book-splash__frame-mask-bar book-splash__frame-mask-bar--top"></span>
+      <span class="book-splash__frame-mask-bar book-splash__frame-mask-bar--right"></span>
+      <span class="book-splash__frame-mask-bar book-splash__frame-mask-bar--bottom"></span>
+      <span class="book-splash__frame-mask-bar book-splash__frame-mask-bar--left"></span>
+    </div>
+    <nav class="splash-toc" aria-label="장서 목차">
+      <span class="splash-toc__caption" aria-hidden="true">CONTENTS</span>
+      <ol>
+        {splashChapters.map((chapter) => <li>
+          <a href={`#${chapter.id}`} data-chapter-link={chapter.id}>
+            <span class="splash-toc__number" aria-hidden="true">{chapter.number}</span>
+            <span>{chapter.label}</span>
+          </a>
+        </li>)}
+      </ol>
+      <span class="splash-toc__rule" aria-hidden="true"></span>
+    </nav>
+    <section class="book-splash__face" id="cover" aria-labelledby="splash-title">
       <div class="book-splash__filigree" aria-hidden="true"></div>
       <div class="book-splash__crest" aria-hidden="true">
         <img
@@ -25,25 +43,15 @@ const glyphRuns = (label: string) => label.split(' ').map((word) => word.split('
 
       <div class="book-splash__center">
         <h1 class="book-splash__title" id="splash-title">
-          <img
-            src="/images/splash-title-embroidered.webp"
-            alt="Extransload"
-            class="book-splash__title-img"
-            width="2172"
-            height="724"
-            loading="eager"
-            decoding="async"
-          />
+          <span class="splash-sr-only">Extransload</span>
+          <img src="/images/extransload-wordmark-crest-tone.webp" class="book-splash__title-glyph" alt="" width="2100" height="402" fetchpriority="high" />
         </h1>
-        <!-- <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p> -->
-        <nav class="book-splash__chapters" aria-label="사이트 공간">
-          <a href="/blog/" aria-label="Journal"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('JOURNAL').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
-          <a href="/works/" aria-label="Works"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('WORKS').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
-          <a href="/playroom/" aria-label="Playroom"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('PLAYROOM').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
-          <a href="/about/">About</a>
-          <a href="/guestbook/">Guestbook</a>
-        </nav>
       </div>
+      <p class="book-splash__tagline">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p>
+      <a class="book-splash__scroll" href="#journal" aria-label="아래로 이동">
+        <span class="book-splash__scroll-line" aria-hidden="true"></span>
+        <svg viewBox="0 0 20 12" aria-hidden="true"><path d="m3 3 7 6 7-6" /></svg>
+      </a>
       {adminUrl && <div class="book-splash__admin" aria-label="관리자 메뉴" data-admin-controls hidden>
         <a class="book-splash__admin-login" data-admin-login href={`${adminOrigin}/auth/github`} aria-label="관리자 로그인" title="관리자 로그인">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2" /><path d="M5.5 20c.7-3.1 3-5 6.5-5s5.8 1.9 6.5 5" /></svg>
@@ -53,8 +61,51 @@ const glyphRuns = (label: string) => label.split(' ').map((word) => word.split('
         </a>
       </div>}
     </section>
+    <div class="splash-chapters">
+      {splashChapters.map((chapter) => <section
+        class={`splash-chapter splash-chapter--${chapter.id}`}
+        id={chapter.id}
+        aria-labelledby={`${chapter.id}-title`}
+        data-chapter
+      >
+        <a class="splash-chapter__link" href={chapter.href} aria-labelledby={`${chapter.id}-title`} aria-describedby={`${chapter.id}-description`}>
+          <div class="splash-chapter__copy">
+            <span class="splash-chapter__ornament" aria-hidden="true"><span></span><i></i><span></span></span>
+            <h2 class="splash-chapter__title" id={`${chapter.id}-title`}>
+              <span class="splash-sr-only">{chapter.label}</span>
+              <img
+                class="splash-chapter__wordmark"
+                src={`/images/splash-${chapter.id}-embroidered.webp`}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              />
+            </h2>
+            <div class="splash-chapter__detail">
+              <p class="splash-chapter__description" id={`${chapter.id}-description`}>{chapter.description}</p>
+              <span class="splash-chapter__invitation" aria-hidden="true">{chapter.invitation}<span>↗</span></span>
+            </div>
+          </div>
+          <div class="splash-chapter__media">
+            {chapter.media ? chapter.media.kind === 'video' ? <video
+              muted loop playsinline preload="none" poster={chapter.media.poster}
+              aria-label={chapter.media.alt} data-chapter-video
+            ><source data-src={chapter.media.src} /></video> : <img
+              src={chapter.media.src} alt={chapter.media.alt} loading="lazy" decoding="async"
+            /> : <SplashArtwork chapter={chapter.id} />}
+          </div>
+        </a>
+      </section>)}
+    </div>
+    <footer class="splash-colophon">
+      <a href="#cover">표지로 돌아가기 <span aria-hidden="true">↑</span></a>
+    </footer>
   </main>
 </SplashLayout>
+<script>
+  import '../domains/main/scripts/splash';
+</script>
 {adminUrl && <script is:inline define:vars={{ adminOrigin }}>
   const controls = document.querySelector('[data-admin-controls]');
   const login = document.querySelector('[data-admin-login]');

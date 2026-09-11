@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { splashChapters } from '../../src/domains/main/data/splash-chapters';
 
 describe('blog routes', () => {
   it('defines main, blog, independent spaces, about, and guestbook pages', () => {
@@ -45,17 +46,17 @@ describe('blog routes', () => {
   it('keeps splash chapter labels aligned with their independent routes', () => {
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
-    expect(rootPage).not.toContain('book-splash__chapter-index');
-    expect(rootPage).toContain('href="/works/"');
-    expect(rootPage).toContain('href="/playroom/"');
-    expect(rootPage).toContain('href="/about/"');
-    expect(rootPage).toContain('<a href="/about/">About</a>');
-    expect(rootPage).toContain('href="/guestbook/"');
-    expect(rootPage).toContain('<a href="/guestbook/">Guestbook</a>');
+    expect(splashChapters.map(({ label, href }) => [label, href])).toEqual([
+      ['Journal', '/blog/'], ['Works', '/works/'], ['Playroom', '/playroom/'],
+      ['About', '/about/'], ['Guestbook', '/guestbook/'],
+    ]);
+    expect(new Set(splashChapters.map(({ id }) => id)).size).toBe(5);
+    expect(rootPage).toContain('href={chapter.href}');
+    expect(rootPage).toContain('href={`#${chapter.id}`}');
     expect(rootPage).not.toContain('Personal Archive');
     expect(rootPage).not.toContain('Vol. I');
     expect(rootPage.indexOf('class="book-splash__crest"')).toBeLessThan(rootPage.indexOf('class="book-splash__center"'));
-    expect(rootPage.indexOf('class="book-splash__title"')).toBeLessThan(rootPage.indexOf('class="book-splash__chapters"'));
+    expect(rootPage.indexOf('class="book-splash__title"')).toBeLessThan(rootPage.indexOf('class="splash-chapters"'));
   });
 
   it('keeps the blog sidebar rooted in the blog domain', () => {
@@ -141,18 +142,35 @@ describe('blog routes', () => {
     expect(layout).toContain('<link rel="preload" as="image" href="/splash-leather-cover-texture.webp"');
   });
 
-  it('keeps the splash crest in one source component', () => {
+  it('reuses the embroidered crest and manuscript texture in chapter illustrations', () => {
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
-
-    expect(rootPage).toContain("import BookCrest from '../domains/main/components/BookCrest.astro';");
+    const artwork = readFileSync('src/domains/main/components/SplashArtwork.astro', 'utf8');
+    expect(rootPage).toContain('/images/splash-crest-embroidered.webp');
+    expect(artwork).toContain('/images/splash-crest-embroidered-back.webp');
+    expect(artwork).toContain('/article-manuscript-paper-texture.webp');
+    expect(artwork).toContain('art-play-token');
+    expect(artwork).not.toContain('theme-moon.png');
+    expect(rootPage).not.toContain('splash-chapter__eyebrow');
+    expect(rootPage).toContain('splash-chapter__ornament');
+    expect(rootPage).toContain('splash-chapter__description');
+    expect(rootPage).toContain('splash-chapter__invitation');
     expect(existsSync('public/emblem.svg')).toBe(false);
     expect(existsSync('public/keeper-seal.svg')).toBe(false);
   });
 
-  it('uses the embroidered title mark as the shared brand', () => {
+  it('uses embroidered wordmarks for the shared brand and splash chapters', () => {
     const header = readFileSync('src/shared/components/Header.astro', 'utf8');
+    const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
-    expect(header).toContain('splash-title-embroidered.webp');
+    expect(header).toContain('/images/extransload-wordmark-crest-tone.webp');
+    expect(rootPage).toContain('/images/extransload-wordmark-crest-tone.webp');
+    expect(rootPage).toContain('src={`/images/splash-${chapter.id}-embroidered.webp`}');
+    for (const chapter of splashChapters) {
+      expect(existsSync(`public/images/splash-${chapter.id}-embroidered.webp`)).toBe(true);
+    }
+    expect(rootPage).not.toContain('GlyphWord');
+    expect(header).not.toContain('splash-title-embroidered.webp');
+    expect(rootPage).not.toContain('splash-title-embroidered.webp');
     expect(header).not.toContain('site-header__profile');
   });
 

@@ -1,0 +1,64 @@
+---
+import { glyphDimensions } from './glyph-dimensions';
+interface Props {
+  text: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+
+const { text, class: className, loading = 'eager' } = Astro.props;
+const words = text.trim().split(/\s+/).filter(Boolean);
+// Optical heights for the brand's separately drawn glyphs, in cap-height units.
+// d retains its ascender: its bowl occupies about 70% of the original bitmap.
+const brandHeights: Record<string, number> = {
+  E: 1, x: .72, t: .96, r: .72, a: .72, n: .72,
+  s: .72, l: 1, o: .72, d: 1.04,
+};
+// Pair spacing in cap-height units, including the bitmap's own edge padding.
+const brandSpacing: Record<string, number> = {
+  Ex: .025, xt: .015, tr: .02, ra: .015, an: .035,
+  ns: .035, sl: .04, lo: .025, oa: .025, ad: .035,
+};
+const glyphPath = (letter: string) => {
+  const isUppercase = letter.toUpperCase() === letter && letter.toLowerCase() !== letter;
+  const filename = isUppercase ? letter : `lower_${letter.toLowerCase()}`;
+  return `/images/glyphs/${filename}.webp`;
+};
+---
+
+<span class:list={['glyph-word', className]} aria-hidden="true">
+  {words.map((word) => <span class="glyph-word__word" style={word === 'Extransload' ? 'gap: 0;' : undefined}>
+    {[...word].map((letter, index) => {
+      const src = glyphPath(letter);
+      const [width, height] = glyphDimensions[src.split('/').pop()!] ?? [406, 406];
+      const displayHeight = word === 'Extransload' ? brandHeights[letter] : height / 406;
+      const spacing = word === 'Extransload' && index > 0
+        ? brandSpacing[word.slice(index - 1, index + 1)] ?? .03
+        : 0;
+      return <img class="glyph-word__glyph" src={src} width={width} height={height}
+        style={`width: ${width / height * displayHeight}em; height: ${displayHeight}em; margin-left: ${spacing}em;`}
+        alt="" loading={loading} decoding="async" />;
+    })}
+  </span>)}
+</span>
+
+<style is:global>
+  .glyph-word {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.06em;
+    white-space: nowrap;
+  }
+
+  .glyph-word__word {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: inherit;
+  }
+
+  .glyph-word__glyph {
+    display: block;
+    flex: none;
+    object-fit: contain;
+  }
+</style>
