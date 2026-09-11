@@ -1062,11 +1062,11 @@
   }
 
   .article-shell > .article__desktop-toc {
-    position: absolute;
+    position: fixed;
     top: calc(var(--space-16) + var(--space-8));
     right: var(--toc-edge-inset);
     width: calc(var(--toc-column-width) + 0.5rem);
-    height: calc(100% - var(--space-16) - var(--space-8));
+    height: auto;
   }
 
   .article-shell > .article__desktop-toc:has(.table-of-contents__desktop:hover),
@@ -1090,8 +1090,8 @@
   }
 
   .article-shell > .article__desktop-toc .table-of-contents__desktop {
-    position: sticky;
-    top: calc(var(--space-16) + var(--space-8));
+    position: relative;
+    top: auto;
     width: calc(var(--toc-column-width) + 0.5rem);
     height: auto;
     max-height: calc(100svh - var(--space-16) - var(--space-8) - var(--space-8));

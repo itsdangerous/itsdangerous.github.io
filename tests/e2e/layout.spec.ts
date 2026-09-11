@@ -297,8 +297,9 @@ test('article shows a wide mobile TOC below the header', async ({ page }) => {
   await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const desktopToc = page.locator('.article__desktop-toc .table-of-contents__desktop');
+  const desktopRail = page.locator('.article__desktop-toc');
   await expect(desktopToc).toBeVisible();
-  await expect(desktopToc).toHaveCSS('position', 'sticky');
+  await expect(desktopRail).toHaveCSS('position', 'fixed');
   await expect(page.locator('.article__desktop-toc details.table-of-contents__mobile')).toBeHidden();
 
   await page.setViewportSize({ width: 360, height: 800 });
@@ -342,7 +343,7 @@ test('sidebar and desktop TOC keep their top offsets when scrolling begins', asy
     tocTop: (await toc.boundingBox())!.y,
   };
 
-  await page.evaluate(() => window.scrollTo(0, 40));
+  await page.evaluate(() => window.scrollTo(0, 1800));
 
   expect((await sidebar.boundingBox())!.y).toBe(initial.sidebarTop);
   expect((await toc.boundingBox())!.y).toBe(initial.tocTop);
