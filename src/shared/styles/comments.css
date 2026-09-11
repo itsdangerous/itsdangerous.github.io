@@ -38,6 +38,7 @@
 .comments .comment-status:empty { display: none; }
 .comments .comment-status[data-error='true'] { color: #d18a79; }
 [data-theme='light'] .comments .comment-status[data-error='true'] { color: #9d3c2f; }
+.comments .comment-admin-notice { margin: .8rem 0; color: var(--comment-brass); font-size: .74rem; line-height: 1.6; }
 .comments-list-heading { margin-top: 1rem; padding-bottom: .55rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; font-size: .76rem; }
 .comments-list-heading > span { color: var(--color-text-muted); }
 .comment-entry { padding: .9rem 0; border-bottom: 1px solid var(--color-border); }

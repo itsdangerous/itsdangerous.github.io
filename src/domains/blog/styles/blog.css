@@ -240,11 +240,6 @@
   width: min(var(--content-width), calc(100% - 2rem));
   margin-inline: auto;
 }
-@media (min-width: 901px) {
-  .markdown-viewer > .article__desktop-toc > [data-viewer-toc] {
-    height: 100%;
-  }
-}
 .markdown-viewer__dropzone {
   display: grid;
   place-items: center;
@@ -1098,8 +1093,13 @@
     position: sticky;
     top: calc(var(--space-16) + var(--space-8));
     width: calc(var(--toc-column-width) + 0.5rem);
+    height: auto;
+    max-height: calc(100svh - var(--space-16) - var(--space-8) - var(--space-8));
     margin-left: auto;
     padding-inline: 0.25rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .article__desktop-toc[data-toc-collapsed] .table-of-contents__desktop > ol {

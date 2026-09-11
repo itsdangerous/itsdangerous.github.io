@@ -2,7 +2,7 @@ interface Comment {
   id: string; page: string; parentId: string | null; nickname: string | null; body: string | null; visibility: 'public' | 'private'; version: number;
   createdAt: string; updatedAt: string; likes: number; liked: boolean | number;
 }
-interface CommentList { items: Comment[]; total: number; next: string | null }
+interface CommentList { items: Comment[]; total: number; next: string | null; admin?: boolean }
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!);
 const visitorKey = 'extransload-comment-visitor';
@@ -34,12 +34,24 @@ export function initializeComments() {
     const listStatus = root.querySelector<HTMLElement>('[data-list-status]')!;
     const compose = root.querySelector<HTMLFormElement>('[data-compose]')!;
     const composeStatus = root.querySelector<HTMLElement>('[data-compose-status]')!;
+    const identityFields = root.querySelector<HTMLElement>('[data-comment-identity]')!;
+    const visibilityFields = root.querySelector<HTMLElement>('[data-comment-visibility]')!;
+    const administratorNotice = root.querySelector<HTMLElement>('[data-comment-admin-notice]')!;
     const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
     (compose.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
     let next: string | null = null;
     let loading = false;
+    let isAdministrator = false;
     const items = new Map<string, Comment>();
     const message = (target: HTMLElement, text: string, failed = false) => { target.textContent = text; target.dataset.error = String(failed); };
+    const setAdministratorMode = (active: boolean) => {
+      isAdministrator = active;
+      identityFields.hidden = active; visibilityFields.hidden = active; administratorNotice.hidden = !active;
+      const nickname = compose.elements.namedItem('nickname') as HTMLInputElement;
+      const password = compose.elements.namedItem('password') as HTMLInputElement;
+      nickname.required = !active; password.required = !active;
+      compose.querySelector<HTMLButtonElement>('[type=submit]')!.textContent = active ? '관리자 댓글 등록' : '완료';
+    };
     async function request<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), 15_000);
@@ -52,6 +64,23 @@ export function initializeComments() {
         const result = await response.json();
         if (!response.ok) throw new Error(result.error?.message || '요청을 처리하지 못했습니다.');
         return result;
+      } catch (cause) {
+        if (cause instanceof Error && cause.name === 'AbortError') throw new Error('응답이 늦어지고 있습니다. 새로고침으로 반영 여부를 확인해 주세요.');
+        if (cause instanceof TypeError) throw new Error('댓글 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+        throw cause;
+      } finally { window.clearTimeout(timer); }
+    }
+    async function administratorRequest<T>(body: { page: string; body: string; parentId?: string }): Promise<T> {
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 15_000);
+      try {
+        const sessionResponse = await fetch(`${api}/api/session`, { mode: 'cors', credentials: 'include', signal: controller.signal });
+        const session = await sessionResponse.json().catch(() => null) as { csrfToken?: string } | null;
+        if (!sessionResponse.ok || !session?.csrfToken) throw new Error('관리자 로그인이 필요합니다.');
+        const response = await fetch(`${api}/api/comments/admin`, { method: 'POST', mode: 'cors', credentials: 'include', signal: controller.signal, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken }, body: JSON.stringify(body) });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error?.message || '관리자 댓글을 등록하지 못했습니다.');
+        return result as T;
       } catch (cause) {
         if (cause instanceof Error && cause.name === 'AbortError') throw new Error('응답이 늦어지고 있습니다. 새로고침으로 반영 여부를 확인해 주세요.');
         if (cause instanceof TypeError) throw new Error('댓글 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');
@@ -86,6 +115,7 @@ export function initializeComments() {
       try {
         const result = await request<CommentList>(`?page=${encodeURIComponent(page)}${append && next ? `&after=${next}` : ''}`);
         if (!append) { items.clear(); list.replaceChildren(); }
+        setAdministratorMode(result.admin === true);
         render(result.items);
         next = result.next; more.hidden = !next;
         root.querySelector('[data-count]')!.textContent = result.total ? String(result.total) : '';
@@ -100,10 +130,13 @@ export function initializeComments() {
       const data = Object.fromEntries(new FormData(compose));
       submit.disabled = true; message(composeStatus, '이야기를 남기고 있습니다.');
       try {
-        await request('', 'POST', { ...data, page });
+        if (isAdministrator) await administratorRequest({ page, body: String(data.body ?? '') });
+        else await request('', 'POST', { ...data, page });
         (compose.elements.namedItem('body') as HTMLTextAreaElement).value = '';
-        (compose.elements.namedItem('password') as HTMLInputElement).value = '';
-        (compose.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
+        if (!isAdministrator) {
+          (compose.elements.namedItem('password') as HTMLInputElement).value = '';
+          (compose.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
+        }
         message(composeStatus, '댓글을 남겼습니다.');
         await load();
       } catch (cause) { message(composeStatus, (cause as Error).message, true); }
@@ -152,16 +185,20 @@ export function initializeComments() {
       if (action === 'reply') {
         list.querySelectorAll('.comment-editor').forEach(editor => editor.remove());
         const form = document.createElement('form'); form.className = 'comment-editor editorial-surface'; form.setAttribute('aria-label', '답글 작성');
-        form.innerHTML = '<div class="comment-fields"><label>닉네임<input name="nickname" required maxlength="30" autocomplete="nickname"></label><label>비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" data-lpignore="true" data-1p-ignore></label></div><fieldset class="comment-visibility"><legend>공개 범위</legend><label><input name="visibility" type="radio" value="public" checked> 공개</label><label><input name="visibility" type="radio" value="private"> 비공개</label></fieldset><label>답글<textarea name="body" required maxlength="3000" rows="3"></textarea></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>';
-        (form.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
-        node.append(form); form.querySelector<HTMLInputElement>('[name=nickname]')!.focus({ preventScroll: true });
+        form.innerHTML = isAdministrator
+          ? '<p class="comment-admin-notice">관리자 이름으로 공개 답글이 등록됩니다.</p><label>관리자 답글<textarea name="body" required maxlength="3000" rows="3"></textarea></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">답글 등록</button></div>'
+          : '<div class="comment-fields"><label>닉네임<input name="nickname" required maxlength="30" autocomplete="nickname"></label><label>비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" data-lpignore="true" data-1p-ignore></label></div><fieldset class="comment-visibility"><legend>공개 범위</legend><label><input name="visibility" type="radio" value="public" checked> 공개</label><label><input name="visibility" type="radio" value="private"> 비공개</label></fieldset><label>답글<textarea name="body" required maxlength="3000" rows="3"></textarea></label><p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>';
+        if (!isAdministrator) (form.elements.namedItem('nickname') as HTMLInputElement).value = randomNickname();
+        node.append(form); (isAdministrator ? form.querySelector<HTMLTextAreaElement>('[name=body]')! : form.querySelector<HTMLInputElement>('[name=nickname]')!).focus({ preventScroll: true });
         form.querySelector('[data-cancel]')!.addEventListener('click', () => form.remove());
         form.addEventListener('submit', async event => {
           event.preventDefault(); const submit = form.querySelector<HTMLButtonElement>('[type=submit]')!; submit.disabled = true;
           const status = form.querySelector<HTMLElement>('[role=status]')!;
           try {
             const data = Object.fromEntries(new FormData(form));
-            await request('', 'POST', { ...data, page, parentId: item.id }); form.remove(); await load();
+            if (isAdministrator) await administratorRequest({ page, parentId: item.id, body: String(data.body ?? '') });
+            else await request('', 'POST', { ...data, page, parentId: item.id });
+            form.remove(); await load();
           } catch (cause) { message(status, (cause as Error).message, true); submit.disabled = false; }
         });
         return;

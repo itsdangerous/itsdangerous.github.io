@@ -1,4 +1,4 @@
-import { error, json } from './security';
+import { error, json, sha256 } from './security';
 import type { Env } from './types';
 import { requireMutation, requireSession } from './auth';
 
@@ -72,8 +72,27 @@ export function validComment(input: Record<string, unknown>) {
   return typeof input.nickname === 'string' && input.nickname.trim().length >= 1 && input.nickname.trim().length <= 30 &&
     typeof input.body === 'string' && input.body.trim().length >= 1 && input.body.trim().length <= 3000;
 }
+const reservedNickname = (value: unknown) => typeof value === 'string' && value.trim().normalize('NFC') === '관리자';
 const validPassword = (value: unknown): value is string => typeof value === 'string' && value.length >= 4 && value.length <= 128;
 const validVisibility = (value: unknown): value is 'public' | 'private' => value === 'public' || value === 'private';
+
+async function createAdministratorComment(request: Request, env: Env, input: Record<string, unknown>) {
+  const auth = await requireSession(request, env);
+  if ('response' in auth) return auth.response!;
+  const csrf = request.headers.get('X-CSRF-Token');
+  if (!csrf || await sha256(csrf) !== auth.record.csrf_hash) return error('INVALID_CSRF', '관리자 확인이 만료되었습니다. 다시 시도해 주세요.', 403);
+  if (!validPage(input.page) || !validComment({ nickname: '관리자', body: input.body })) return error('INVALID_INPUT', '댓글 내용을 확인해 주세요.', 422);
+  if (input.parentId !== undefined) {
+    if (!uuid.test(String(input.parentId))) return error('INVALID_INPUT', '답글 위치가 올바르지 않습니다.', 422);
+    const parent = await env.DB.prepare('SELECT page, parent_id FROM comments WHERE id=?').bind(input.parentId).first<{ page: string; parent_id: string | null }>();
+    if (!parent || parent.page !== input.page || parent.parent_id) return error('INVALID_INPUT', '답글을 남길 수 없는 댓글입니다.', 422);
+  }
+  const id = crypto.randomUUID(); const salt = crypto.randomUUID(); const now = new Date().toISOString();
+  const hash = await passwordHash(crypto.randomUUID(), salt, env.COMMENTS_SECRET!);
+  await env.DB.prepare('INSERT INTO comments (id, page, parent_id, nickname, body, password_hash, password_salt, visibility, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, input.page, input.parentId ?? null, '관리자', (input.body as string).trim(), hash, salt, 'public', now, now).run();
+  return json({ id }, 201);
+}
 
 async function rateLimit(env: Env, identity: string, scope: string, limit: number) {
   const minute = Math.floor(Date.now() / 60_000);
@@ -137,13 +156,14 @@ async function handle(request: Request, env: Env): Promise<Response> {
     return json({ items, total: total?.total ?? 0, next: rows.results.length > 20 ? roots[19].id : null, admin: isAdmin });
   }
 
+  const administratorCreate = url.pathname === '/api/comments/admin' && request.method === 'POST';
   const match = url.pathname.match(/^\/api\/comments\/([0-9a-f-]+)(\/(like|reveal))?$/i);
   const create = url.pathname === '/api/comments' && request.method === 'POST';
   const edit = match && !match[2] && request.method === 'PATCH';
   const remove = match && !match[2] && request.method === 'DELETE';
   const like = match && match[3] === 'like' && request.method === 'PUT';
   const reveal = match && match[3] === 'reveal' && request.method === 'POST';
-  if (!create && !edit && !remove && !like && !reveal) return error('NOT_FOUND', '댓글 경로를 찾을 수 없습니다.', 404);
+  if (!administratorCreate && !create && !edit && !remove && !like && !reveal) return error('NOT_FOUND', '댓글 경로를 찾을 수 없습니다.', 404);
   if (match && !uuid.test(match[1])) return error('INVALID_ID', '댓글 ID가 올바르지 않습니다.', 400);
   if (!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json')) return error('INVALID_CONTENT_TYPE', 'JSON 요청이 필요합니다.', 415);
   if (Number(request.headers.get('Content-Length')) > 16_384) return error('TOO_LARGE', '입력 내용이 너무 깁니다.', 413);
@@ -167,12 +187,14 @@ async function handle(request: Request, env: Env): Promise<Response> {
     input = JSON.parse(new TextDecoder().decode(bytes));
     if (!input || typeof input !== 'object' || Array.isArray(input)) throw new Error();
   } catch { return error('INVALID_BODY', '입력 내용을 확인해 주세요.', 400); }
+  if (administratorCreate) return createAdministratorComment(request, env, input);
   const ip = request.headers.get('CF-Connecting-IP') ?? 'local';
   if (!await rateLimit(env, ip, like ? 'likes' : create ? 'create' : 'password', like ? 60 : create ? 5 : 10)) {
     return json({ error: { code: 'RATE_LIMITED', message: '요청이 많습니다. 1분 후 다시 시도해 주세요.' } }, 429, { 'Retry-After': '60' });
   }
   if (create) {
     if (!validPage(input.page) || !validComment(input) || !validPassword(input.password) || !validVisibility(input.visibility)) return error('INVALID_INPUT', '닉네임 1~30자, 댓글 1~3,000자, 비밀번호 4~128자와 공개 범위를 입력해 주세요.', 422);
+    if (reservedNickname(input.nickname)) return error('RESERVED_NICKNAME', '관리자는 운영자 전용 닉네임입니다.', 422);
     if (input.website) return error('INVALID_INPUT', '등록 요청을 확인해 주세요.', 422);
     if (input.parentId !== undefined) {
       if (!uuid.test(String(input.parentId))) return error('INVALID_INPUT', '답글 위치가 올바르지 않습니다.', 422);
@@ -199,7 +221,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
     return results[1].results[0] ? json(results[1].results[0]) : error('NOT_FOUND', '삭제된 댓글입니다.', 404);
   }
   if (!validPassword(input.password) || (!reveal && !Number.isInteger(input.version))) return error('INVALID_INPUT', '댓글 비밀번호를 입력해 주세요.', 422);
-  if (edit && !validComment(input)) return error('INVALID_INPUT', '닉네임과 댓글 길이를 확인해 주세요.', 422);
+  if (edit && (!validComment(input) || reservedNickname(input.nickname))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);
   if (!await rateLimit(env, id, 'comment-password', 30)) return error('RATE_LIMITED', '이 댓글의 확인 요청이 많습니다. 잠시 후 다시 시도해 주세요.', 429);
   const stored = await env.DB.prepare('SELECT password_hash, password_salt, nickname, body, visibility, version FROM comments WHERE id=?').bind(id).first<{ password_hash: string; password_salt: string; nickname: string; body: string; visibility: string; version: number }>();
   if (!stored) return error('NOT_FOUND', '삭제되었거나 존재하지 않는 댓글입니다.', 404);
@@ -236,7 +258,7 @@ export async function commentsApi(request: Request, env: Env) {
     headers.set('Access-Control-Allow-Origin', origin);
     headers.set('Access-Control-Allow-Credentials', 'true');
     headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, PUT, OPTIONS');
-    headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Comment-Visitor');
+    headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Comment-Visitor, X-CSRF-Token');
   }
   return new Response(response.body, { status: response.status, headers });
 }

@@ -320,6 +320,7 @@ test('long desktop TOC scrolls independently within the viewport', async ({ page
   await page.goto('/blog/posts/macos-space/');
 
   const toc = page.locator('.article__desktop-toc .table-of-contents__desktop');
+  await toc.hover();
   await expect(toc).toHaveCSS('overflow-y', 'auto');
   const metrics = await toc.evaluate((element) => ({
     height: element.getBoundingClientRect().height,
