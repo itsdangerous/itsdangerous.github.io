@@ -104,7 +104,7 @@ export function initializeComments() {
       const date = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.createdAt));
       const privateComment = item.visibility === 'private' && !item.body;
       const administratorComment = !privateComment && item.nickname === '관리자';
-      const controls = isAdministrator && administratorComment ? '<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button>' : '';
+      const controls = isAdministrator ? '<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button>' : '';
       node.innerHTML = `<div class="comment-meta"><strong${administratorComment ? ' class="comment-author--administrator"' : ''}>${privateComment ? '비공개' : escapeHtml(item.nickname ?? '')}</strong><time datetime="${escapeHtml(item.createdAt)}">${escapeHtml(date)}${item.version > 1 ? ' · 수정됨' : ''}</time></div>
         <p class="comment-text${privateComment ? ' comment-text--private' : ''}">${privateComment ? '🔒 비공개 댓글입니다.' : escapeHtml(item.body ?? '')}</p>
         <div class="comment-actions"><button class="comment-like" type="button" data-action="like" aria-pressed="${Boolean(item.liked)}" aria-label="좋아요 ${item.likes}개${item.liked ? ', 취소하기' : ''}"><span aria-hidden="true">${item.liked ? '♥' : '♡'}</span> 좋아요 <b>${item.likes}</b></button>${privateComment ? '<button type="button" data-action="reveal">내용 보기</button>' : ''}${!item.parentId ? '<button type="button" data-action="reply">답글</button>' : ''}${controls}</div><p class="comment-status" data-entry-status role="status"></p><div class="comment-replies" data-replies></div>`;
@@ -220,8 +220,8 @@ export function initializeComments() {
       list.querySelectorAll('.comment-editor').forEach(editor => editor.remove());
       const form = document.createElement('form'); form.className = 'comment-editor editorial-surface';
       form.setAttribute('aria-label', action === 'edit' ? '댓글 수정' : '댓글 삭제');
-      const administratorMutation = isAdministrator && item.nickname === '관리자';
-      form.innerHTML = `${action === 'edit' ? `${administratorMutation ? '<input name="nickname" type="hidden" value="관리자">' : `<label>닉네임<input name="nickname" required maxlength="30" value="${escapeHtml(item.nickname ?? '')}"></label>`}<label>댓글<textarea name="body" required maxlength="3000" rows="4">${escapeHtml(item.body ?? '')}</textarea></label>` : '<p>이 댓글을 삭제할까요? 삭제한 댓글은 복구할 수 없습니다.</p>'}
+      const administratorMutation = isAdministrator;
+      form.innerHTML = `${action === 'edit' ? `${item.nickname === '관리자' ? '<input name="nickname" type="hidden" value="관리자">' : `<label>닉네임<input name="nickname" required maxlength="30" value="${escapeHtml(item.nickname ?? '')}"></label>`}<label>댓글<textarea name="body" required maxlength="3000" rows="4">${escapeHtml(item.body ?? '')}</textarea></label>` : '<p>이 댓글을 삭제할까요? 삭제한 댓글은 복구할 수 없습니다.</p>'}
         ${administratorMutation ? '<p class="comment-admin-notice">관리자 세션으로 처리됩니다.</p>' : '<label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="비밀번호"></label>'}
         <p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>`;
       node.append(form);

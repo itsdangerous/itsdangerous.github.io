@@ -81,6 +81,21 @@ it('lets an authenticated administrator edit and delete administrator comments w
   expect((await adminCall(`/${id}`, 'DELETE', { version: 2 })).status).toBe(200);
   expect(db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toMatchObject({ n: 0 });
 });
+it('lets an authenticated administrator edit and delete a visitor comment without its password', async () => {
+  const { id } = await (await call('', 'POST', { ...input, visibility: 'public' })).json() as { id: string };
+  const session = 'admin-session';
+  const csrf = 'admin-csrf';
+  db.prepare('INSERT INTO sessions (token_hash,github_user_id,github_login,csrf_hash,expires_at) VALUES (?,?,?,?,?)').run(await sha256(session), 1, 'admin', await sha256(csrf), '2099-01-01');
+  const adminCall = (method: string, body: unknown) => commentsApi(new Request(`https://worker.test/api/comments/${id}`, {
+    method,
+    headers: { Origin: 'https://extransload.github.io', Cookie: `__Host-admin_session=${session}`, 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+    body: JSON.stringify(body),
+  }), env);
+  expect((await adminCall('PATCH', { nickname: input.nickname, body: '관리자가 수정한 댓글', version: 1 })).status).toBe(200);
+  expect(db.prepare('SELECT body FROM comments WHERE id=?').get(id)).toMatchObject({ body: '관리자가 수정한 댓글' });
+  expect((await adminCall('DELETE', { version: 2 })).status).toBe(200);
+  expect(db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toMatchObject({ n: 0 });
+});
 it('preserves replies on version conflicts and deletes a standalone comment successfully', async () => {
   const { id } = await (await call('', 'POST', input)).json() as any;
   await call('', 'POST', { ...input, parentId: id });

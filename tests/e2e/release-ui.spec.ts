@@ -69,8 +69,8 @@ test('an authenticated administrator writes post comments and replies without an
   await expect.poll(() => administratorRequests.length).toBe(2);
   expect(administratorRequests[1]).toEqual({ page: parent.page, parentId: parent.id, body: '고맙습니다.' });
   await expect(page.locator(`[data-comment-id="${reply.id}"] .comment-meta strong`)).toHaveText('관리자');
-  await expect(page.locator(`[data-comment-id="${parent.id}"] > .comment-actions [data-action=edit]`)).toHaveCount(0);
-  await expect(page.locator(`[data-comment-id="${parent.id}"] > .comment-actions [data-action=delete]`)).toHaveCount(0);
+  await expect(page.locator(`[data-comment-id="${parent.id}"] > .comment-actions [data-action=edit]`)).toHaveCount(1);
+  await expect(page.locator(`[data-comment-id="${parent.id}"] > .comment-actions [data-action=delete]`)).toHaveCount(1);
   await expect(page.locator(`[data-comment-id="${reply.id}"] > .comment-meta .comment-author--administrator`)).toBeVisible();
   await expect(page.locator(`[data-comment-id="${reply.id}"] > .comment-actions [data-action=edit]`)).toHaveCount(1);
   await expect(page.locator(`[data-comment-id="${reply.id}"] > .comment-actions [data-action=delete]`)).toHaveCount(1);

@@ -229,13 +229,12 @@ async function handle(request: Request, env: Env): Promise<Response> {
   }
   const stored = await env.DB.prepare('SELECT password_hash, password_salt, nickname, body, visibility, version FROM comments WHERE id=?').bind(id).first<{ password_hash: string; password_salt: string; nickname: string; body: string; visibility: string; version: number }>();
   if (!stored) return error('NOT_FOUND', '삭제되었거나 존재하지 않는 댓글입니다.', 404);
-  const administratorMutation = (edit || remove) && reservedNickname(stored.nickname) && await hasAdministratorMutationAccess(request, env);
+  const administratorMutation = (edit || remove) && await hasAdministratorMutationAccess(request, env);
   if (!administratorMutation && (!validPassword(input.password) || (!reveal && !Number.isInteger(input.version)))) return error('INVALID_INPUT', '댓글 비밀번호를 입력해 주세요.', 422);
-  if (edit && (!validComment(input) || (!administratorMutation && reservedNickname(input.nickname)))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);
+  if (edit && !validComment(input)) return error('INVALID_INPUT', '댓글 내용을 확인해 주세요.', 422);
+  if (edit && (reservedNickname(stored.nickname) ? !reservedNickname(input.nickname) : reservedNickname(input.nickname))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);
   if (!administratorMutation && !await rateLimit(env, id, 'comment-password', 30)) return error('RATE_LIMITED', '이 댓글의 확인 요청이 많습니다. 잠시 후 다시 시도해 주세요.', 429);
   if (administratorMutation && !Number.isInteger(input.version)) return error('INVALID_INPUT', '댓글 버전을 확인해 주세요.', 422);
-  if (administratorMutation && edit && !reservedNickname(input.nickname)) return error('INVALID_INPUT', '관리자 댓글의 닉네임은 변경할 수 없습니다.', 422);
-  if (administratorMutation && edit && !validComment(input)) return error('INVALID_INPUT', '댓글 내용을 확인해 주세요.', 422);
   if (!administratorMutation) {
   const hash = await passwordHash(input.password, stored.password_salt, env.COMMENTS_SECRET);
   if (!equalHash(hash, stored.password_hash)) return error('WRONG_PASSWORD', '비밀번호가 맞지 않습니다.', 403);
