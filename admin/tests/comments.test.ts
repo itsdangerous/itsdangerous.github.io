@@ -53,6 +53,7 @@ it('masks private content and requires the correct password or admin session', a
 });
 it('reserves the administrator nickname and creates administrator comments only for a valid admin session', async () => {
   expect((await call('', 'POST', { ...input, nickname: ' 관리자 ' })).status).toBe(422);
+  expect((await call('', 'POST', { ...input, nickname: ' Extransload ' })).status).toBe(422);
   const session = 'admin-session';
   const csrf = 'admin-csrf';
   db.prepare('INSERT INTO sessions (token_hash,github_user_id,github_login,csrf_hash,expires_at) VALUES (?,?,?,?,?)').run(await sha256(session), 1, 'admin', await sha256(csrf), '2099-01-01');
@@ -62,9 +63,9 @@ it('reserves the administrator nickname and creates administrator comments only 
     body: JSON.stringify(body),
   }), env);
   const { id: parentId } = await (await adminCall({ page, body: '관리자 댓글' })).json() as { id: string };
-  expect(db.prepare('SELECT nickname, visibility, password_hash FROM comments WHERE id=?').get(parentId)).toMatchObject({ nickname: '관리자', visibility: 'public' });
+  expect(db.prepare('SELECT nickname, visibility, password_hash FROM comments WHERE id=?').get(parentId)).toMatchObject({ nickname: 'Extransload', visibility: 'public' });
   expect((await adminCall({ page, parentId, body: '관리자 답글', nickname: '임의 이름', visibility: 'private' })).status).toBe(201);
-  expect(db.prepare('SELECT nickname, body, visibility, parent_id FROM comments WHERE parent_id=?').get(parentId)).toMatchObject({ nickname: '관리자', body: '관리자 답글', visibility: 'public', parent_id: parentId });
+  expect(db.prepare('SELECT nickname, body, visibility, parent_id FROM comments WHERE parent_id=?').get(parentId)).toMatchObject({ nickname: 'Extransload', body: '관리자 답글', visibility: 'public', parent_id: parentId });
 });
 it('lets an authenticated administrator edit and delete administrator comments without a password', async () => {
   const session = 'admin-session';
@@ -77,8 +78,8 @@ it('lets an authenticated administrator edit and delete administrator comments w
   }), env);
   const { id } = await (await adminCall('/admin', 'POST', { page, body: '관리자 댓글' })).json() as { id: string };
   expect((await call(`/${id}`, 'DELETE', { password: '1234', version: 1 })).status).toBe(403);
-  expect((await adminCall(`/${id}`, 'PATCH', { nickname: '관리자', body: '수정한 관리자 댓글', version: 1 })).status).toBe(200);
-  expect(db.prepare('SELECT nickname, body FROM comments WHERE id=?').get(id)).toMatchObject({ nickname: '관리자', body: '수정한 관리자 댓글' });
+  expect((await adminCall(`/${id}`, 'PATCH', { nickname: 'Extransload', body: '수정한 관리자 댓글', version: 1 })).status).toBe(200);
+  expect(db.prepare('SELECT nickname, body FROM comments WHERE id=?').get(id)).toMatchObject({ nickname: 'Extransload', body: '수정한 관리자 댓글' });
   expect((await adminCall(`/${id}`, 'DELETE', { version: 2 })).status).toBe(200);
   expect(db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toMatchObject({ n: 0 });
 });
