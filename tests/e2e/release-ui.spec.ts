@@ -78,8 +78,9 @@ test('an authenticated administrator writes post comments and replies without an
 
 test('a visitor can enter a password to edit or delete a comment', async ({ page }) => {
   const comment = { id: '11111111-1111-4111-8111-111111111111', page: '/blog/posts/git-reset-vs-git-revert/', parentId: null, nickname: '방문자', body: '좋은 글입니다.', visibility: 'public', version: 1, createdAt: '2026-09-11T00:00:00.000Z', updatedAt: '2026-09-11T00:00:00.000Z', likes: 0, liked: false };
+  const administratorComment = { ...comment, id: '22222222-2222-4222-8222-222222222222', nickname: '관리자', body: '관리자 답글입니다.' };
   await page.route('**/api/comments/post-like?**', route => route.fulfill({ json: { likes: 0, liked: false } }));
-  await page.route('**/api/comments?**', route => route.fulfill({ json: { items: [comment], total: 1, next: null, admin: false } }));
+  await page.route('**/api/comments?**', route => route.fulfill({ json: { items: [comment, administratorComment], total: 2, next: null, admin: false } }));
   await page.goto('/blog/posts/git-reset-vs-git-revert/');
 
   const entry = page.locator(`[data-comment-id="${comment.id}"]`);
@@ -87,6 +88,9 @@ test('a visitor can enter a password to edit or delete a comment', async ({ page
   await expect(entry.locator(':scope > .comment-actions [data-action=delete]')).toHaveCount(1);
   await entry.locator('[data-action=edit]').click();
   await expect(entry.locator('.comment-editor [name=password]')).toBeVisible();
+  const administratorEntry = page.locator(`[data-comment-id="${administratorComment.id}"]`);
+  await expect(administratorEntry.locator(':scope > .comment-actions [data-action=edit]')).toHaveCount(0);
+  await expect(administratorEntry.locator(':scope > .comment-actions [data-action=delete]')).toHaveCount(0);
 });
 
 test('guestbook has a separate anonymous comment page', async ({ page }) => {

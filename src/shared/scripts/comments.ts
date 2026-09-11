@@ -104,7 +104,7 @@ export function initializeComments() {
       const date = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.createdAt));
       const privateComment = item.visibility === 'private' && !item.body;
       const administratorComment = !privateComment && item.nickname === '관리자';
-      const controls = '<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button>';
+      const controls = isAdministrator || !administratorComment ? '<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button>' : '';
       node.innerHTML = `<div class="comment-meta"><strong${administratorComment ? ' class="comment-author--administrator"' : ''}>${privateComment ? '비공개' : escapeHtml(item.nickname ?? '')}</strong><time datetime="${escapeHtml(item.createdAt)}">${escapeHtml(date)}${item.version > 1 ? ' · 수정됨' : ''}</time></div>
         <p class="comment-text${privateComment ? ' comment-text--private' : ''}">${privateComment ? '🔒 비공개 댓글입니다.' : escapeHtml(item.body ?? '')}</p>
         <div class="comment-actions"><button class="comment-like" type="button" data-action="like" aria-pressed="${Boolean(item.liked)}" aria-label="좋아요 ${item.likes}개${item.liked ? ', 취소하기' : ''}"><span aria-hidden="true">${item.liked ? '♥' : '♡'}</span> 좋아요 <b>${item.likes}</b></button>${privateComment ? '<button type="button" data-action="reveal">내용 보기</button>' : ''}${!item.parentId ? '<button type="button" data-action="reply">답글</button>' : ''}${controls}</div><p class="comment-status" data-entry-status role="status"></p><div class="comment-replies" data-replies></div>`;

@@ -230,6 +230,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   const stored = await env.DB.prepare('SELECT password_hash, password_salt, nickname, body, visibility, version FROM comments WHERE id=?').bind(id).first<{ password_hash: string; password_salt: string; nickname: string; body: string; visibility: string; version: number }>();
   if (!stored) return error('NOT_FOUND', '삭제되었거나 존재하지 않는 댓글입니다.', 404);
   const administratorMutation = (edit || remove) && await hasAdministratorMutationAccess(request, env);
+  if ((edit || remove) && reservedNickname(stored.nickname) && !administratorMutation) return error('ADMIN_COMMENT_FORBIDDEN', '관리자 댓글은 수정하거나 삭제할 수 없습니다.', 403);
   if (!administratorMutation && (!validPassword(input.password) || (!reveal && !Number.isInteger(input.version)))) return error('INVALID_INPUT', '댓글 비밀번호를 입력해 주세요.', 422);
   if (edit && !validComment(input)) return error('INVALID_INPUT', '댓글 내용을 확인해 주세요.', 422);
   if (edit && (reservedNickname(stored.nickname) ? !reservedNickname(input.nickname) : reservedNickname(input.nickname))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);

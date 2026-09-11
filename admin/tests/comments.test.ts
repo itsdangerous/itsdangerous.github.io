@@ -76,6 +76,7 @@ it('lets an authenticated administrator edit and delete administrator comments w
     body: JSON.stringify(body),
   }), env);
   const { id } = await (await adminCall('/admin', 'POST', { page, body: '관리자 댓글' })).json() as { id: string };
+  expect((await call(`/${id}`, 'DELETE', { password: '1234', version: 1 })).status).toBe(403);
   expect((await adminCall(`/${id}`, 'PATCH', { nickname: '관리자', body: '수정한 관리자 댓글', version: 1 })).status).toBe(200);
   expect(db.prepare('SELECT nickname, body FROM comments WHERE id=?').get(id)).toMatchObject({ nickname: '관리자', body: '수정한 관리자 댓글' });
   expect((await adminCall(`/${id}`, 'DELETE', { version: 2 })).status).toBe(200);
