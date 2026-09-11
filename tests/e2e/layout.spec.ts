@@ -5,15 +5,21 @@ test('sealed-volume splash keeps its chapter navigation inside the mobile viewpo
   await page.goto('/');
 
   const chapters = page.locator('.book-splash__chapters').first();
-  const secondaryChapters = page.locator('.book-splash__chapters--secondary');
+  const title = page.locator('.book-splash__title');
   await expect(chapters).toBeVisible();
-  await expect(secondaryChapters).toBeVisible();
   expect(await chapters.evaluate((element) => (
     element.getBoundingClientRect().bottom <= window.innerHeight
   ))).toBe(true);
-  expect(await secondaryChapters.evaluate((element) => (
-    element.getBoundingClientRect().bottom <= window.innerHeight
-  ))).toBe(true);
+  expect(await chapters.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
+  const [titleBox, primaryBox] = await Promise.all([title.boundingBox(), chapters.boundingBox()]);
+  expect(titleBox).not.toBeNull();
+  expect(primaryBox).not.toBeNull();
+  expect(titleBox!.y).toBeLessThan(primaryBox!.y);
+  const primaryLinks = await chapters.locator('a').evaluateAll((links) => links.map((link) => ({
+    top: link.getBoundingClientRect().top,
+    bottom: link.getBoundingClientRect().bottom,
+  })));
+  expect(new Set(primaryLinks.map(({ top }) => Math.round(top))).size).toBe(5);
 });
 
 test('root splash links to each independent site space', async ({ page }) => {
@@ -25,34 +31,22 @@ test('root splash links to each independent site space', async ({ page }) => {
   await expect(page.locator('.book-splash__chapters a[href="/playroom/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/about/"]')).toBeVisible();
   await expect(page.locator('.book-splash__chapters a[href="/guestbook/"]')).toBeVisible();
-  await expect(page.locator('.book-splash__chapters--secondary a')).toHaveCount(2);
-  await expect(page.locator('.book-splash__chapters:not(.book-splash__chapters--secondary) a')).toHaveCount(3);
-  await expect(page.locator('.book-splash__chapters').first()).toContainText('Journal');
+  await expect(page.locator('.book-splash__chapters a[href="/blog/"]')).toHaveAttribute('aria-label', 'Journal');
 });
 
-test('splash secondary links stay small and stacked at the lower left', async ({ page }) => {
+test('splash menu sits as one spaced vertical list below the title', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
 
-  const secondary = page.locator('.book-splash__chapters--secondary');
-  const face = page.locator('.book-splash__face');
-  const secondaryBox = await secondary.boundingBox();
-  const faceBox = await face.boundingBox();
-  expect(secondaryBox).not.toBeNull();
-  expect(faceBox).not.toBeNull();
-  expect(secondaryBox!.x).toBeLessThan(faceBox!.x + 140);
-  expect(await secondary.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
-  expect(await secondary.locator('a').first().evaluate((element) => getComputedStyle(element).fontSize)).toBe('14px');
-
-  const [aboutBox, guestbookBox] = await Promise.all([
-    secondary.locator('a[href="/about/"]').boundingBox(),
-    secondary.locator('a[href="/guestbook/"]').boundingBox(),
-  ]);
-  expect(aboutBox).not.toBeNull();
-  expect(guestbookBox).not.toBeNull();
-  expect(aboutBox!.y).toBeLessThan(guestbookBox!.y);
-
-  await expect(secondary.locator('.book-splash__chapter-hint')).toHaveCount(0);
+  const primary = page.locator('.book-splash__chapters').first();
+  const links = primary.locator('a');
+  const primaryBox = await primary.boundingBox();
+  expect(primaryBox).not.toBeNull();
+  expect(await primary.evaluate((element) => getComputedStyle(element).flexDirection)).toBe('column');
+  const boxes = await links.evaluateAll((items) => items.map((element) => element.getBoundingClientRect().toJSON()));
+  expect(new Set(boxes.map(({ y }) => Math.round(y))).size).toBe(5);
+  expect(new Set(boxes.map(({ x, width }) => Math.round(x + width / 2))).size).toBe(1);
+  expect(await links.nth(1).evaluate((element) => getComputedStyle(element, '::before').content)).toBe('none');
 });
 
 test('sidebar reading icons show collapse-style tooltips on hover and focus', async ({ page }) => {

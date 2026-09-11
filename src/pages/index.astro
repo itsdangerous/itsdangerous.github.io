@@ -4,6 +4,7 @@ import '../domains/main/styles/splash.css';
 import BookCrest from '../domains/main/components/BookCrest.astro';
 const adminUrl = import.meta.env.PUBLIC_ADMIN_URL?.trim();
 const adminOrigin = adminUrl?.replace(/\/+$/, '').replace(/\/admin$/, '') || '';
+const glyphRuns = (label: string) => label.split(' ').map((word) => word.split('').map((letter) => `/images/glyphs/${letter}.webp`));
 ---
 
 <SplashLayout title="Extransload" description="기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서">
@@ -36,11 +37,9 @@ const adminOrigin = adminUrl?.replace(/\/+$/, '').replace(/\/admin$/, '') || '';
         </h1>
         <!-- <p class="book-splash__subtitle">기록과 작업, 취향과 놀이를 보관하는 한 권의 개인 장서</p> -->
         <nav class="book-splash__chapters" aria-label="사이트 공간">
-          <a href="/blog/">Journal</a>
-          <a href="/works/">Works</a>
-          <a href="/playroom/">Playroom</a>
-        </nav>
-        <nav class="book-splash__chapters book-splash__chapters--secondary" aria-label="추가 사이트 공간">
+          <a href="/blog/" aria-label="Journal"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('JOURNAL').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
+          <a href="/works/" aria-label="Works"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('WORKS').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
+          <a href="/playroom/" aria-label="Playroom"><span class="book-splash__glyph-label" aria-hidden="true">{glyphRuns('PLAYROOM').map((run) => <span class="book-splash__glyph-word">{run.map((src) => <img src={src} alt="" decoding="async" />)}</span>)}</span></a>
           <a href="/about/">About</a>
           <a href="/guestbook/">Guestbook</a>
         </nav>

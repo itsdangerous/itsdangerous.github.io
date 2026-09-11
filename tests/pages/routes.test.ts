@@ -46,14 +46,12 @@ describe('blog routes', () => {
     const rootPage = readFileSync('src/pages/index.astro', 'utf8');
 
     expect(rootPage).not.toContain('book-splash__chapter-index');
-    expect(rootPage).toContain('<a href="/works/">');
-    expect(rootPage).toContain('<a href="/playroom/">');
+    expect(rootPage).toContain('href="/works/"');
+    expect(rootPage).toContain('href="/playroom/"');
     expect(rootPage).toContain('href="/about/"');
-    expect(rootPage).toContain('<a href="/works/">Works</a>');
-    expect(rootPage).toContain('<a href="/playroom/">Playroom</a>');
     expect(rootPage).toContain('<a href="/about/">About</a>');
     expect(rootPage).toContain('href="/guestbook/"');
-    expect(rootPage).toContain('book-splash__chapters--secondary');
+    expect(rootPage).toContain('<a href="/guestbook/">Guestbook</a>');
     expect(rootPage).not.toContain('Personal Archive');
     expect(rootPage).not.toContain('Vol. I');
     expect(rootPage.indexOf('class="book-splash__crest"')).toBeLessThan(rootPage.indexOf('class="book-splash__center"'));
@@ -259,7 +257,7 @@ describe('blog routes', () => {
     expect(blogStyles).toContain('background-color: transparent;');
     expect(blogStyles).toContain('content: none;');
     expect(blogStyles).toContain('.table-of-contents__desktop {\n  display: block;\n  position: sticky;');
-    expect(blogStyles).toContain('.article-shell > .article__desktop-toc .table-of-contents__desktop {\n    position: sticky;');
+    expect(blogStyles).toContain('.article-shell > .article__desktop-toc .table-of-contents__desktop {\n    position: relative;');
     expect(blogStyles).toContain('right: var(--toc-edge-inset);');
   });
 

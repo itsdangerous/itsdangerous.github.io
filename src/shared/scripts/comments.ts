@@ -87,14 +87,27 @@ export function initializeComments() {
         throw cause;
       } finally { window.clearTimeout(timer); }
     }
+    async function administratorMutationRequest<T>(path: string, method: 'PATCH' | 'DELETE', body: unknown): Promise<T> {
+      const sessionResponse = await fetch(`${api}/api/session`, { mode: 'cors', credentials: 'include' });
+      const session = await sessionResponse.json().catch(() => null) as { csrfToken?: string } | null;
+      if (!sessionResponse.ok || !session?.csrfToken) throw new Error('관리자 로그인이 필요합니다.');
+      const response = await fetch(`${api}/api/comments${path}`, {
+        method, mode: 'cors', credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken }, body: JSON.stringify(body),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error?.message || '관리자 댓글을 처리하지 못했습니다.');
+      return result as T;
+    }
     function entry(item: Comment) {
       const node = document.createElement('article');
       node.className = 'comment-entry'; node.dataset.commentId = item.id;
       const date = new Intl.DateTimeFormat('ko-KR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.createdAt));
       const privateComment = item.visibility === 'private' && !item.body;
-      node.innerHTML = `<div class="comment-meta"><strong>${privateComment ? '비공개' : escapeHtml(item.nickname ?? '')}</strong><time datetime="${escapeHtml(item.createdAt)}">${escapeHtml(date)}${item.version > 1 ? ' · 수정됨' : ''}</time></div>
+      const administratorComment = !privateComment && item.nickname === '관리자';
+      const controls = isAdministrator && administratorComment ? '<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button>' : '';
+      node.innerHTML = `<div class="comment-meta"><strong${administratorComment ? ' class="comment-author--administrator"' : ''}>${privateComment ? '비공개' : escapeHtml(item.nickname ?? '')}</strong><time datetime="${escapeHtml(item.createdAt)}">${escapeHtml(date)}${item.version > 1 ? ' · 수정됨' : ''}</time></div>
         <p class="comment-text${privateComment ? ' comment-text--private' : ''}">${privateComment ? '🔒 비공개 댓글입니다.' : escapeHtml(item.body ?? '')}</p>
-        <div class="comment-actions"><button class="comment-like" type="button" data-action="like" aria-pressed="${Boolean(item.liked)}" aria-label="좋아요 ${item.likes}개${item.liked ? ', 취소하기' : ''}"><span aria-hidden="true">${item.liked ? '♥' : '♡'}</span> 좋아요 <b>${item.likes}</b></button>${privateComment ? '<button type="button" data-action="reveal">내용 보기</button>' : ''}${!item.parentId ? '<button type="button" data-action="reply">답글</button>' : ''}<button type="button" data-action="edit">수정</button><button type="button" data-action="delete">삭제</button></div><p class="comment-status" data-entry-status role="status"></p><div class="comment-replies" data-replies></div>`;
+        <div class="comment-actions"><button class="comment-like" type="button" data-action="like" aria-pressed="${Boolean(item.liked)}" aria-label="좋아요 ${item.likes}개${item.liked ? ', 취소하기' : ''}"><span aria-hidden="true">${item.liked ? '♥' : '♡'}</span> 좋아요 <b>${item.likes}</b></button>${privateComment ? '<button type="button" data-action="reveal">내용 보기</button>' : ''}${!item.parentId ? '<button type="button" data-action="reply">답글</button>' : ''}${controls}</div><p class="comment-status" data-entry-status role="status"></p><div class="comment-replies" data-replies></div>`;
       return node;
     }
     function render(itemsToRender: Comment[]) {
@@ -207,14 +220,15 @@ export function initializeComments() {
       list.querySelectorAll('.comment-editor').forEach(editor => editor.remove());
       const form = document.createElement('form'); form.className = 'comment-editor editorial-surface';
       form.setAttribute('aria-label', action === 'edit' ? '댓글 수정' : '댓글 삭제');
-      form.innerHTML = `${action === 'edit' ? `<label>닉네임<input name="nickname" required maxlength="30" value="${escapeHtml(item.nickname ?? '')}"></label><label>댓글<textarea name="body" required maxlength="3000" rows="4">${escapeHtml(item.body ?? '')}</textarea></label>` : '<p>이 댓글을 삭제할까요? 삭제한 댓글은 복구할 수 없습니다.</p>'}
-        <label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="비밀번호"></label>
+      const administratorMutation = isAdministrator && item.nickname === '관리자';
+      form.innerHTML = `${action === 'edit' ? `${administratorMutation ? '<input name="nickname" type="hidden" value="관리자">' : `<label>닉네임<input name="nickname" required maxlength="30" value="${escapeHtml(item.nickname ?? '')}"></label>`}<label>댓글<textarea name="body" required maxlength="3000" rows="4">${escapeHtml(item.body ?? '')}</textarea></label>` : '<p>이 댓글을 삭제할까요? 삭제한 댓글은 복구할 수 없습니다.</p>'}
+        ${administratorMutation ? '<p class="comment-admin-notice">관리자 세션으로 처리됩니다.</p>' : '<label>댓글 비밀번호<input name="password" type="password" required minlength="4" maxlength="128" autocomplete="off" placeholder="비밀번호"></label>'}
         <p class="comment-status" role="status"></p><div class="comment-actions"><button type="button" data-cancel>취소</button><button class="comment-submit" type="submit">완료</button></div>`;
       node.append(form);
       const close = () => { form.remove(); button.focus({ preventScroll: true }); };
       form.querySelector('[data-cancel]')!.addEventListener('click', close);
       form.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
-      form.querySelector<HTMLInputElement>('[name=password]')!.focus({ preventScroll: true });
+      (form.querySelector<HTMLInputElement>('[name=password]') ?? form.querySelector<HTMLTextAreaElement>('[name=body]') ?? form.querySelector<HTMLButtonElement>('[type=submit]'))!.focus({ preventScroll: true });
       form.addEventListener('submit', async event => {
         event.preventDefault();
         const submit = form.querySelector<HTMLButtonElement>('[type=submit]')!;
@@ -224,7 +238,8 @@ export function initializeComments() {
         const data = Object.fromEntries(new FormData(form));
         message(status, '처리 중입니다.');
         try {
-          await request(`/${item.id}`, action === 'edit' ? 'PATCH' : 'DELETE', { ...data, version: item.version });
+          if (administratorMutation) await administratorMutationRequest(`/${item.id}`, action === 'edit' ? 'PATCH' : 'DELETE', { ...data, version: item.version });
+          else await request(`/${item.id}`, action === 'edit' ? 'PATCH' : 'DELETE', { ...data, version: item.version });
           form.remove();
           message(composeStatus, action === 'edit' ? '댓글을 수정했습니다.' : '댓글을 삭제했습니다.');
           await load(); compose.querySelector<HTMLInputElement>('[name=nickname]')!.focus({ preventScroll: true });

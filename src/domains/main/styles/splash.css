@@ -80,7 +80,7 @@
 
 .book-splash__crest {
   position: absolute;
-  top: clamp(2rem, 5vw, 3.9rem);
+  top: clamp(2.6rem, 5.5vw, 4.5rem);
   left: 50%;
   z-index: 1;
   display: grid;
@@ -147,27 +147,18 @@
 
 .book-splash__chapters {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(0.8rem, 2.5vw, 1.8rem);
+  gap: 0.65rem;
   margin-top: clamp(1.5rem, 3vw, 2.25rem);
-}
-
-.book-splash__chapters--secondary {
-  position: absolute;
-  bottom: clamp(1.75rem, 4vw, 2.5rem);
-  left: clamp(1.75rem, 4vw, 2.5rem);
-  z-index: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-  margin-top: 0;
 }
 
 .book-splash__chapters a {
   position: relative;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
+  min-height: 1.6rem;
   color: var(--cover-muted);
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.05rem, 2.1vw, 1.35rem);
@@ -177,32 +168,42 @@
   transition: color 160ms ease, text-shadow 160ms ease;
 }
 
-.book-splash__chapters--secondary a {
-  font-size: 0.875rem;
-  letter-spacing: 0.1em;
+.book-splash__chapters a:nth-child(4) {
+  margin-top: 0.65rem;
 }
 
-.book-splash__chapters--secondary a + a::before {
-  display: none;
+.book-splash__glyph-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.16rem;
+  line-height: 1;
 }
 
-.book-splash__chapters a + a::before {
-  position: absolute;
-  left: calc(clamp(0.8rem, 2.5vw, 1.8rem) / -2);
-  top: 50%;
-  width: 0.2rem;
-  height: 0.2rem;
-  border-radius: 50%;
-  content: '';
-  background: var(--cover-gold);
-  opacity: 0.68;
-  transform: translate(-50%, -50%);
+.book-splash__glyph-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.035rem;
+}
+
+.book-splash__glyph-label img {
+  display: block;
+  width: auto;
+  height: clamp(0.8rem, 1.5vw, 1rem);
+  object-fit: contain;
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 32%));
+  transition: filter 160ms ease, transform 160ms ease;
 }
 
 .book-splash__chapters a:hover,
 .book-splash__chapters a:focus-visible {
   color: var(--cover-gold-bright);
   text-shadow: 0 0 0.5rem rgb(224 199 127 / 35%);
+}
+
+.book-splash__chapters a:hover .book-splash__glyph-label img,
+.book-splash__chapters a:focus-visible .book-splash__glyph-label img {
+  filter: drop-shadow(0 0 0.45rem rgb(224 199 127 / 48%));
+  transform: translateY(-1px);
 }
 
 .book-splash__chapters a:focus-visible {
@@ -283,13 +284,15 @@
   }
 
   .book-splash__crest {
-    top: 2rem;
+    top: 2.6rem;
     width: clamp(4rem, 18vw, 5rem);
     height: clamp(4rem, 18vw, 5rem);
   }
 
   .book-splash__center {
     min-height: 0;
+    align-content: start;
+    padding-top: clamp(7rem, 22vh, 10rem);
   }
 
   .book-splash__subtitle {
@@ -297,25 +300,24 @@
   }
 
   .book-splash__chapters {
-    display: grid;
-    width: min(100%, 21rem);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem 1.4rem;
-    margin-inline: auto;
-  }
-
-  .book-splash__chapters--secondary {
     display: flex;
     width: auto;
-    left: 1.7rem;
-    bottom: 1.7rem;
-    gap: 0.2rem;
+    gap: 0.45rem;
+    margin-inline: auto;
+    flex-direction: column;
   }
 
   .book-splash__chapters a {
     justify-content: center;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+    flex: 0 1 auto;
+    min-width: 0;
+    min-height: 1.2rem;
+    font-size: 0.92rem;
+    letter-spacing: 0.03em;
+  }
+
+  .book-splash__chapters .book-splash__glyph-label img {
+    height: 0.72rem;
   }
 
   .book-splash__admin {

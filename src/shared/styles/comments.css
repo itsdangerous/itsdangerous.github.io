@@ -44,6 +44,8 @@
 .comment-entry { padding: .9rem 0; border-bottom: 1px solid var(--color-border); }
 .comment-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: .7rem; }
 .comment-meta strong { font-weight: 600; font-size: .82rem; overflow-wrap: anywhere; }
+.comment-meta .comment-author--administrator { display: inline-flex; align-items: center; gap: .3rem; color: var(--comment-brass); font-weight: 700; }
+.comment-meta .comment-author--administrator::before { content: '✦'; font-size: .68rem; }
 .comment-meta time { color: var(--color-text-muted); font-size: .66rem; }
 .comments .comment-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; font-size: .84rem; margin: .55rem 0; }
 .comments .comment-text--private { color: var(--color-text-muted); font-style: italic; }

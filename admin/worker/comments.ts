@@ -76,6 +76,13 @@ const reservedNickname = (value: unknown) => typeof value === 'string' && value.
 const validPassword = (value: unknown): value is string => typeof value === 'string' && value.length >= 4 && value.length <= 128;
 const validVisibility = (value: unknown): value is 'public' | 'private' => value === 'public' || value === 'private';
 
+async function hasAdministratorMutationAccess(request: Request, env: Env) {
+  const auth = await requireSession(request, env);
+  if ('response' in auth) return false;
+  const csrf = request.headers.get('X-CSRF-Token');
+  return !!csrf && await sha256(csrf) === auth.record.csrf_hash;
+}
+
 async function createAdministratorComment(request: Request, env: Env, input: Record<string, unknown>) {
   const auth = await requireSession(request, env);
   if ('response' in auth) return auth.response!;
@@ -220,13 +227,19 @@ async function handle(request: Request, env: Env): Promise<Response> {
     const results = await env.DB.batch([change, env.DB.prepare(`SELECT ${publicColumns} FROM comments c WHERE c.id=?`).bind(visitorHash, id)]);
     return results[1].results[0] ? json(results[1].results[0]) : error('NOT_FOUND', '삭제된 댓글입니다.', 404);
   }
-  if (!validPassword(input.password) || (!reveal && !Number.isInteger(input.version))) return error('INVALID_INPUT', '댓글 비밀번호를 입력해 주세요.', 422);
-  if (edit && (!validComment(input) || reservedNickname(input.nickname))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);
-  if (!await rateLimit(env, id, 'comment-password', 30)) return error('RATE_LIMITED', '이 댓글의 확인 요청이 많습니다. 잠시 후 다시 시도해 주세요.', 429);
   const stored = await env.DB.prepare('SELECT password_hash, password_salt, nickname, body, visibility, version FROM comments WHERE id=?').bind(id).first<{ password_hash: string; password_salt: string; nickname: string; body: string; visibility: string; version: number }>();
   if (!stored) return error('NOT_FOUND', '삭제되었거나 존재하지 않는 댓글입니다.', 404);
+  const administratorMutation = (edit || remove) && reservedNickname(stored.nickname) && await hasAdministratorMutationAccess(request, env);
+  if (!administratorMutation && (!validPassword(input.password) || (!reveal && !Number.isInteger(input.version)))) return error('INVALID_INPUT', '댓글 비밀번호를 입력해 주세요.', 422);
+  if (edit && (!validComment(input) || (!administratorMutation && reservedNickname(input.nickname)))) return error('INVALID_INPUT', '관리자 닉네임은 사용할 수 없습니다.', 422);
+  if (!administratorMutation && !await rateLimit(env, id, 'comment-password', 30)) return error('RATE_LIMITED', '이 댓글의 확인 요청이 많습니다. 잠시 후 다시 시도해 주세요.', 429);
+  if (administratorMutation && !Number.isInteger(input.version)) return error('INVALID_INPUT', '댓글 버전을 확인해 주세요.', 422);
+  if (administratorMutation && edit && !reservedNickname(input.nickname)) return error('INVALID_INPUT', '관리자 댓글의 닉네임은 변경할 수 없습니다.', 422);
+  if (administratorMutation && edit && !validComment(input)) return error('INVALID_INPUT', '댓글 내용을 확인해 주세요.', 422);
+  if (!administratorMutation) {
   const hash = await passwordHash(input.password, stored.password_salt, env.COMMENTS_SECRET);
   if (!equalHash(hash, stored.password_hash)) return error('WRONG_PASSWORD', '비밀번호가 맞지 않습니다.', 403);
+  }
   if (reveal) {
     if (stored.visibility !== 'private') return error('NOT_PRIVATE', '공개 댓글입니다.', 409);
     return json({ id, nickname: stored.nickname, body: stored.body, visibility: stored.visibility, version: stored.version });

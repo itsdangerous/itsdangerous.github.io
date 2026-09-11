@@ -66,6 +66,21 @@ it('reserves the administrator nickname and creates administrator comments only 
   expect((await adminCall({ page, parentId, body: '관리자 답글', nickname: '임의 이름', visibility: 'private' })).status).toBe(201);
   expect(db.prepare('SELECT nickname, body, visibility, parent_id FROM comments WHERE parent_id=?').get(parentId)).toMatchObject({ nickname: '관리자', body: '관리자 답글', visibility: 'public', parent_id: parentId });
 });
+it('lets an authenticated administrator edit and delete administrator comments without a password', async () => {
+  const session = 'admin-session';
+  const csrf = 'admin-csrf';
+  db.prepare('INSERT INTO sessions (token_hash,github_user_id,github_login,csrf_hash,expires_at) VALUES (?,?,?,?,?)').run(await sha256(session), 1, 'admin', await sha256(csrf), '2099-01-01');
+  const adminCall = (path: string, method: string, body: unknown) => commentsApi(new Request(`https://worker.test/api/comments${path}`, {
+    method,
+    headers: { Origin: 'https://extransload.github.io', Cookie: `__Host-admin_session=${session}`, 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+    body: JSON.stringify(body),
+  }), env);
+  const { id } = await (await adminCall('/admin', 'POST', { page, body: '관리자 댓글' })).json() as { id: string };
+  expect((await adminCall(`/${id}`, 'PATCH', { nickname: '관리자', body: '수정한 관리자 댓글', version: 1 })).status).toBe(200);
+  expect(db.prepare('SELECT nickname, body FROM comments WHERE id=?').get(id)).toMatchObject({ nickname: '관리자', body: '수정한 관리자 댓글' });
+  expect((await adminCall(`/${id}`, 'DELETE', { version: 2 })).status).toBe(200);
+  expect(db.prepare('SELECT COUNT(*) AS n FROM comments').get()).toMatchObject({ n: 0 });
+});
 it('preserves replies on version conflicts and deletes a standalone comment successfully', async () => {
   const { id } = await (await call('', 'POST', input)).json() as any;
   await call('', 'POST', { ...input, parentId: id });
