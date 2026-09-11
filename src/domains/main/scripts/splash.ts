@@ -60,6 +60,14 @@ if (root) {
     else if (scrollY > lastScrollY + 1) root.dataset.scrollDirection = 'down';
     lastScrollY = scrollY;
     setCoverProgress();
+    for (const chapter of chapters) {
+      const box = chapter.getBoundingClientRect();
+      const chapterCenter = box.top + box.height / 2;
+      const progress = clamp(1 - Math.abs(chapterCenter - window.innerHeight / 2) / window.innerHeight);
+      chapter.style.setProperty('--glow-progress', progress.toFixed(3));
+      const impact = clamp((progress - 0.42) / 0.58) ** 1.35;
+      chapter.style.setProperty('--glow-impact', impact.toFixed(3));
+    }
     const readingLine = window.innerHeight * 0.5;
     const current = chapters.find((chapter) => {
       const box = chapter.getBoundingClientRect();

@@ -57,8 +57,8 @@
 .book-splash__title-glyph {
   display: block;
   height: auto;
-  width: min(82vw, 34rem);
-  max-width: 82vw;
+  width: min(57.4vw, 23.8rem);
+  max-width: 57.4vw;
 }
 .book-splash__tagline {
   position: absolute; bottom: clamp(8rem, 14svh, 10rem); left: 50%; width: min(32rem, calc(100% - 3rem));
@@ -91,6 +91,18 @@
   position: relative; display: grid; align-items: center; min-height: 100svh; padding-block: 5rem; scroll-margin-top: 0;
 }
 .splash-chapter__link { display: grid; position: relative; grid-template-columns: .85fr 1.35fr; align-items: center; width: 100%; color: inherit; text-decoration: none; }
+.splash-chapter__link::before {
+  position: absolute; z-index: 0; inset: 0; content: '';
+  pointer-events: none; opacity: calc(.16 + var(--glow-progress, 0) * .38);
+  background:
+    radial-gradient(ellipse 42% 22% at calc(8% + var(--glow-progress, 0) * 42%) 50%, rgb(255 239 177 / 32%), transparent 68%),
+    radial-gradient(ellipse 42% 22% at calc(92% - var(--glow-progress, 0) * 42%) 50%, rgb(255 239 177 / 32%), transparent 68%),
+    radial-gradient(ellipse calc(22% + var(--glow-impact, 0) * 38%) calc(10% + var(--glow-impact, 0) * 18%) at center, rgb(255 239 177 / calc(8% + var(--glow-impact, 0) * 34%)), transparent 70%),
+    radial-gradient(ellipse at center, rgb(199 167 90 / 10%), transparent 64%);
+  mix-blend-mode: screen;
+  filter: blur(calc(8px + var(--glow-progress, 0) * 10px));
+  transition: opacity 380ms ease, filter 500ms ease;
+}
 .splash-chapter__copy { position: relative; z-index: 2; }
 .splash-chapter__ornament { display: flex; align-items: center; gap: .55rem; width: 5.2rem; color: var(--cover-gold-dim); }
 .splash-chapter__ornament span { display: block; width: 1.9rem; height: 1px; background: linear-gradient(90deg, transparent, var(--cover-gold)); }
